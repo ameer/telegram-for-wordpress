@@ -1,0 +1,272 @@
+# Copyright (C) 2015 Telegram for WordPress
+# This file is distributed under the same license as the Telegram for WordPress package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Telegram for WordPress 1.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/telegram-for-wp\n"
+"POT-Creation-Date: 2015-12-11 21:45+0330\n"
+"PO-Revision-Date: 2015-12-11 21:45+0330\n"
+"Last-Translator: Ameer Mousavi <me@ameer.ir>\n"
+"Language-Team: Ameer Mousavi <me@ameer.ir>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.6.5\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-Basepath: e:\\wamp\\www\\ameer\\wp-content\\plugins\\telegram-for-"
+"wp\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: twp.php:8
+msgid "Receive your WordPress site notifications in your Telegram account and publish your posts to Telegram channel."
+msgstr ""
+
+#: twp.php:11
+msgid "Ameer Mousavi"
+msgstr ""
+
+#: twp.php:23 twp.php:282
+msgid "TWP Settings"
+msgstr ""
+
+#: twp.php:52
+msgid "Telegram for WordPress"
+msgstr ""
+
+#: twp.php:53
+#, php-format
+msgid "Join our channel in Telegram: %s"
+msgstr ""
+
+#: twp.php:57
+msgid "Notifications"
+msgstr ""
+
+#: twp.php:59
+msgid ""
+"You will receive messages in Telegram with the contents of every emails that "
+"sent from your WordPress site.<br>\n"
+"                For example, once a new comment has been submitted, you will "
+"receive the comment in your Telegram account.<br>\n"
+"                "
+msgstr ""
+
+#: twp.php:66
+msgid "Instructions"
+msgstr ""
+
+#: twp.php:69
+msgid "If you want to send notifications to single user:"
+msgstr ""
+
+#: twp.php:71
+#, php-format
+msgid "In Telegram app start a new chat with %s."
+msgstr ""
+
+#: twp.php:72
+msgid ""
+"Send <code>/token</code> command and the bot will give you an API token for "
+"the user."
+msgstr ""
+
+#: twp.php:73 twp.php:80
+msgid "Copy and paste it in the below field and hit the save button!"
+msgstr ""
+
+#: twp.php:74
+msgid "Kaboom! You are ready to go."
+msgstr ""
+
+#: twp.php:77
+msgid "If you want to send notifications to group:"
+msgstr ""
+
+#: twp.php:79
+msgid ""
+"Add the bot to your group and bot will give you an API token for the "
+"group( token must be started with <code>g:</code> ) "
+msgstr ""
+
+#: twp.php:92
+msgid "Send a test Message"
+msgstr ""
+
+#: twp.php:93 twp.php:143 twp.php:181 twp.php:205
+msgid "Send now!"
+msgstr ""
+
+#: twp.php:96
+msgid "Hashtag (optional)"
+msgstr ""
+
+#: twp.php:99
+msgid "Insert a custom hashtag at the beginning of the messages."
+msgstr ""
+
+#: twp.php:100
+msgid "Don't forget <code>#</code> at the beginning"
+msgstr ""
+
+#: twp.php:106
+msgid "Post to Channel"
+msgstr ""
+
+#: twp.php:109
+msgid "Introduction"
+msgstr ""
+
+#: twp.php:112
+msgid ""
+"Telegram channel is a great way for attracting people to your site.<br> This "
+"option allows you to send posts to your Telegram channel. Intresting, no?"
+"<br>\n"
+"                     So let's start!<br>"
+msgstr ""
+
+#: twp.php:116
+msgid "Create a channel (if you don't already have one)."
+msgstr ""
+
+#: twp.php:117
+msgid "Create a bot (if you don't already have one)."
+msgstr ""
+
+#: twp.php:118
+msgid "Go to channel options and select 'Administrator' option."
+msgstr ""
+
+#: twp.php:119
+msgid "Select 'Add Administrator' option."
+msgstr ""
+
+#: twp.php:120
+msgid "Search the username of your bot and add it as administrator."
+msgstr ""
+
+#: twp.php:121
+msgid ""
+"Copy the bot token (you got it in step two) and paste it in the below field."
+msgstr ""
+
+#: twp.php:122
+msgid "Enter the username of the channel and hit SAVE button!!!"
+msgstr ""
+
+#: twp.php:123
+msgid ""
+"Yes! Now, whenever you publish or update a post you can choose whether send "
+"it to Telegram (from post editor page)"
+msgstr ""
+
+#: twp.php:131 twp.php:227
+msgid "Check bot token"
+msgstr ""
+
+#: twp.php:133
+msgid "Bot Info: "
+msgstr ""
+
+#: twp.php:140
+msgid "Channel Username"
+msgstr ""
+
+#: twp.php:144
+msgid "Don't forget <code>@</code> at the beginning"
+msgstr ""
+
+#: twp.php:148
+msgid "Channel Signature"
+msgstr ""
+
+#: twp.php:150
+msgid "Add channel username at the end of the messages"
+msgstr ""
+
+#: twp.php:151
+msgid ""
+"When people forwards your messages, this signature helps others to join your "
+"channel faster."
+msgstr ""
+
+#: twp.php:161
+#, php-format
+msgid ""
+"If you like this plugin, please rate it in %1$s. You can also support us by "
+"%2$s"
+msgstr ""
+
+#: twp.php:161
+msgid "Telegram for Wordpress page in wordpress.org"
+msgstr ""
+
+#: twp.php:161
+msgid "donating"
+msgstr ""
+
+#: twp.php:170 twp.php:194 twp.php:216
+msgid "Please wait..."
+msgstr ""
+
+#: twp.php:174 twp.php:198
+msgid "This is a test message"
+msgstr ""
+
+#: twp.php:185
+msgid "api_token field is empty"
+msgstr ""
+
+#: twp.php:191
+msgid "This will send a test message to your channel. Do you want to continue?"
+msgstr ""
+
+#: twp.php:209
+msgid "bot token/channel username field is empty"
+msgstr ""
+
+#: twp.php:230
+msgid "bot token field is empty"
+msgstr ""
+
+#: twp.php:251
+msgid "Persian Tutorial in HamyarWP"
+msgstr ""
+
+#: twp.php:282
+#, php-format
+msgid "Your API token isn't set. Please go to %s and set it."
+msgstr ""
+
+#: twp.php:295 twp.php:316
+msgid "Send to Telegram Channel"
+msgstr ""
+
+#: twp.php:314
+msgid "Bot token or Channel username aren't set!"
+msgstr ""
+
+#: twp.php:320
+msgid "Title + Featured Image"
+msgstr ""
+
+#: twp.php:323
+msgid "Excerpt + Featured Image"
+msgstr ""
+
+#: twp.php:326
+msgid "Text without image(s)"
+msgstr ""
+
+#: twp.php:331
+msgid "Add short url at the end"
+msgstr ""
+
+#: twp.php:334
+msgid "Add full url at the end"
+msgstr ""
+
+#: twp.php:329
+msgid "Sending result: "
+msgstr ""
