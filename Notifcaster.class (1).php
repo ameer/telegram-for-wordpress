@@ -78,12 +78,15 @@ class Notifcaster_Class
      *
      * @return string
      */
-    public function channel_text($chat_id , $msg)
+    public function channel_text($chat_id , $msg, $parse_mode='')
     {
         $params = array(
             'chat_id'  => $chat_id,
             'text'        => strip_tags($msg)
         );
+        if($parse_mode==1){
+            $params['parse_mode'] = "Markdown";
+        }
         $this->api_method = "/sendMessage";
         $response = $this->make_request($params);
         return $response;
@@ -211,9 +214,9 @@ class Notifcaster_Class
         } while (preg_grep("/{$boundary}/", $body));
 
     // add boundary for each parameters
-        foreach ($body as &$part) {
-			$part = "--{$boundary}\r\n{$part}"; unset($part);
-		}
+        array_walk($body, function (&$part) use ($boundary) {
+            $part = "--{$boundary}\r\n{$part}";
+        });
 
     // add final boundary
         $body[] = "--{$boundary}--";

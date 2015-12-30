@@ -337,7 +337,7 @@ function twp_settings_page() {
             <label style="color:grey" for="url_type_long">'.__('Add full url at the end', 'twp-plugin').'</label>
             </fieldset>
             <hr>
-            <p>'.__("Sending result: ", "twp-plugin").'</p><span id="twp_last_publish" style="font-weight:700">'.get_post_meta( $post->ID, '_twp_meta_value_date', true ).'</span>
+            <p>'.__("Sending result: ", "twp-plugin").'</p><span id="twp_last_publish" style="font-weight:700">'.get_post_meta( $post->ID, '_twp_meta_data', true ).'</span>
             </div>
             <script>
             jQuery("#twp_send_to_channel").click(function() {
@@ -400,33 +400,50 @@ function twp_settings_page() {
         }
 
         if ($_POST['twp_send_to_channel'] == 1) {
+            $twp_meta_array = 
+            array(
+                'method' => $_POST['send_type'], 
+                'url_type' => $_POST['url_type'],
+                'description' => ""
+             );
+            update_post_meta( $post_id, '_twp_meta_data', $twp_meta_array);
+        }
+    }
+    add_action( 'save_post', 'twp_save_meta_box_data' );
+
+    function twp_post_published ( $ID, $post ) {
+            if (! isset($_POST['send_type']) || ! isset($_POST['url_type'])){
+                $twp_meta_array = get_post_meta($post_ID, '_twp_meta_data');
+            } else {
+                $twp_meta_array = $_POST;
+            }
+            
             $method = "photo";
             $ch_name = get_option('twp_channel_username');
             $token = get_option('twp_bot_token');
-            $post_obj = get_post($post_id);
-            $photo =  get_attached_file( get_post_thumbnail_id($post->ID));
+            $photo =  get_attached_file( get_post_thumbnail_id($ID));
             if ($token == "" || $ch_name == ""){
-                update_post_meta( $post_id, '_twp_meta_value_date', __("Bot token or Channel username aren't set!", "twp-plugin") );
+                update_post_meta( $ID, '_twp_meta_data', __("Bot token or Channel username aren't set!", "twp-plugin") );
                 return;
             }
-            switch ($_POST['send_type']) {
+            switch ($twp_meta_array['send_type']) {
                 case '1':
-                    $msg = $post_obj->post_title;
+                    $msg = $post->post_title;
                     break;
                 case '2':
-                    $msg = $post_obj->post_excerpt;
+                    $msg = $post->post_excerpt;
                     break;
                 case '3':
-                    $msg = $post_obj->post_content;
+                    $msg = $post->post_content;
                     $method = "text";
                     break;
                 default:
                     break;
             }
-            if ($_POST['url_type'] == 1) {
-                $msg .= "\n".wp_get_shortlink($post_id);
-            } else if ($_POST['url_type'] == 2) {
-                $msg .= "\n".get_permalink($post_id);
+            if ($twp_meta_array['url_type'] == 1) {
+                $msg .= "\n".wp_get_shortlink($ID);
+            } else if ($twp_meta_array['url_type'] == 2) {
+                $msg .= "\n".get_permalink($ID);
             }
             if (get_option("twp_channel_signature") == 1 ) {
                 $msg .= "\n".$ch_name;
@@ -440,11 +457,10 @@ function twp_settings_page() {
                 }
             if ($r["ok"] == true){
             $publish_date = current_time( "mysql", $gmt = 0 );
-            update_post_meta( $post_id, '_twp_meta_value_date', $publish_date );
+            update_post_meta( $ID, '_twp_meta_data', __('Published succesfully on ', 'twp-plugin').$publish_date );
             } else {
-            update_post_meta( $post_id, '_twp_meta_value_date', $r["description"] );  
+            update_post_meta( $ID, '_twp_meta_data', $r["description"] );  
             }
-        }
     }
-    add_action( 'save_post', 'twp_save_meta_box_data' );
+    add_action( 'publish_post', 'twp_post_published', 10, 2 );
 ?>
