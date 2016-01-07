@@ -119,11 +119,19 @@ class Notifcaster_Class
      */    
     protected function make_request(array $params = array(), $file_upload = false)
     {
+        $default_params = $params;
+        if (strlen($params['caption']) > 140) {
+            $splitted_text = str_split($params['caption'], 1024);
+            $params['caption'] = '';
+        }
+        if (strlen($params['text']) > 1024) {
+            $splitted_text = str_split($params['text'], 1024);
+        }
         if (function_exists('curl_init')) {
             $curl = curl_init($this->url.$this->api_method);
             if (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 5){
                 curl_setopt($curl, CURLOPT_SAFE_UPLOAD, true);
-            } 
+            }
             if ($file_upload) {
                 if (class_exists('CURLFile')) {
                     $params['photo'] = new CURLFile($params['photo']);
@@ -141,7 +149,22 @@ class Notifcaster_Class
                 CURLOPT_POSTFIELDS => $params
             ));
             $response = curl_exec($curl);
-            curl_close($curl);
+            // if text
+            if ($splitted_text) {
+                foreach ($splitted_text as $text_part) {
+                    $params = array(
+                        'chat_id'  => $default_params['chat_id'],
+                        'text'     => $text_part
+                        );
+                    $params = http_build_query($params);
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => $this->url."/sendMessage",
+                        CURLOPT_POSTFIELDS => $params
+                        ));
+                    $response = curl_exec($curl);
+                }
+            }
+            curl_close($curl);                     
         } else {
             $context = stream_context_create(array(
                 'http' => array(
