@@ -7,6 +7,13 @@ require_once("admin/settings-page.php");
 }
 
 /**
+* Print admin subpage
+*/
+function twp_broadcast_page_callback() {
+    require_once("broadcast.php");
+}
+
+/**
  * Load plugin textdomain.
  *
  * @since 1.0.0
@@ -205,7 +212,7 @@ function twp_post_published ( $ID, $post ) {
 	}
 	switch ($a['send_type']) {
 		case '1':
-		$msg = $post->post_content;
+		$msg = $post->post_title;
 		break;
 		case '2':
 		$msg = $post->post_excerpt;

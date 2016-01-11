@@ -21,10 +21,11 @@ $twp_settings =
 add_action('admin_menu', 'twp_create_menu');
 function twp_create_menu() {
  //create new top-level menu
- add_menu_page('TWP Plugin Settings', __('TWP Settings','twp-plugin'), 'administrator', __FILE__, 'twp_settings_page',plugins_url('icon.png', __FILE__));
-
+    add_menu_page('TWP Plugin Settings', __('TWP Settings','twp-plugin'), 'administrator', 'telegram-for-wp', 'twp_settings_page',plugins_url('icon.png', __FILE__));
+//create sub-menu
+   add_submenu_page( __FILE__, __('Broadcast','twp-plugin'), __('Broadcast','twp-plugin'), 'manage_options', "/broadcast.php", 'twp_broadcast_page_callback' );
  //call register settings function
- add_action( 'admin_init', 'register_twp_settings' );
+   add_action( 'admin_init', 'register_twp_settings' );
 }
 function register_twp_settings() {
             //register our settings
@@ -35,11 +36,9 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_channel_signature' );
 }
 
-// If api_token has been set, then add our hook to phpmailer, else show a warning message.
+// If api_token has been set, then add our hook to phpmailer.
 if (get_option('twp_api_token') != null ) {
     add_action( 'phpmailer_init', 'twp_phpmailer_hook' );
-} else {
-    add_action( 'admin_notices', 'twp_api_admin_notice' ); 
 }
 
 ?>
