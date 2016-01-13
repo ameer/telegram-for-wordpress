@@ -153,7 +153,20 @@ if ( ! is_admin() ) die;
                             <th scope="row"><h3><?php echo __("Use Markdown in messages", "twp-plugin") ?></h3></th>
                             <td>
                             <p class="howto"><?php echo __("Telegram supports basic markdown (bold, italic, inline links). By checking the following options, your messages will be compatible with Telegram markdown format", "twp-plugin") ?></p><br>
-                                <input id="twp_markdown_bold" type="checkbox" name="twp_markdown_bold"  value="1" <?php checked( '1', get_option( 'twp_markdown_bold' ) ); ?> /><?php echo __("Bold texts in messages", "twp-plugin") ?>                
+                            <fieldset>
+                                <label for="twp_markdown_bold">
+                                <input id="twp_markdown_bold" type="checkbox" name="twp_markdown_bold"  value="1" <?php checked( '1', get_option( 'twp_markdown_bold' ) ); ?> />
+                                <strong><?php echo __("Bold", "twp-plugin") ?></strong>
+                                </label><br>
+                                <label for="twp_markdown_italic">
+                                <input id="twp_markdown_italic" type="checkbox" name="twp_markdown_italic"  value="1" <?php checked( '1', get_option( 'twp_markdown_italic' ) ); ?> />
+                                <em><?php echo __("Italic", "twp-plugin") ?></em>
+                                </label><br>
+                                <label for="twp_markdown_inline_url">
+                                <input id="twp_markdown_inline_url" type="checkbox" name="twp_markdown_inline_url"  value="1" <?php checked( '1', get_option( 'twp_markdown_inline_url' ) ); ?> />
+                                <a href="https://core.telegram.org/bots/api#using-markdown" target="_blank" title="Learn more"><?php echo __("Inline Links", "twp-plugin") ?> </a>
+                                </label><br>
+                            </fieldset>
                             </td>
                         </tr>
                     </table>
@@ -180,9 +193,9 @@ if ( ! is_admin() ) die;
                 var h = '<?php  echo get_option("twp_hashtag"); ?>';
             }
         var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
-        jQuery.post('<?php echo plugins_url( "test.php", __FILE__ ) ?>', 
+        jQuery.post(ajaxurl, 
         { 
-            msg: msg , api_token: api_token, subject: 'm'
+            msg: msg , api_token: api_token, subject: 'm', action:'twp_ajax_test'
         }, function( data ) {
             alert(data.description);
             jQuery('#sendbtn').prop('disabled', false);
@@ -205,9 +218,9 @@ if ( ! is_admin() ) die;
                         }
                         var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
 
-                        jQuery.post('<?php echo plugins_url( "test.php", __FILE__ ) ?>', 
+                        jQuery.post(ajaxurl, 
                         { 
-                            channel_username: channel_username, msg: msg , bot_token: bot_token, subject: 'c'
+                            channel_username: channel_username, msg: msg , bot_token: bot_token, subject: 'c', action:'twp_ajax_test'
                         }, function( data ) {
                             jQuery('#channelbtn').prop('disabled', false);
                             jQuery('#channelbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>'); 
@@ -222,9 +235,9 @@ if ( ! is_admin() ) die;
             var bot_token = jQuery('input[name=twp_bot_token]').val();
             jQuery('#checkbot').prop('disabled', true);
             jQuery('#checkbot').text('<?php echo __("Please wait...", "twp-plugin") ?> ');
-            jQuery.post('<?php echo plugins_url( "test.php", __FILE__ ) ?>', 
+            jQuery.post(ajaxurl, 
             { 
-                bot_token: bot_token, subject: 'b'
+                bot_token: bot_token, subject: 'b', action:'twp_ajax_test'
             }, function( data ) {
                 if (data != undefined && data.ok != false){
                     jQuery('#bot_name').text(data.result.first_name + ' ' + (data.result.last_name == undefined ? ' ' :  data.result.last_name ) + '(@' + data.result.username + ')')

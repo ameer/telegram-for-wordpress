@@ -14,7 +14,13 @@ License: GPLv2 or later.
 Text Domain: twp-plugin
 Domain Path: /lang
 */
-require_once("Notifcaster.class.php");
+if ( ! defined( 'TWP_PLUGIN_URL' ) ){
+    define( 'TWP_PLUGIN_URL', untrailingslashit( plugins_url( '', __FILE__ ) ) );
+}
+if ( ! defined( 'TWP_PLUGIN_DIR' ) ){
+    define( 'TWP_PLUGIN_DIR', untrailingslashit( dirname( __FILE__ ) ) );
+}
+require_once(TWP_PLUGIN_DIR."/inc/Notifcaster.class.php");
 require_once("functions.php");
 $twp_settings = 
 // create custom plugin settings menu
@@ -34,6 +40,9 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_channel_username' );
             register_setting( 'twp-settings-group', 'twp_hashtag' );
             register_setting( 'twp-settings-group', 'twp_channel_signature' );
+            register_setting( 'twp-settings-group', 'twp_markdown_bold' );
+            register_setting( 'twp-settings-group', 'twp_markdown_italic' );
+            register_setting( 'twp-settings-group', 'twp_markdown_inline_url' );
 }
 
 // If api_token has been set, then add our hook to phpmailer.

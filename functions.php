@@ -248,4 +248,33 @@ function twp_post_published ( $ID, $post ) {
 	//print_r($a);
 }
 add_action( 'publish_post', 'twp_post_published', 10, 2 );
+
+function twp_ajax_test_callback() {
+	$nt = new Notifcaster_Class();
+	switch ($_POST['subject']) {
+		case 'm':
+			//This will send a test message.
+			$nt->Notifcaster($_POST['api_token']);
+			$result = $nt->notify($_POST['msg']);
+			echo json_encode($result);
+			wp_die();
+			break;
+		case 'c':
+			$nt->_telegram($_POST['bot_token']);
+			$result = $nt->channel_text($_POST['channel_username'], $_POST['msg']);
+			echo json_encode($result);
+			wp_die();
+			break;
+		case 'b':
+			$nt->_telegram($_POST['bot_token']);
+			$result = $nt->get_bot();
+			echo json_encode($result);
+			wp_die();
+			break;
+		default:
+			return "Invalid POST request";
+			break;
+	}
+}
+add_action( 'wp_ajax_twp_ajax_test', 'twp_ajax_test_callback' );
 ?>
