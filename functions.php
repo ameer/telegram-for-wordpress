@@ -202,9 +202,13 @@ function twp_post_published ( $ID, $post ) {
 	} else {
 		$a = $_POST;
 	}
-	$method = "photo";
+	# Initialize Telegram information
 	$ch_name = get_option('twp_channel_username');
 	$token = get_option('twp_bot_token');
+	$nt = new Notifcaster_Class();
+	$nt->_telegram($token);
+	# Preparing message for sending
+	$method = "photo";
 	$photo =  get_attached_file( get_post_thumbnail_id($ID));
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __("Bot token or Channel username aren't set!", "twp-plugin") );
@@ -232,8 +236,9 @@ function twp_post_published ( $ID, $post ) {
 	if (get_option("twp_channel_signature") == 1 ) {
 		$msg .= "\n".$ch_name;
 	}
-	$nt = new Notifcaster_Class();
-	$nt->_telegram($token);
+	# Applying Telegram markdown format (bold, italic, inline-url)
+	$msg = $nt->markdown($msg, get_option('twp_markdown_bold'), get_option('twp_markdown_italic'), get_option('twp_markdown_inline_url') );
+	
 	if ($method == "photo" && $photo != false ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {

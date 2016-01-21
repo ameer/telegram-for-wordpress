@@ -121,12 +121,16 @@ class Notifcaster_Class
     {
         $default_params = $params;
         if (!empty($params)) {
-            if (strlen($params['caption']) > 140) {
-                $splitted_text = str_split($params['caption'], 1024);
-                $params['caption'] = '';
+            if (isset($params['caption'])) {
+                if (strlen($params['caption']) > 140){
+                  $splitted_text = str_split($params['caption'], 1024);
+                  $params['caption'] = '';  
+                }
             }
-            if (strlen($params['text']) > 1024) {
-                $splitted_text = str_split($params['text'], 1024);
+            if (isset($params['text'])) {
+                if(strlen($params['text']) > 1024){
+                  $splitted_text = str_split($params['text'], 1024);  
+                }
             }
         }
         if (function_exists('curl_init')) {
@@ -262,8 +266,28 @@ class Notifcaster_Class
     * @return string
     */
     function markdown ($html, $b = 0, $i = 0, $u = 0) {
-        
+        $allowed_tags = "";
+        $re = array();
+        $subst = array();
+        if ($b){
+            $allowed_tags .= "<strong>";
+            array_push($re, "/<strong>(.+?)<\\/strong>/is");
+            array_push($subst, "*$1*");
 
+        }
+        if ($i){
+            $allowed_tags .= "<em>";
+            array_push($re, "/<em>(.+?)<\\/em>/is");
+            array_push($subst, "_$1_");
+        }
+        if ($u){
+            $allowed_tags .= "<a>";
+            array_push($re, "/<a\\s+(?:[^>]*?\\s+)?href=[\"']?([^'\"]*)[\"']?.*?>(.*?)<\\/a>/is");
+            array_push($subst, "[$2]($1)");
+        }
+        strip_tags($html, $allowed_tags);
+        $result = preg_replace($re, $subst, $html);
+        return $result;
     }
 }
 ?>
