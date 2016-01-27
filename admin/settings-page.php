@@ -252,8 +252,9 @@ if ( ! is_admin() ) die;
         }
     }
     jQuery(document).ready(function() {
+        jQuery('.tabs #twp_tab1').fadeIn(400).siblings().hide();
         jQuery('.tabs .tab-links a').on('click', function(e)  {
-            var currentAttrValue = jQuery(this).attr('href');
+        var currentAttrValue = jQuery(this).attr('href');
 
         // Show/Hide Tabs
         jQuery('.tabs ' + currentAttrValue).fadeIn(400).siblings().hide();

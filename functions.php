@@ -90,35 +90,31 @@ function twp_add_meta_box() {
 */
 function twp_meta_box_callback( $post ) {
     // Add a nonce field so we can check for it later.
+    $ID = $post->ID;
 	wp_nonce_field( 'twp_save_meta_box_data', 'twp_meta_box_nonce' );
 	$error = "";
+	$dis = "";
+	$check_state = "";
 	if (get_option("twp_channel_username") == "" || get_option('twp_bot_token') == "")
 		{
-			$dis = "disabled=disabled"; $error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
+			$dis = "disabled=disabled"; 
+			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
+	$twp_meta_data = get_post_meta($ID, '_twp_meta_data', true);
+	if($twp_meta_data != "" || $twp_meta_data != null) {
+		$check_state = "checked=\'checked\'";
+	}
 	echo 
 	'<div style="padding-top: 7px;">'
 	.$error.
-	'<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel"  value="1" '.$dis.'/><label for="twp_send_to_channel">'.__('Send to Telegram Channel', 'twp-plugin' ).'</label>
+	'<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel"  value="1" '.$check_state.' '.$dis.'/><label for="twp_send_to_channel">'.__('Send to Telegram Channel', 'twp-plugin' ).'</label>
 	<br>
 	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" disabled="disabled">
-		<input id="send_type_featured" type="radio" name="send_type" value="1" checked="checked">
-		<label style="color:grey" for="send_type_content">'.__('Title + Featured Image', 'twp-plugin').'</label>
+		<textarea id="send_pattern" name="send_pattern" cols="40" rows="8" style="resize:vertical">'.$twp_meta_data.'</textarea>
 		<br>
-		<input id="send_type_excerpt" type="radio" name="send_type" value="2">
-		<label style="color:grey" for="send_type_excerpt">'.__('Excerpt + Featured Image', 'twp-plugin').'</label>
-		<br>
-		<input id="send_type_content" type="radio" name="send_type" value="3">
-		<label style="color:grey" for="send_type_content">'.__('Text without image(s)', 'twp-plugin').'</label>
-		<hr>
-		<input id="url_type_short" type="radio" name="url_type" value="1">
-		<label style="color:grey" for="url_type_short">'.__('Add short url at the end', 'twp-plugin').'</label>
-		<br>
-		<input id="url_type_long" type="radio" name="url_type" value="2">
-		<label style="color:grey" for="url_type_long">'.__('Add full url at the end', 'twp-plugin').'</label>
 	</fieldset>
 	<hr>
-	<p>'.__("Sending result: ", "twp-plugin").'</p><span id="twp_last_publish" style="font-weight:700"></span>
+	<p>'.__("Sending result: ", "twp-plugin").'</p><span id="twp_last_publish" style="font-weight:700">'.print_r($category).'</span>
 </div>
 <script>
 	jQuery("#twp_send_to_channel").click(function() {
@@ -179,13 +175,10 @@ function twp_save_meta_box_data( $post_id ) {
     	return;
     }
     if ($_POST['twp_send_to_channel'] == 1) {
-    	$twp_meta_array = 
-    	array(
-    		'send_type' => $_POST['send_type'], 
-    		'url_type' => $_POST['url_type'],
-    		'description' => ""
-    		);
-    	update_post_meta( $post_id, '_twp_meta_data', $twp_meta_array);
+    	$twp_meta_data = $_POST['send_pattern'];
+    	update_post_meta( $post_id, '_twp_meta_data', $twp_meta_data);
+    } else {
+
     }
 }
 add_action( 'save_post', 'twp_save_meta_box_data' );
@@ -196,46 +189,66 @@ add_action( 'save_post', 'twp_save_meta_box_data' );
 * @param obj $post
 */
 function twp_post_published ( $ID, $post ) {
-	if(! isset( $_POST['twp_send_to_channel'] ) ){
-		$a = get_post_meta($ID, '_twp_meta_data');
-		$a = $a[0];
+	# $a stands for array
+	if (! isset($_POST['twp_send_to_channel']) ) {
+		$a = get_post_meta($ID, '_twp_meta_data', true);
 	} else {
-		$a = $_POST;
+		$a = $_POST['send_pattern'];
+	}
+	# If there is no pattern then return!
+	if ($a == ""){
+		return;
 	}
 	# Initialize Telegram information
 	$ch_name = get_option('twp_channel_username');
 	$token = get_option('twp_bot_token');
+	if ($token == "" || $ch_name == ""){
+		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
+		return;
+	}
+
+	$tags = wp_get_post_tags( $ID, array( 'fields' => 'names' ) );
+	$categories = wp_get_post_categories($ID, array( 'fields' => 'names' ));
 	$nt = new Notifcaster_Class();
 	$nt->_telegram($token);
 	# Preparing message for sending
 	$method = "photo";
 	$photo =  get_attached_file( get_post_thumbnail_id($ID));
-	if ($token == "" || $ch_name == ""){
-		update_post_meta( $ID, '_twp_meta_data', __("Bot token or Channel username aren't set!", "twp-plugin") );
-		return;
-	}
-	switch ($a['send_type']) {
-		case '1':
-		$msg = $post->post_title;
-		break;
-		case '2':
-		$msg = $post->post_excerpt;
-		break;
-		case '3':
-		$msg = $post->post_content;
-		$method = "text";
-		break;
-		default:
-		break;
-	}
-	if ($a['url_type'] == "1") {
-		$msg .= "\n".wp_get_shortlink($ID);
-	} else if ($a['url_type'] == 2) {
-		$msg .= "\n".get_permalink($ID);
-	}
-	if (get_option("twp_channel_signature") == 1 ) {
-		$msg .= "\n".$ch_name;
-	}
+	
+	$re = array("/({title})/iu","/({excerpt})/iu","/({content})/iu","/({author})/iu","/({short_url})/iu","/({full_url})/iu","/{(tags\\|(.))}/iu","/{(categories\\|(.))}/iu");
+	$subst = array(
+		$post->post_title,
+		$post->post_excerpt,
+		$post->post_content,
+		get_the_author_meta("display_name",$post->post_author),
+		wp_get_shortlink($ID),
+		get_permalink($ID),
+		$tags,
+		$categories
+		);
+	$msg = preg_replace($re, $subst, $a);
+	// switch ($a['send_type']) {
+	// 	case '1':
+	// 	$msg = $post->post_title;
+	// 	break;
+	// 	case '2':
+	// 	$msg = $post->post_excerpt;
+	// 	break;
+	// 	case '3':
+	// 	$msg = $post->post_content;
+	// 	$method = "text";
+	// 	break;
+	// 	default:
+	// 	break;
+	// }
+	// if ($a['url_type'] == "1") {
+	// 	$msg .= "\n".wp_get_shortlink($ID);
+	// } else if ($a['url_type'] == 2) {
+	// 	$msg .= "\n".get_permalink($ID);
+	// }
+	// if (get_option("twp_channel_signature") == 1 ) {
+	// 	$msg .= "\n".$ch_name;
+	// }
 	# Applying Telegram markdown format (bold, italic, inline-url)
 	$msg = $nt->markdown($msg, get_option('twp_markdown_bold'), get_option('twp_markdown_italic'), get_option('twp_markdown_inline_url') );
 	
@@ -243,6 +256,7 @@ function twp_post_published ( $ID, $post ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
+		$publish_date = current_time( "mysql", $gmt = 0 );
 	}
 	if ($r["ok"] == true){
 		$publish_date = current_time( "mysql", $gmt = 0 );
@@ -250,7 +264,7 @@ function twp_post_published ( $ID, $post ) {
 	} else {
 		update_post_meta( $ID, '_twp_meta_data', $r["description"] );  
 	}
-	//print_r($a);
+	$_POST['twp_send_to_channel'] = 0;
 }
 add_action( 'publish_post', 'twp_post_published', 10, 2 );
 
