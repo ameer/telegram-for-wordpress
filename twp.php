@@ -38,11 +38,9 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_api_token' , 'sanitize_text_field');
             register_setting( 'twp-settings-group', 'twp_bot_token', 'sanitize_text_field');
             register_setting( 'twp-settings-group', 'twp_channel_username', 'sanitize_text_field' );
+            register_setting( 'twp-settings-group', 'twp_channel_pattern', 'twp_sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_hashtag', 'sanitize_text_field' );
-            register_setting( 'twp-settings-group', 'twp_channel_signature', 'sanitize_text_field' );
-            register_setting( 'twp-settings-group', 'twp_markdown_bold', 'sanitize_text_field' );
-            register_setting( 'twp-settings-group', 'twp_markdown_italic', 'sanitize_text_field' );
-            register_setting( 'twp-settings-group', 'twp_markdown_inline_url', 'sanitize_text_field' );
+            register_setting( 'twp-settings-group', 'twp_markdown', 'sanitize_text_field' );
 }
 
 // If api_token has been set, then add our hook to phpmailer.

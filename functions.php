@@ -1,18 +1,81 @@
 <?php
+global $twp_db_version;
+$twp_db_version = '1.0';
+global $table_name;
+$table_name = $wpdb->prefix . "twp_logs";
+/**
+* Add table to db for logs
+*/
+function twp_install() {
+   global $wpdb;
+   global $twp_db_version;
+   $table_name = $wpdb->prefix . "twp_logs";
+   $charset_collate = $wpdb->get_charset_collate();
+   $sql = "CREATE TABLE $table_name (
+   	id bigint(20) NOT NULL AUTO_INCREMENT,
+   	time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+   	post_id bigint(20) NOT NULL,
+   	sending_result text NOT NULL,
+   	UNIQUE KEY id (id)
+   	) $charset_collate;";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
+}
+register_activation_hook( TWP_PLUGIN_DIR.'/twp.php', 'twp_install' );
 /**
 * Print admin settings page
 */
 function twp_settings_page() {
-require_once("admin/settings-page.php");
+require_once('admin/settings-page.php');
 }
 
 /**
 * Print admin subpage
 */
 function twp_broadcast_page_callback() {
-    require_once("broadcast.php");
+    require_once('broadcast.php');
 }
+/**
+ * Sanitize a string from user input or from the db
+ *
+ * check for invalid UTF-8,
+ * Convert single < characters to entity,
+ * strip all tags,
+ * strip octets.
+ *
+ * @since 2.9.0
+ *
+ * @param string $str
+ * @return string
+ */
+function twp_sanitize_text_field($str) {
+	$filtered = wp_check_invalid_utf8( $str );
 
+	if ( strpos($filtered, '<') !== false ) {
+		$filtered = wp_pre_kses_less_than( $filtered );
+		// This will strip extra whitespace for us.
+		$filtered = wp_strip_all_tags( $filtered, true );
+	}
+	$found = false;
+	while ( preg_match('/%[a-f0-9]{2}/i', $filtered, $match) ) {
+		$filtered = str_replace($match[0], '', $filtered);
+		$found = true;
+	}
+	if ( $found ) {
+		// Strip out the whitespace that may now exist after removing the octets.
+		$filtered = trim( preg_replace('/ +/', ' ', $filtered) );
+	}
+
+	/**
+	 * Filter a sanitized text field string.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $filtered The sanitized string.
+	 * @param string $str      The string prior to being sanitized.
+	 */
+	return apply_filters( 'twp_sanitize_text_field', $filtered, $str );
+}
 /**
  * Load plugin textdomain.
  *
@@ -89,32 +152,32 @@ function twp_add_meta_box() {
 * @param WP_Post $post The object for the current post/page.
 */
 function twp_meta_box_callback( $post ) {
+	global $wpdb;
     // Add a nonce field so we can check for it later.
     $ID = $post->ID;
 	wp_nonce_field( 'twp_save_meta_box_data', 'twp_meta_box_nonce' );
 	$error = "";
 	$dis = "";
 	$check_state = "";
-	if (get_option("twp_channel_username") == "" || get_option('twp_bot_token') == "")
+	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID", ARRAY_A );
+	if (get_option('twp_channel_username') == "" || get_option('twp_bot_token') == "")
 		{
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
 	$twp_meta_data = get_post_meta($ID, '_twp_meta_data', true);
-	if($twp_meta_data != "" || $twp_meta_data != null) {
-		$check_state = "checked=\'checked\'";
-	}
-	echo 
-	'<div style="padding-top: 7px;">'
-	.$error.
-	'<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel"  value="1" '.$check_state.' '.$dis.'/><label for="twp_send_to_channel">'.__('Send to Telegram Channel', 'twp-plugin' ).'</label>
+	$twp_channel_pattern = get_post_meta($ID, '_twp_meta_pattern', true) != "" ? get_post_meta($ID, '_twp_meta_pattern', true) : get_option( 'twp_channel_pattern');
+	?>
+	<div style="padding-top: 7px;">
+	<?php echo $error ?>
+	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_meta_data ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
 	<br>
 	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" disabled="disabled">
-		<textarea id="send_pattern" name="send_pattern" cols="40" rows="8" style="resize:vertical">'.$twp_meta_data.'</textarea>
+		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo $twp_channel_pattern ?></textarea>
 		<br>
 	</fieldset>
 	<hr>
-	<p>'.__("Sending result: ", "twp-plugin").'</p><span id="twp_last_publish" style="font-weight:700">'.print_r($category).'</span>
+	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
 </div>
 <script>
 	jQuery("#twp_send_to_channel").click(function() {
@@ -127,7 +190,8 @@ function twp_meta_box_callback( $post ) {
 			jQuery("#twp_fieldset label").css("color", "black")
 		}
 	});
-</script>';
+</script>
+<?php
 }
 
 /**
@@ -171,14 +235,14 @@ function twp_save_meta_box_data( $post_id ) {
     }
     /* OK, it's safe for us to save the data now. */
     // Make sure that it is set.
-    if ( ! isset( $_POST['twp_send_to_channel'] ) ) {
-    	return;
-    }
-    if ($_POST['twp_send_to_channel'] == 1) {
-    	$twp_meta_data = $_POST['send_pattern'];
-    	update_post_meta( $post_id, '_twp_meta_data', $twp_meta_data);
+    if ( isset( $_POST['twp_send_to_channel'] ) ) {
+    	update_post_meta( $post_id, '_twp_meta_data', $_POST['twp_send_to_channel']);
+    	if (get_option( 'twp_channel_pattern') != $_POST['twp_channel_pattern']) {
+    		$twp_meta_pattern = $_POST['twp_channel_pattern'];
+    		update_post_meta( $post_id, '_twp_meta_pattern', $twp_meta_pattern);
+    	}
     } else {
-
+    	update_post_meta( $post_id, '_twp_meta_data', 0);
     }
 }
 add_action( 'save_post', 'twp_save_meta_box_data' );
@@ -189,11 +253,12 @@ add_action( 'save_post', 'twp_save_meta_box_data' );
 * @param obj $post
 */
 function twp_post_published ( $ID, $post ) {
-	# $a stands for array
-	if (! isset($_POST['twp_send_to_channel']) ) {
-		$a = get_post_meta($ID, '_twp_meta_data', true);
-	} else {
-		$a = $_POST['send_pattern'];
+	global $wpdb;
+	if(get_post_meta($ID, '_twp_meta_data', true) == 1){
+		$a = get_post_meta($ID, '_twp_meta_pattern', true);
+		if ($a == "" || $a == false){
+			$a = get_option( 'twp_channel_pattern');
+		}
 	}
 	# If there is no pattern then return!
 	if ($a == ""){
@@ -207,15 +272,23 @@ function twp_post_published ( $ID, $post ) {
 		return;
 	}
 
-	$tags = wp_get_post_tags( $ID, array( 'fields' => 'names' ) );
-	$categories = wp_get_post_categories($ID, array( 'fields' => 'names' ));
+	$tags_array = wp_get_post_tags( $ID, array( 'fields' => 'names' ) );
+	foreach ($tags_array as $tag) {
+		$tags .= " #".$tag;
+	}
+
+	$categories_array = wp_get_post_categories($ID, array( 'fields' => 'names' ));
+	foreach ($categories_array as $cat) {
+		$categories .= "|".$cat;
+	}
+
 	$nt = new Notifcaster_Class();
-	$nt->_telegram($token);
+	$nt->_telegram($token, "markdown");
 	# Preparing message for sending
 	$method = "photo";
 	$photo =  get_attached_file( get_post_thumbnail_id($ID));
-	
-	$re = array("/({title})/iu","/({excerpt})/iu","/({content})/iu","/({author})/iu","/({short_url})/iu","/({full_url})/iu","/{(tags\\|(.))}/iu","/{(categories\\|(.))}/iu");
+	# The patterns are case-sensitive.
+	$re = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
 	$subst = array(
 		$post->post_title,
 		$post->post_excerpt,
@@ -226,45 +299,44 @@ function twp_post_published ( $ID, $post ) {
 		$tags,
 		$categories
 		);
-	$msg = preg_replace($re, $subst, $a);
-	// switch ($a['send_type']) {
-	// 	case '1':
-	// 	$msg = $post->post_title;
-	// 	break;
-	// 	case '2':
-	// 	$msg = $post->post_excerpt;
-	// 	break;
-	// 	case '3':
-	// 	$msg = $post->post_content;
-	// 	$method = "text";
-	// 	break;
-	// 	default:
-	// 	break;
-	// }
-	// if ($a['url_type'] == "1") {
-	// 	$msg .= "\n".wp_get_shortlink($ID);
-	// } else if ($a['url_type'] == 2) {
-	// 	$msg .= "\n".get_permalink($ID);
-	// }
-	// if (get_option("twp_channel_signature") == 1 ) {
-	// 	$msg .= "\n".$ch_name;
-	// }
+	$msg = str_replace($re, $subst, $a);
 	# Applying Telegram markdown format (bold, italic, inline-url)
-	$msg = $nt->markdown($msg, get_option('twp_markdown_bold'), get_option('twp_markdown_italic'), get_option('twp_markdown_inline_url') );
-	
-	if ($method == "photo" && $photo != false ) {
+	if (get_option('twp_markdown') == 1){
+		$msg = $nt->markdown($msg, 1, 1, 1 );
+	}
+	if ($method == 'photo' && $photo != false ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
-		$publish_date = current_time( "mysql", $gmt = 0 );
 	}
+	$publish_date = current_time( "mysql", $gmt = 0 );
 	if ($r["ok"] == true){
-		$publish_date = current_time( "mysql", $gmt = 0 );
-		update_post_meta( $ID, '_twp_meta_data', __('Published succesfully on ', 'twp-plugin').$publish_date );
+		$sending_result = __('Published succesfully on ', 'twp-plugin');
 	} else {
-		update_post_meta( $ID, '_twp_meta_data', $r["description"] );  
+		$sending_result = $r["description"];  
 	}
-	$_POST['twp_send_to_channel'] = 0;
+	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID");
+	if($twp_log == null){
+		$wpdb->replace( 
+			$wpdb->prefix .'twp_logs', 
+			array( 
+				'time' => $publish_date,
+				'post_id' => $ID,
+				'sending_result' => $sending_result
+				)
+			);	
+	} else {
+		$wpdb->update( 
+			$wpdb->prefix .'twp_logs', 
+			array( 
+				'time' => $publish_date,
+				'post_id' => $ID,
+				'sending_result' => $sending_result
+				),
+			array ('post_id' => $ID)
+			);
+	}
+	
 }
 add_action( 'publish_post', 'twp_post_published', 10, 2 );
 

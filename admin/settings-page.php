@@ -143,29 +143,23 @@ if ( ! is_admin() ) die;
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><h3><?php echo __("Channel Signature", "twp-plugin") ?></h3></th>
+                            <th scope="row"><h3><?php echo __("Message Pattern", "twp-plugin") ?></h3></th>
                             <td>
-                                <input id="twp_channel_signature" type="checkbox" name="twp_channel_signature"  value="1" <?php checked( '1', get_option( 'twp_channel_signature' ) ); ?> /><?php echo __("Add channel username at the end of the messages", "twp-plugin") ?>
-                                <p class="howto"><?php echo __("When people forwards your messages, this signature helps others to join your channel faster.", "twp-plugin") ?></p>                
+                                <p class="howto"><?php echo __("Here you can define the structure of messages that are sent to the channel. Use the below tags to make your custom pattern", "twp-plugin") ?></p>
+                                <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo get_option( 'twp_channel_pattern')?></textarea>          
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><h3><?php echo __("Use Markdown in messages", "twp-plugin") ?></h3></th>
                             <td>
-                            <p class="howto"><?php echo __("Telegram supports basic markdown (bold, italic, inline links). By checking the following options, your messages will be compatible with Telegram markdown format", "twp-plugin") ?></p><br>
+                            <p class="howto"><?php echo __("Telegram supports basic markdown (bold, italic, inline links). By checking the following option, your messages will be compatible with Telegram markdown format", "twp-plugin") ?></p><br>
                             <fieldset>
-                                <label for="twp_markdown_bold">
-                                <input id="twp_markdown_bold" type="checkbox" name="twp_markdown_bold"  value="1" <?php checked( '1', get_option( 'twp_markdown_bold' ) ); ?> />
-                                <strong><?php echo __("Bold", "twp-plugin") ?></strong>
+                                <label for="twp_markdown">
+                                <input id="twp_markdown" type="checkbox" name="twp_markdown"  value="1" <?php checked( '1', get_option( 'twp_markdown' ) ); ?> />
+                                <strong><?php echo __("Enable markdown", "twp-plugin") ?></strong>
                                 </label><br>
-                                <label for="twp_markdown_italic">
-                                <input id="twp_markdown_italic" type="checkbox" name="twp_markdown_italic"  value="1" <?php checked( '1', get_option( 'twp_markdown_italic' ) ); ?> />
-                                <em><?php echo __("Italic", "twp-plugin") ?></em>
-                                </label><br>
-                                <label for="twp_markdown_inline_url">
-                                <input id="twp_markdown_inline_url" type="checkbox" name="twp_markdown_inline_url"  value="1" <?php checked( '1', get_option( 'twp_markdown_inline_url' ) ); ?> />
-                                <a href="https://core.telegram.org/bots/api#using-markdown" target="_blank" title="Learn more"><?php echo __("Inline Links", "twp-plugin") ?> </a>
-                                </label><br>
+                                <a href="https://core.telegram.org/bots/api#using-markdown" target="_blank" title="Learn more"><?php echo __("Learn more", "twp-plugin") ?> </a>
+                                <br>
                             </fieldset>
                             </td>
                         </tr>

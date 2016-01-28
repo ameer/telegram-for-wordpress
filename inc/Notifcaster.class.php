@@ -20,7 +20,8 @@ class Notifcaster_Class
     protected
         $api_token  = null,
         $url        = 'https://tg-notifcaster.rhcloud.com/api/v1',
-        $api_method = null;
+        $api_method = null,
+        $parse_mode = null;
     /**
     * Notifcaster API constructor
     * @param string $api_token
@@ -35,11 +36,13 @@ class Notifcaster_Class
      * Telegram API constructor
      *
      * @param string $bot_token
+     * @param string $parse_mode
      *
      */
-    public function _telegram($bot_token)
+    public function _telegram($bot_token, $parse_mode = null)
     {
         $this->url = 'https://api.telegram.org/bot'.$bot_token;
+        $this->parse_mode = $parse_mode;
     }
     /**
      * Send Notification to user
@@ -82,7 +85,8 @@ class Notifcaster_Class
     {
         $params = array(
             'chat_id'  => $chat_id,
-            'text'        => strip_tags($msg)
+            'text'        => strip_tags($msg),
+            'parse_mode' => $this->parse_mode
         );
         $this->api_method = "/sendMessage";
         $response = $this->make_request($params);
@@ -160,7 +164,8 @@ class Notifcaster_Class
                 foreach ($splitted_text as $text_part) {
                     $params = array(
                         'chat_id'  => $default_params['chat_id'],
-                        'text'     => $text_part
+                        'text'     => $text_part,
+                        'parse_mode' => $this->parse_mode
                         );
                     $params = http_build_query($params);
                     curl_setopt_array($curl, array(
