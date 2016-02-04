@@ -270,7 +270,7 @@ class Notifcaster_Class
     * @param boolean $u <a> to [text](url)
     * @return string
     */
-    function markdown ($html, $b = 0, $i = 0, $u = 0) {
+    public function markdown ($html, $b = 0, $i = 0, $u = 0) {
         $allowed_tags = "";
         $re = array();
         $subst = array();

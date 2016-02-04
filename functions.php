@@ -1,7 +1,5 @@
 <?php
-global $twp_db_version;
 $twp_db_version = '1.0';
-global $table_name;
 $table_name = $wpdb->prefix . "twp_logs";
 /**
 * Add table to db for logs
@@ -153,6 +151,7 @@ function twp_add_meta_box() {
 */
 function twp_meta_box_callback( $post ) {
 	global $wpdb;
+	global $table_name;
     // Add a nonce field so we can check for it later.
     $ID = $post->ID;
 	wp_nonce_field( 'twp_save_meta_box_data', 'twp_meta_box_nonce' );
@@ -165,12 +164,12 @@ function twp_meta_box_callback( $post ) {
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	$twp_meta_data = get_post_meta($ID, '_twp_meta_data', true);
+	$twp_send_to_channel = get_post_meta($ID, '_twp_send_to_channel', true);
 	$twp_channel_pattern = get_post_meta($ID, '_twp_meta_pattern', true) != "" ? get_post_meta($ID, '_twp_meta_pattern', true) : get_option( 'twp_channel_pattern');
 	?>
 	<div style="padding-top: 7px;">
 	<?php echo $error ?>
-	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_meta_data ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_send_to_channel ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
 	<br>
 	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" disabled="disabled">
 		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo $twp_channel_pattern ?></textarea>
@@ -197,9 +196,9 @@ function twp_meta_box_callback( $post ) {
 /**
 * When the post is saved, saves our custom data.
 *
-* @param int $post_id The ID of the post being saved.
+* @param int $ID The ID of the post being saved.
 */
-function twp_save_meta_box_data( $post_id ) {
+function twp_save_meta_box_data( $ID, $post ) {
     /*
     * We need to verify this came from our screen and with proper authorization,
     * because the save_post action can be triggered at other times.
@@ -217,35 +216,38 @@ function twp_save_meta_box_data( $post_id ) {
     	return;
     }
     // Return if it's a post revision
-    if ( false !== wp_is_post_revision( $post_id ) ){
+    if ( false !== wp_is_post_revision( $ID ) ){
     	return;
     }
     // Check the user's permissions.
     if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
 
-    	if ( ! current_user_can( 'edit_page', $post_id ) ) {
+    	if ( ! current_user_can( 'edit_page', $ID ) ) {
     		return;
     	}
 
     } else {
 
-    	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    	if ( ! current_user_can( 'edit_post', $ID ) ) {
     		return;
     	}
     }
     /* OK, it's safe for us to save the data now. */
     // Make sure that it is set.
     if ( isset( $_POST['twp_send_to_channel'] ) ) {
-    	update_post_meta( $post_id, '_twp_meta_data', $_POST['twp_send_to_channel']);
+    	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
     	if (get_option( 'twp_channel_pattern') != $_POST['twp_channel_pattern']) {
     		$twp_meta_pattern = $_POST['twp_channel_pattern'];
-    		update_post_meta( $post_id, '_twp_meta_pattern', $twp_meta_pattern);
+    		update_post_meta( $ID, '_twp_meta_pattern', $twp_meta_pattern);
     	}
     } else {
-    	update_post_meta( $post_id, '_twp_meta_data', 0);
+    	update_post_meta( $ID, '_twp_send_to_channel', 0);
+    }
+    if (get_post_status( $ID ) == 'publish'){
+   		twp_post_published ( $ID, $post );
     }
 }
-add_action( 'save_post', 'twp_save_meta_box_data' );
+add_action( 'save_post', 'twp_save_meta_box_data', 10, 2 );
 
 /**
 * When the post is published, send the messages.
@@ -254,7 +256,8 @@ add_action( 'save_post', 'twp_save_meta_box_data' );
 */
 function twp_post_published ( $ID, $post ) {
 	global $wpdb;
-	if(get_post_meta($ID, '_twp_meta_data', true) == 1){
+	global $table_name;
+	if(get_post_meta($ID, '_twp_send_to_channel', true) == 1){
 		$a = get_post_meta($ID, '_twp_meta_pattern', true);
 		if ($a == "" || $a == false){
 			$a = get_option( 'twp_channel_pattern');
@@ -318,7 +321,7 @@ function twp_post_published ( $ID, $post ) {
 	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID");
 	if($twp_log == null){
 		$wpdb->replace( 
-			$wpdb->prefix .'twp_logs', 
+			$table_name, 
 			array( 
 				'time' => $publish_date,
 				'post_id' => $ID,
@@ -327,7 +330,7 @@ function twp_post_published ( $ID, $post ) {
 			);	
 	} else {
 		$wpdb->update( 
-			$wpdb->prefix .'twp_logs', 
+			$table_name, 
 			array( 
 				'time' => $publish_date,
 				'post_id' => $ID,
@@ -336,7 +339,8 @@ function twp_post_published ( $ID, $post ) {
 			array ('post_id' => $ID)
 			);
 	}
-	
+	update_post_meta( $ID, '_twp_send_to_channel', 0);
+	unset($_POST['twp_send_to_channel']);
 }
 add_action( 'publish_post', 'twp_post_published', 10, 2 );
 

@@ -246,10 +246,15 @@ if ( ! is_admin() ) die;
         }
     }
     jQuery(document).ready(function() {
-        jQuery('.tabs #twp_tab1').fadeIn(400).siblings().hide();
+        currnetTab = sessionStorage.currnetTab || '#twp_tab1';
+        jQuery('.tabs ' + currnetTab).fadeIn(400).siblings().hide();
+        jQuery('a[href="'+currnetTab+'"]').parent('li').addClass('active').siblings().removeClass('active');
         jQuery('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
-
+        if(typeof(Storage) !== 'undefined') {
+             sessionStorage.currnetTab = currentAttrValue;
+        }
+        
         // Show/Hide Tabs
         jQuery('.tabs ' + currentAttrValue).fadeIn(400).siblings().hide();
 
