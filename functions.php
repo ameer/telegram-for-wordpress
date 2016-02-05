@@ -33,6 +33,17 @@ require_once('admin/settings-page.php');
 function twp_broadcast_page_callback() {
     require_once('broadcast.php');
 }
+
+/**
+ * Enqueue scripts in the WordPress admin, excluding edit.php.
+ *
+ * @param int $hook Hook suffix for the current admin page.
+ */
+function twp_enqueue_script( $hook ) {
+    wp_enqueue_script( 'textrange', TWP_PLUGIN_URL. '/inc/js/textrange.js', array(), '', true );
+}
+add_action( 'admin_enqueue_scripts', 'twp_enqueue_script' );
+
 /**
  * Sanitize a string from user input or from the db
  *
