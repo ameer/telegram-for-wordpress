@@ -26,6 +26,7 @@ if ( ! is_admin() ) die;
     .tab-content{padding:15px;border-radius:3px;box-shadow:-1px 1px 1px rgba(0,0,0,0.15);background:#fff}
     .tab{display:none}
     .tab.active{display:block}
+    #patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
     @media screen and (max-width: 415px){
         .twp_label {display: none;}
         .tab-links img {width: 32px !important;height: auto !important;}
@@ -146,7 +147,19 @@ if ( ! is_admin() ) die;
                             <th scope="row"><h3><?php echo __("Message Pattern", "twp-plugin") ?></h3></th>
                             <td>
                                 <p class="howto"><?php echo __("Here you can define the structure of messages that are sent to the channel. Use the below tags to make your custom pattern", "twp-plugin") ?></p>
-                                <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo get_option( 'twp_channel_pattern')?></textarea>          
+                                <div class="toolbar">
+                                    <ul id="patterns">
+                                        <li>{title}</li>
+                                        <li>{excerpt}</li>
+                                        <li>{content}</li>
+                                        <li>{author}</li>
+                                        <li>{short_url}</li>
+                                        <li>{full_url}</li>
+                                        <li>{tags}</li>
+                                        <li>{categories}</li>
+                                    </ul>
+                                </div>
+                                <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo get_option( 'twp_channel_pattern')?></textarea>     
                             </td>
                         </tr>
                         <tr>
@@ -273,4 +286,9 @@ if ( ! is_admin() ) die;
             jQuery('#floating_save_button').jScroll({ top : 34, speed : 600 });
         });
     });
+    jQuery(document).ready(function(){
+        jQuery('#patterns li').click(function(){
+            t
+        })
+    })
 </script>
