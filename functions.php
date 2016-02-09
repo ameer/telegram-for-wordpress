@@ -175,16 +175,25 @@ function twp_meta_box_callback( $post ) {
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	$twp_send_to_channel = get_post_meta($ID, '_twp_send_to_channel', true);
+	$twp_send_to_channel = get_post_meta($ID, '_twp_send_to_channel', true) != "" ? get_post_meta($ID, '_twp_send_to_channel', true) : get_option( 'twp_send_to_channel');
 	$twp_channel_pattern = get_post_meta($ID, '_twp_meta_pattern', true) != "" ? get_post_meta($ID, '_twp_meta_pattern', true) : get_option( 'twp_channel_pattern');
+	$twp_send_thumb = get_post_meta($ID, '_twp_send_thumb', true) != "" ? get_post_meta($ID, '_twp_send_thumb', true) : get_option( 'twp_send_thumb');
 	?>
 	<div style="padding-top: 7px;">
 	<?php echo $error ?>
 	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_send_to_channel ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
 	<br>
-	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" disabled="disabled">
+	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" <?php echo $dis ?> >
 		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo $twp_channel_pattern ?></textarea>
 		<br>
+		<div id="send-thumb-select">
+		<input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($twp_send_thumb==0)?'checked=checked':'' ?> value="0">
+			<label for="twp-send-thumb-0">Don't send featured image</label>
+			<br>
+			<input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($twp_send_thumb==1)?'checked=checked':'' ?> value="1">
+			<label for="twp-send-thumb-1">Send featured image</label>
+			<br>
+		</div>
 	</fieldset>
 	<hr>
 	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
@@ -251,6 +260,10 @@ function twp_save_meta_box_data( $ID, $post ) {
     		$twp_meta_pattern = $_POST['twp_channel_pattern'];
     		update_post_meta( $ID, '_twp_meta_pattern', $twp_meta_pattern);
     	}
+    	if (get_option( 'twp_send_thumb') != $_POST['twp_send_thumb']){
+    		$twp_send_thumb = $_POST['twp_send_thumb'];
+    		update_post_meta( $ID, '_twp_send_thumb', $twp_send_thumb);
+    	}
     } else {
     	update_post_meta( $ID, '_twp_send_to_channel', 0);
     }
@@ -299,8 +312,13 @@ function twp_post_published ( $ID, $post ) {
 	$nt = new Notifcaster_Class();
 	$nt->_telegram($token, "markdown");
 	# Preparing message for sending
-	$method = "photo";
-	$photo =  get_attached_file( get_post_thumbnail_id($ID));
+	$thumb_method = get_option('twp_send_thumb');
+	if($thumb_method == 1){
+		$method = 'photo';
+		$photo =  get_attached_file(get_post_thumbnail_id($ID));
+	} else {
+		$method = false;
+	}
 	# The patterns are case-sensitive.
 	$re = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
 	$subst = array(

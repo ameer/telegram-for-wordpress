@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! is_admin() ) die;
 ?>
 <style type="text/css">
+    label {vertical-align: middle;}
     #twp-wrap div {transition:opacity linear .15s;}
     #twp-wrap h1, h2, h3, h4, h5, h6 {line-height: normal;}
     #twp-wrap .howto span {color:#6495ED;font-weight:700;font-style: normal;}
@@ -27,6 +28,8 @@ if ( ! is_admin() ) die;
     .tab{display:none}
     .tab.active{display:block}
     #patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
+    #send-thumb-select {line-height: 2em;margin-top:10px;}
+    #send-thumb-select input {margin-top:1px;}
     @media screen and (max-width: 415px){
         .twp_label {display: none;}
         .tab-links img {width: 32px !important;height: auto !important;}
@@ -144,6 +147,14 @@ if ( ! is_admin() ) die;
                             </td>
                         </tr>
                         <tr>
+                            <th scope="row"><h3><?php echo __("Always send to Telegram", "twp-plugin") ?></h3></th>
+                            <td>
+                                <p class="howto"><?php echo __("By checking the below option, you don't need to check \"Send to Telegram Channel\" every time you create a new post.", "twp-plugin") ?></p><br>
+                                <input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', get_option('twp_send_to_channel') ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+                                <br>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row"><h3><?php echo __("Message Pattern", "twp-plugin") ?></h3></th>
                             <td>
                                 <p class="howto"><?php echo __("Here you can define the structure of messages that are sent to the channel. Use the below tags to make your custom pattern", "twp-plugin") ?></p>
@@ -159,7 +170,16 @@ if ( ! is_admin() ) die;
                                         <li>{categories}</li>
                                     </ul>
                                 </div>
-                                <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo get_option( 'twp_channel_pattern')?></textarea>     
+                                <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 65%; height: auto;min-height: 128px;"><?php echo get_option( 'twp_channel_pattern')?></textarea>
+                                <?php $c = get_option('twp_send_thumb'); ?>
+                                <div id="send-thumb-select">
+                                <input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($c==0)?'checked=checked':'' ?> value="0">
+                                <label for="twp-send-thumb-0">Don't send featured image</label>
+                                <br>
+                                <input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($c==1)?'checked=checked':'' ?> value="1">
+                                <label for="twp-send-thumb-1">Send featured image</label>
+                                <br>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -167,8 +187,8 @@ if ( ! is_admin() ) die;
                             <td>
                             <p class="howto"><?php echo __("Telegram supports basic markdown (bold, italic, inline links). By checking the following option, your messages will be compatible with Telegram markdown format", "twp-plugin") ?></p><br>
                             <fieldset>
-                                <label for="twp_markdown">
                                 <input id="twp_markdown" type="checkbox" name="twp_markdown"  value="1" <?php checked( '1', get_option( 'twp_markdown' ) ); ?> />
+                                <label for="twp_markdown">
                                 <strong><?php echo __("Enable markdown", "twp-plugin") ?></strong>
                                 </label><br>
                                 <a href="https://core.telegram.org/bots/api#using-markdown" target="_blank" title="Learn more"><?php echo __("Learn more", "twp-plugin") ?> </a>
@@ -288,7 +308,8 @@ if ( ! is_admin() ) die;
     });
     jQuery(document).ready(function(){
         jQuery('#patterns li').click(function(){
-            t
+            jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
+            jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
         })
     })
 </script>
