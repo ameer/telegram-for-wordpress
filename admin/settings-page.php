@@ -1,6 +1,12 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! is_admin() ) die;
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+    #If WooCommerce is active then show WC tags for message pattern
+    $is_wc_active = true;
+} else {
+    $is_wc_active = false;
+}
 ?>
 <style type="text/css">
     label {vertical-align: middle;}
@@ -27,8 +33,9 @@ if ( ! is_admin() ) die;
     .tab-content{padding:15px;border-radius:3px;box-shadow:-1px 1px 1px rgba(0,0,0,0.15);background:#fff}
     .tab{display:none}
     .tab.active{display:block}
-    #patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
-    #send-thumb-select {line-height: 2em;margin-top:10px;}
+    .patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
+        .wc-patterns li {background-color: #a46497;}
+    #send-thumb-select {line-height: 2em;}
     #send-thumb-select input {margin-top:1px;}
     @media screen and (max-width: 415px){
         .twp_label {display: none;}
@@ -155,11 +162,15 @@ if ( ! is_admin() ) die;
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><h3><?php echo __("Message Pattern", "twp-plugin") ?></h3></th>
+                            <th scope="row">
+                            <h3><?php echo __("Message Pattern", "twp-plugin") ?></h3><br>
+                            <p style="font-weight:400;margin:0;"><span style="color:#309152;font-size: 1.5em;">&#x25a0;</span> Wordpress default tags </p>
+                            <p style="font-weight:400;margin:0;"><span style="color:#a46497;font-size: 1.5em;">&#x25a0;</span> WooCommerce default tags </p>
+                            </th>
                             <td>
-                                <p class="howto"><?php echo __("Here you can define the structure of messages that are sent to the channel. Use the below tags to make your custom pattern", "twp-plugin") ?></p>
+                                <p class="howto"><?php echo __("Here you can define the structure of messages that are sent to the channel. Click on the below tags to make your custom pattern", "twp-plugin") ?></p>
                                 <div class="toolbar">
-                                    <ul id="patterns">
+                                    <ul class="patterns" style="margin-bottom:0;">
                                         <li>{title}</li>
                                         <li>{excerpt}</li>
                                         <li>{content}</li>
@@ -169,6 +180,29 @@ if ( ! is_admin() ) die;
                                         <li>{tags}</li>
                                         <li>{categories}</li>
                                     </ul>
+                                    <?php if ($is_wc_active) {
+                                        ?>
+                                    <ul class="patterns wc-patterns" style="margin-top:0;">
+                                        <li>{width}</li>
+                                        <li>{length}</li>
+                                        <li>{height}</li>
+                                        <li>{weight}</li>
+                                        <li>{price}</li>
+                                        <li>{regular_price}</li>
+                                        <li>{sale_price}</li>
+                                        <li>{sku}</li>
+                                        <li>{stock}</li>
+                                        <li>{downloadable}</li>
+                                        <li>{virtual}</li>
+                                        <li>{sold_individually}</li>
+                                        <li>{tax_status}</li>
+                                        <li>{tax_class}</li>
+                                        <li>{stock_status}</li>
+                                        <li>{backorders}</li>
+                                        <li>{featured}</li>
+                                        <li>{visibility}</li>
+                                    </ul>
+                                    <?php } ?>
                                 </div>
                                 <textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 65%; height: auto;min-height: 128px;"><?php echo get_option( 'twp_channel_pattern')?></textarea>
                                 <?php $c = get_option('twp_send_thumb'); ?>
@@ -307,7 +341,7 @@ if ( ! is_admin() ) die;
         });
     });
     jQuery(document).ready(function(){
-        jQuery('#patterns li').click(function(){
+        jQuery('.patterns li').click(function(){
             jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
             jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
         })

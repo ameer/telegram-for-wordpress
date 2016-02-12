@@ -163,12 +163,13 @@ function twp_add_meta_box() {
 function twp_meta_box_callback( $post ) {
 	global $wpdb;
 	global $table_name;
-    // Add a nonce field so we can check for it later.
-    $ID = $post->ID;
+	// Add a nonce field so we can check for it later.
+	$ID = $post->ID;
 	wp_nonce_field( 'twp_save_meta_box_data', 'twp_meta_box_nonce' );
 	$error = "";
 	$dis = "";
 	$check_state = "";
+	$is_product = false;
 	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID", ARRAY_A );
 	if (get_option('twp_channel_username') == "" || get_option('twp_bot_token') == "")
 		{
@@ -178,13 +179,60 @@ function twp_meta_box_callback( $post ) {
 	$twp_send_to_channel = get_post_meta($ID, '_twp_send_to_channel', true) != "" ? get_post_meta($ID, '_twp_send_to_channel', true) : get_option( 'twp_send_to_channel');
 	$twp_channel_pattern = get_post_meta($ID, '_twp_meta_pattern', true) != "" ? get_post_meta($ID, '_twp_meta_pattern', true) : get_option( 'twp_channel_pattern');
 	$twp_send_thumb = get_post_meta($ID, '_twp_send_thumb', true) != "" ? get_post_meta($ID, '_twp_send_thumb', true) : get_option( 'twp_send_thumb');
+	if ($post->post_type == 'product'){
+		$is_product = true;
+	}
 	?>
 	<div style="padding-top: 7px;">
+	<style type="text/css">
+		.patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
+		.wc-patterns li {background-color: #a46497;}
+		#send-thumb-select {line-height: 2em;}
+		#send-thumb-select input {margin-top:1px;}
+	</style>
 	<?php echo $error ?>
 	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_send_to_channel ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
-	<br>
+	<p class="howto"><?php echo __("Click on the below tags to customize the pattern", "twp-plugin") ?></p>
 	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" <?php echo $dis ?> >
-		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 100%; height: auto;"><?php echo $twp_channel_pattern ?></textarea>
+		<div class="toolbar">
+			<ul class="patterns" style="margin-bottom:0;">
+				<li>{title}</li>
+				<li>{excerpt}</li>
+				<li>{content}</li>
+				<li>{author}</li>
+				<li>{short_url}</li>
+				<li>{full_url}</li>
+				<li>{tags}</li>
+				<li>{categories}</li>
+			</ul>
+		<?php 
+		if($is_product){
+			?>
+			<ul class="patterns wc-patterns" style="margin-top:0;">
+				<li>{width}</li>
+				<li>{length}</li>
+				<li>{height}</li>
+				<li>{weight}</li>
+				<li>{price}</li>
+				<li>{regular_price}</li>
+				<li>{sale_price}</li>
+				<li>{sku}</li>
+				<li>{stock}</li>
+				<li>{downloadable}</li>
+				<li>{virtual}</li>
+				<li>{sold_individually}</li>
+				<li>{tax_status}</li>
+				<li>{tax_class}</li>
+				<li>{stock_status}</li>
+				<li>{backorders}</li>
+				<li>{featured}</li>
+				<li>{visibility}</li>
+			</ul>
+			<?php 
+		} 
+			?>
+		</div>
+		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 65%; height: auto;min-height: 128px;"><?php echo $twp_channel_pattern ?></textarea>
 		<br>
 		<div id="send-thumb-select">
 		<input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($twp_send_thumb==0)?'checked=checked':'' ?> value="0">
@@ -200,7 +248,7 @@ function twp_meta_box_callback( $post ) {
 </div>
 <script>
 	jQuery("#twp_send_to_channel").click(function() {
-		if (jQuery("#twp_fieldset").prop("disabled") == false){
+		if (jQuery(this).prop("checked") == false){
 			jQuery("#twp_fieldset").prop("disabled", true);
 			jQuery("#twp_fieldset label").css("color", "grey")
 		}
@@ -209,6 +257,20 @@ function twp_meta_box_callback( $post ) {
 			jQuery("#twp_fieldset label").css("color", "black")
 		}
 	});
+	jQuery(document).ready(function(){
+		if (jQuery('#twp_send_to_channel').prop("checked") == false){
+			jQuery("#twp_fieldset").prop("disabled", true);
+			jQuery("#twp_fieldset label").css("color", "grey")
+		}
+		else {
+			jQuery("#twp_fieldset").prop("disabled", false);
+			jQuery("#twp_fieldset label").css("color", "black")
+		}
+		jQuery('.patterns li').click(function(){
+			jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
+			jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
+		})
+	})
 </script>
 <?php
 }
@@ -298,13 +360,18 @@ function twp_post_published ( $ID, $post ) {
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
 	}
-
-	$tags_array = wp_get_post_tags( $ID, array( 'fields' => 'names' ) );
+	if($post->post_type == 'product'){
+		$_pf = new WC_Product_Factory();
+		$product = $_pf->get_product($ID);
+		$tags_array = explode(', ' , $product->get_tags());
+		$categories_array = explode(', ' ,$product->get_categories());
+	} else {
+		$tags_array = wp_get_post_tags( $ID, array( 'fields' => 'names' ) );
+		$categories_array = wp_get_post_categories($ID, array( 'fields' => 'names' ));	
+	}
 	foreach ($tags_array as $tag) {
 		$tags .= " #".$tag;
 	}
-
-	$categories_array = wp_get_post_categories($ID, array( 'fields' => 'names' ));
 	foreach ($categories_array as $cat) {
 		$categories .= "|".$cat;
 	}
@@ -368,7 +435,7 @@ function twp_post_published ( $ID, $post ) {
 			array ('post_id' => $ID)
 			);
 	}
-	update_post_meta( $ID, '_twp_send_to_channel', 0);
+	//update_post_meta( $ID, '_twp_send_to_channel', 0);
 	unset($_POST['twp_send_to_channel']);
 }
 add_action( 'publish_post', 'twp_post_published', 10, 2 );
