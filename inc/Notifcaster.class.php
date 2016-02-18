@@ -85,7 +85,7 @@ class Notifcaster_Class
     {
         $params = array(
             'chat_id'  => $chat_id,
-            'text'        => strip_tags($msg),
+            'text'        => html_entity_decode(preg_replace("/U\+([0-9A-F]{5})/", "&#x\\1;", $msg), ENT_NOQUOTES, 'UTF-8'),
             'parse_mode' => $this->parse_mode
         );
         $this->api_method = "/sendMessage";

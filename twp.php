@@ -39,7 +39,7 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_bot_token', 'sanitize_text_field');
             register_setting( 'twp-settings-group', 'twp_channel_username', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_send_to_channel', 'sanitize_text_field' );
-            register_setting( 'twp-settings-group', 'twp_channel_pattern', 'twp_sanitize_text_field' );
+            register_setting( 'twp-settings-group', 'twp_channel_pattern');
             register_setting( 'twp-settings-group', 'twp_send_thumb', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_hashtag', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_markdown', 'sanitize_text_field' );
