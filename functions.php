@@ -46,6 +46,7 @@ function twp_enqueue_script( $hook ) {
 	}
 	wp_enqueue_script( 'textrange', TWP_PLUGIN_URL. '/inc/js/textrange.js', array(), '', true );
 	wp_enqueue_script( 'emojione', TWP_PLUGIN_URL. '/inc/js/emojione.js', array(), '', true );
+	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array(), '', true );
 }
 add_action( 'admin_enqueue_scripts', 'twp_enqueue_script' );
 
@@ -251,44 +252,6 @@ function twp_meta_box_callback( $post ) {
 	<hr>
 	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
 </div>
-<script>
-	jQuery("#twp_send_to_channel").click(function() {
-		if (jQuery(this).prop("checked") == false){
-			jQuery("#twp_fieldset").prop("disabled", true);
-			jQuery("#twp_fieldset label").css("color", "grey")
-		}
-		else {
-			jQuery("#twp_fieldset").prop("disabled", false);
-			jQuery("#twp_fieldset label").css("color", "black")
-		}
-	});
-	jQuery(document).ready(function(){
-		if (jQuery('#twp_send_to_channel').prop("checked") == false){
-			jQuery("#twp_fieldset").prop("disabled", true);
-			jQuery("#twp_fieldset label").css("color", "grey")
-		}
-		else {
-			jQuery("#twp_fieldset").prop("disabled", false);
-			jQuery("#twp_fieldset label").css("color", "black")
-		}
-		jQuery('.patterns li').click(function(){
-			jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
-			jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
-		})
-	})
-	 
-	jQuery("#twp_channel_pattern").keyup(function(){
-		var re = /(:\w+:)/gi;
-		var str = jQuery("#twp_channel_pattern").val(); 
-		var emojis = str.match(re);
-		if ()
-		for (var i = 0; i <= emojis.length; i++) {
-			var emoji = emojione.shortnameToUnicode(emojis[i]);
-			str.replace(emojis[i], emoji);
-		}
-		jQuery(this).val()= str;
-	})
-</script>
 <?php
 }
 
