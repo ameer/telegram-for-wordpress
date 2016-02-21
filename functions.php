@@ -198,47 +198,7 @@ function twp_meta_box_callback( $post ) {
 	</style>
 	<?php echo $error ?>
 	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_send_to_channel ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
-	<p class="howto"><?php echo __("Click on the below tags to customize the pattern", "twp-plugin") ?></p>
-	<fieldset id="twp_fieldset" style="margin: 10px 20px;line-height: 2em;" <?php echo $dis ?> >
-		<div class="toolbar">
-			<ul class="patterns" style="margin-bottom:0;">
-				<li>{title}</li>
-				<li>{excerpt}</li>
-				<li>{content}</li>
-				<li>{author}</li>
-				<li>{short_url}</li>
-				<li>{full_url}</li>
-				<li>{tags}</li>
-				<li>{categories}</li>
-			</ul>
-		<?php 
-		if($is_product){
-			?>
-			<ul class="patterns wc-patterns" style="margin-top:0;">
-				<li>{width}</li>
-				<li>{length}</li>
-				<li>{height}</li>
-				<li>{weight}</li>
-				<li>{price}</li>
-				<li>{regular_price}</li>
-				<li>{sale_price}</li>
-				<li>{sku}</li>
-				<li>{stock}</li>
-				<li>{downloadable}</li>
-				<li>{virtual}</li>
-				<li>{sold_individually}</li>
-				<li>{tax_status}</li>
-				<li>{tax_class}</li>
-				<li>{stock_status}</li>
-				<li>{backorders}</li>
-				<li>{featured}</li>
-				<li>{visibility}</li>
-			</ul>
-			<?php 
-		} 
-			?>
-		</div>
-		<textarea id="twp_channel_pattern" name="twp_channel_pattern"style="resize: vertical; width: 65%; height: auto;min-height: 128px;"><?php echo $twp_channel_pattern ?></textarea>
+	<?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
 		<br>
 		<div id="send-thumb-select">
 		<input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($twp_send_thumb==0)?'checked=checked':'' ?> value="0">
@@ -252,6 +212,7 @@ function twp_meta_box_callback( $post ) {
 	<hr>
 	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
 </div>
+
 <?php
 }
 

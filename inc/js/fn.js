@@ -19,7 +19,6 @@ jQuery(document).ready(function(){
 	}
 	jQuery('.patterns li').click(function(){
 		jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
-		jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
 	})
 })
 jQuery("#twp_channel_pattern").keyup(function(){
@@ -27,74 +26,9 @@ jQuery("#twp_channel_pattern").keyup(function(){
 	var preview = emojione.toImage(str);
 	jQuery('#output').html(preview);
 	jQuery(this).val(emojione.shortnameToUnicode(str));
+	var objDiv = document.getElementById("output");
+	objDiv.scrollTop = objDiv.scrollHeight;
 })
-function sendTest() {
-	var api_token = jQuery('input[name=twp_api_token]').val(), h = '';
-	if(api_token != '' ) {
-		jQuery('#sendbtn').prop('disabled', true);
-		jQuery('#sendbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> ');
-		if(jQuery("#twp_hashtag").val() != ''){
-			var h = '<?php  echo get_option("twp_hashtag"); ?>';
-		}
-		var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
-		jQuery.post(ajaxurl, 
-		{ 
-			msg: msg , api_token: api_token, subject: 'm', action:'twp_ajax_test'
-		}, function( data ) {
-			alert(data.description);
-			jQuery('#sendbtn').prop('disabled', false);
-			jQuery('#sendbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>');
-		}, 
-		'json'); 
-	} else {
-		alert(' <?php  echo __("api_token field is empty", "twp-plugin") ?>') 
-	}
-};
-function channelTest() {
-	var bot_token = jQuery('input[name=twp_bot_token]').val(), channel_username = jQuery('input[name=twp_channel_username]').val(), h = '';
-	if(bot_token != '' && channel_username != '' ) {
-		var c = confirm('<?php echo __("This will send a test message to your channel. Do you want to continue?", "twp-plugin") ?>');
-		if( c == true ){ 
-			jQuery('#channelbtn').prop('disabled', true);
-			jQuery('#channelbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> '); 
-			if(jQuery('#twp_hashtag').val() != ''){
-				var h = '<?php  echo get_option("twp_hashtag"); ?>';
-			}
-			var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
-
-			jQuery.post(ajaxurl, 
-			{ 
-				channel_username: channel_username, msg: msg , bot_token: bot_token, subject: 'c', action:'twp_ajax_test'
-			}, function( data ) {
-				jQuery('#channelbtn').prop('disabled', false);
-				jQuery('#channelbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>'); 
-				alert((data.ok == true ? 'The message sent succesfully.' : data.description))}, 'json');
-		}
-	} else {
-		alert(' <?php  echo __("bot token/channel username field is empty", "twp-plugin") ?>') 
-	}
-}
-function botTest() {
-	if(jQuery('input[name=twp_bot_token]').val() != '' ) {
-		var bot_token = jQuery('input[name=twp_bot_token]').val();
-		jQuery('#checkbot').prop('disabled', true);
-		jQuery('#checkbot').text('<?php echo __("Please wait...", "twp-plugin") ?> ');
-		jQuery.post(ajaxurl, 
-		{ 
-			bot_token: bot_token, subject: 'b', action:'twp_ajax_test'
-		}, function( data ) {
-			if (data != undefined && data.ok != false){
-				jQuery('#bot_name').text(data.result.first_name + ' ' + (data.result.last_name == undefined ? ' ' :  data.result.last_name ) + '(@' + data.result.username + ')')
-			}else {
-				jQuery('#bot_name').text(data.description)
-			}
-			jQuery('#checkbot').prop('disabled', false);
-			jQuery('#checkbot').text('<?php echo __("Check bot token", "twp-plugin") ?>');
-		}, 'json'); 
-	} else {
-		alert(' <?php  echo __("bot token field is empty", "twp-plugin") ?>') 
-	}
-}
 jQuery(document).ready(function() {
 	currnetTab = sessionStorage.currnetTab || '#twp_tab1';
 	jQuery('.tabs ' + currnetTab).fadeIn(400).siblings().hide();
@@ -123,9 +57,3 @@ jQuery(document).ready(function() {
 		jQuery('#floating_save_button').jScroll({ top : 34, speed : 600 });
 	});
 });
-jQuery(document).ready(function(){
-	jQuery('.patterns li').click(function(){
-		jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
-		jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
-	})
-})
