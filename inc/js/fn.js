@@ -19,6 +19,7 @@ jQuery(document).ready(function(){
 	}
 	jQuery('.patterns li').click(function(){
 		jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
+		jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
 	})
 })
 jQuery("#twp_channel_pattern").keyup(function(){

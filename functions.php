@@ -182,9 +182,12 @@ function twp_meta_box_callback( $post ) {
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	$twp_send_to_channel = get_option( 'twp_send_to_channel');
-	$twp_channel_pattern = get_post_meta($ID, '_twp_meta_pattern', true) != "" ? get_post_meta($ID, '_twp_meta_pattern', true) : get_option( 'twp_channel_pattern');
-	$twp_send_thumb = get_post_meta($ID, '_twp_send_thumb', true) != "" ? get_post_meta($ID, '_twp_send_thumb', true) : get_option( 'twp_send_thumb');
+	$sc = get_post_meta($ID, '_twp_send_to_channel', true);
+	$sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
+	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
+	$cp = $cp != "" ? $cp : get_option( 'twp_channel_pattern');
+	$s = get_post_meta($ID, '_twp_send_thumb', true);
+	$s = $s != "" ? $s : get_option( 'twp_send_thumb');
 	if ($post->post_type == 'product'){
 		$is_product = true;
 	}
@@ -197,18 +200,11 @@ function twp_meta_box_callback( $post ) {
 		#send-thumb-select input {margin-top:1px;}
 	</style>
 	<?php echo $error ?>
-	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $twp_send_to_channel ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
-	<?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
-		<br>
-		<div id="send-thumb-select">
-		<input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($twp_send_thumb==0)?'checked=checked':'' ?> value="0">
-			<label for="twp-send-thumb-0">Don't send featured image</label>
-			<br>
-			<input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($twp_send_thumb==1)?'checked=checked':'' ?> value="1">
-			<label for="twp-send-thumb-1">Send featured image</label>
-			<br>
-		</div>
+	<table class="form-table">
+	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+	<?php require_once(TWP_PLUGIN_DIR."/inc/composer.php");?>
 	</fieldset>
+	</table>
 	<hr>
 	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
 </div>

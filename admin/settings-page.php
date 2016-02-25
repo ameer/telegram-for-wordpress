@@ -165,18 +165,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                                 <br>
                             </td>
                         </tr>
-                        <?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
-                        <?php $c = get_option('twp_send_thumb'); ?>
-                        <div id="send-thumb-select">
-                            <input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($c==0)?'checked=checked':'' ?> value="0">
-                            <label for="twp-send-thumb-0">Don't send featured image</label>
-                            <br>
-                            <input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($c==1)?'checked=checked':'' ?> value="1">
-                            <label for="twp-send-thumb-1">Send featured image</label>
-                            <br>
-                        </div>
-                    </td>
-                </tr>
+                                <?php 
+                                $s = get_option('twp_send_thumb');
+                                $pattern = get_option( 'twp_channel_pattern');
+                                ?>
+                                <?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
+
                         <tr>
                             <th scope="row"><h3><?php echo __("Use Markdown in messages", "twp-plugin") ?></h3></th>
                             <td>

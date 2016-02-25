@@ -2,7 +2,7 @@
 	textarea#twp_channel_pattern {resize: vertical; width: 48%; height: auto;min-height: 128px;}
 	div#output {width: 48%; display: inline-block; vertical-align: top; white-space: pre; border: 1px solid #ddd; height: 122px; background: #F1F1F1; cursor: not-allowed;padding: 2px 6px; overflow-y: auto } 
 	.emojione{font-size:inherit;height:3ex;width:3.1ex;min-height:20px;min-width:20px;display:inline-block;margin:-.2ex .15em .2ex;line-height:normal;vertical-align:middle}
-    img.emojione{width:auto}
+	img.emojione{width:auto}
 </style>
 <tr>
 	<th scope="row">
@@ -52,5 +52,15 @@
 				</ul>
 				<?php } ?>
 			</div>
-			<textarea id="twp_channel_pattern" name="twp_channel_pattern"><?php echo get_option( 'twp_channel_pattern')?></textarea>
-			<div id="output"><?php echo get_option( 'twp_channel_pattern')?></div>
+			<textarea id="twp_channel_pattern" name="twp_channel_pattern"><?php echo $cp ?></textarea>
+			<div id="output"><?php echo $cp ?></div>
+			<div id="send-thumb-select">
+				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-0" <?php echo ($s==0)?'checked=checked':'' ?> value="0">
+				<label for="twp-send-thumb-0">Don't send featured image</label>
+				<br>
+				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($s==1)?'checked=checked':'' ?> value="1">
+				<label for="twp-send-thumb-1">Send featured image</label>
+				<br>
+			</div>
+		</td>
+	</tr>
