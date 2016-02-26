@@ -20,6 +20,11 @@ if ( ! defined( 'TWP_PLUGIN_URL' ) ){
 if ( ! defined( 'TWP_PLUGIN_DIR' ) ){
     define( 'TWP_PLUGIN_DIR', untrailingslashit( dirname( __FILE__ ) ) );
 }
+/**
+ * Update when DB tables change
+ */
+define( "TWP_DB_VERSION", 1 );
+
 require_once(TWP_PLUGIN_DIR."/inc/Notifcaster.class.php");
 require_once("functions.php");
 $twp_settings = 

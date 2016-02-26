@@ -85,7 +85,7 @@ class Notifcaster_Class
     {
         $params = array(
             'chat_id'  => $chat_id,
-            'text'        => html_entity_decode(preg_replace("/U\+([0-9A-F]{5})/", "&#x\\1;", $msg), ENT_NOQUOTES, 'UTF-8'),
+            'text'        => strip_tags($msg),
             'parse_mode' => $this->parse_mode
         );
         $this->api_method = "/sendMessage";
@@ -126,14 +126,14 @@ class Notifcaster_Class
         $default_params = $params;
         if (!empty($params)) {
             if (isset($params['caption'])) {
-                if (strlen($params['caption']) > 140){
-                  $splitted_text = str_split($params['caption'], 1024);
+                if (mb_strlen($params['caption']) > 140){
+                  $splitted_text = $this->str_split_unicode($params['caption'], 4096);
                   $params['caption'] = '';  
                 }
             }
             if (isset($params['text'])) {
-                if(strlen($params['text']) > 1024){
-                  $splitted_text = str_split($params['text'], 1024);  
+                if(mb_strlen($params['text']) > 4096){
+                  $splitted_text = $this->str_split_unicode($params['text'], 4096);  
                 }
             }
         }
@@ -293,6 +293,22 @@ class Notifcaster_Class
         strip_tags($html, $allowed_tags);
         $result = preg_replace($re, $subst, $html);
         return $result;
+    }
+    /**
+    * @param str - string - The input string
+    * @param l - integer - Maximum length of the chunk
+    * @author http://nl1.php.net/manual/en/function.str-split.php#107658
+    */
+    function str_split_unicode($str, $l = 0) {
+        if ($l > 0) {
+            $ret = array();
+            $len = mb_strlen($str, "UTF-8");
+            for ($i = 0; $i < $len; $i += $l) {
+                $ret[] = mb_substr($str, $i, $l, "UTF-8");
+            }
+            return $ret;
+        }
+        return preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
     }
 }
 ?>

@@ -18,8 +18,12 @@ jQuery(document).ready(function(){
 		jQuery("#twp_fieldset label").css("color", "black")
 	}
 	jQuery('.patterns li').click(function(){
-		jQuery('#twp_channel_pattern').textrange('insert', jQuery(this).text())
-		jQuery('#twp_channel_pattern').textrange('setcursor', jQuery('#twp_channel_pattern').textrange('get', 'end'));
+		var tcp = '#twp_channel_pattern';
+		jQuery(tcp).textrange('insert', jQuery(this).text())
+		jQuery(tcp).textrange('setcursor', jQuery(tcp).textrange('get', 'end'));
+		var str = jQuery(tcp).val();
+		var preview = emojione.toImage(str);
+		jQuery('#output').html(preview);
 	})
 })
 jQuery("#twp_channel_pattern").keyup(function(){

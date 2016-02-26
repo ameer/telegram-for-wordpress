@@ -1,25 +1,54 @@
 <?php
-$twp_db_version = '1.0';
 $table_name = $wpdb->prefix . "twp_logs";
 /**
 * Add table to db for logs
 */
 function twp_install() {
-   global $wpdb;
-   global $twp_db_version;
-   $table_name = $wpdb->prefix . "twp_logs";
-   $charset_collate = $wpdb->get_charset_collate();
-   $sql = "CREATE TABLE $table_name (
-   	id bigint(20) NOT NULL AUTO_INCREMENT,
-   	time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   	post_id bigint(20) NOT NULL,
-   	sending_result text NOT NULL,
-   	UNIQUE KEY id (id)
-   	) $charset_collate;";
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	dbDelta( $sql );
+   if (!get_option('twp_db_version')) add_option('twp_db_version', TWP_DB_VERSION);
+   if ( twp_db_need_update() ) twp_install_db_tables();
 }
 register_activation_hook( TWP_PLUGIN_DIR.'/twp.php', 'twp_install' );
+
+/**
+ * Install twp table
+ */
+function twp_install_db_tables() {
+	global $wpdb;
+	$table_name = $wpdb->prefix . "twp_logs";
+	$charset_collate = $wpdb->get_charset_collate();
+	$sql = "CREATE TABLE $table_name (
+		id bigint(20) NOT NULL AUTO_INCREMENT,
+		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		post_id bigint(20) NOT NULL,
+		sending_result text NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate;";
+require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+dbDelta( $sql );
+}
+
+#forked from alo-easymail plugin. Thanks!
+/**
+ * Check if plugin tables are already properly installed
+ */
+function twp_db_need_update() {
+	global $wpdb;
+	$installed_db = get_option('twp_db_version');
+	$missing_table = false; // Check if tables not yet installed
+	if ( $wpdb->get_var("show tables like '$table_name'") != $table_name ) $missing_table = true;
+	return ( $missing_table || TWP_DB_VERSION != $installed_db ) ? true : false;
+}
+/**
+ * Since 3.1 the register_activation_hook is not called when a plugin
+ * is updated, so to run the above code on automatic upgrade you need
+ * to check the plugin db version on another hook.
+ */
+function twp_check_db_when_loaded() {
+   if ( twp_db_need_update() ) twp_install_db_tables();
+}
+add_action('plugins_loaded', 'twp_check_db_when_loaded');
+#End forked functions
+
 /**
 * Print admin settings page
 */
@@ -152,7 +181,7 @@ function twp_add_meta_box() {
 	foreach ( $screens as $screen ) {
 		add_meta_box(
 			'twp_meta_box',
-			__( 'Send to Telegram Channel', 'twp-plugin' ),
+			__( 'Telegram Channel Options', 'twp-plugin' ),
 			'twp_meta_box_callback',
 			$screen,
 			"normal",
@@ -160,7 +189,28 @@ function twp_add_meta_box() {
 			);
 	}
 }
-
+/*
+* Gets the excerpt of a specific post ID or object
+* @param - $post - object - the object of the post to get the excerpt of
+* @param - $length - int - the length of the excerpt in words
+* @param - $tags - string - the allowed HTML tags. These will not be stripped out
+* @param - $extra - string - text to append to the end of the excerpt
+* @author https://pippinsplugins.com
+*/
+function excerpt_by_id($post, $length = 55, $tags = '<a><em><strong>', $extra = '') {
+ 
+	if(has_excerpt($post->ID)) {
+		$the_excerpt = $post->post_excerpt;
+		return apply_filters('the_content', $the_excerpt);
+	} else {
+		$the_excerpt = $post->post_content;
+	}
+	$the_excerpt = preg_split('/\b/', $the_excerpt, $length * 2+1);
+	$excerpt_waste = array_pop($the_excerpt);
+	$the_excerpt = implode($the_excerpt);
+ 
+	return apply_filters('the_content', $the_excerpt);
+}
 /**
 * Prints the box content.
 * 
@@ -182,8 +232,10 @@ function twp_meta_box_callback( $post ) {
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	$sc = get_post_meta($ID, '_twp_send_to_channel', true);
-	$sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
+	#Experimental feature : Always check the the Send to channel option
+	// $sc = get_post_meta($ID, '_twp_send_to_channel', true);
+	// $sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
+	$sc = get_option( 'twp_send_to_channel');
 	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
 	$cp = $cp != "" ? $cp : get_option( 'twp_channel_pattern');
 	$s = get_post_meta($ID, '_twp_send_thumb', true);
@@ -192,7 +244,7 @@ function twp_meta_box_callback( $post ) {
 		$is_product = true;
 	}
 	?>
-	<div style="padding-top: 7px;">
+	<div id="twp_metabox">
 	<style type="text/css">
 		.patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
 		.wc-patterns li {background-color: #a46497;}
@@ -201,12 +253,17 @@ function twp_meta_box_callback( $post ) {
 	</style>
 	<?php echo $error ?>
 	<table class="form-table">
-	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+	<tr>
+	<th scope="row"><h3><?php echo __('Send to Telegram channel', 'twp-plugin' ) ?></h3> </th>
+	<td>
+	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send this post to channel', 'twp-plugin' ) ?> </label>
+	</td>
+	</tr>
 	<?php require_once(TWP_PLUGIN_DIR."/inc/composer.php");?>
 	</fieldset>
 	</table>
 	<hr>
-	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' '.$twp_log['time'] ?></span>
+	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' || '.__("Date: ", "twp-plugin").$twp_log['time'] ?></span>
 </div>
 
 <?php
@@ -336,12 +393,12 @@ function twp_post_published ( $ID, $post ) {
 	$nt = new Notifcaster_Class();
 	$nt->_telegram($token, "markdown");
 	# Preparing message for sending
-	
-	# The variables are case-sensitive.
-	$re = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
-	$subst = array(
+	#Wordpress default tags and substitutes array
+	$wp_tags = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$wp_subs = array(
 		$post->post_title,
-		$post->post_excerpt,
+		#Change the below number to change the number of words in excerpt
+		excerpt_by_id($post, 55),
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),
@@ -349,19 +406,32 @@ function twp_post_published ( $ID, $post ) {
 		$tags,
 		$categories
 		);
+	#WooCommerce tags and substitutes array
+	$wc_tags = array("{width}", "{length}", "{height}", "{weight}", "{price}", "{regular_price}", "{sale_price}", "{sku}", "{stock}", "{downloadable}", "{virtual}", "{sold_indiidually}", "{tax_status}", "{tax_class}", "{stock_status}", "{backorders}", "{featured}", "{visibility}");
+	 if ($post->post_type == 'product'){
+		$p = $product;
+		$wc_subs = array ($p->width, $p->length, $p->height, $p->weight, $p->price, $p->regular_price, $p->sale_price, $p->sku, $p->stock, $p->downloadable, $p->virtual, $p->sold_individually, $p->tax_status, $p->tax_class, $p->stock_status, $p->backorders, $p->featured, $p->visibility);
+	}
+	
+	# The variables are case-sensitive.
+	$re = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$subst = $wp_subs;
 	if ($post->post_type == 'product'){
 		$p = $product;
-		array_push($re, "{width}", "{length}", "{height}", "{weight}", "{price}", "{regular_price}", "{sale_price}", "{sku}", "{stock}", "{downloadable}", "{virtual}", "{sold_individually}", "{tax_status}", "{tax_class}", "{stock_status}", "{backorders}", "{featured}", "{visibility}");
-		array_push($subst, $p->width, $p->length, $p->height, $p->weight, $p->price, $p->regular_price, $p->sale_price, $p->sku, $p->stock, $p->downloadable, $p->virtual, $p->sold_individually, $p->tax_status, $p->tax_class, $p->stock_status, $p->backorders, $p->featured, $p->visibility);
+		array_merge($re, $wc_tags);
+		array_merge($subst, $wc_subs);
+	} else {
+	#if it's not a product post then strip out all of the WooCommerce tags
+		$strip_wc = true;
 	}
 	$msg = str_replace($re, $subst, $pattern);
+	if ($strip_wc){
+		$msg = str_replace($wc_tags, '', $msg);
+	}
 	# Applying Telegram markdown format (bold, italic, inline-url)
 	if (get_option('twp_markdown') == 1){
 		$msg = $nt->markdown($msg, 1, 1, 1 );
 	}
-	//Emoji
-	//$msg = html_entity_decode(preg_replace("/U\+([0-9A-F]{5})/", "&#x\\1;", $msg), ENT_NOQUOTES, 'UTF-8');
-
 	if ($method == 'photo' && $photo != false ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {
