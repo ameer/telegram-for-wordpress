@@ -1,12 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! is_admin() ) die;
-if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-    #If WooCommerce is active then show WC tags for message pattern
-    $is_wc_active = true;
-} else {
-    $is_wc_active = false;
-}
 ?>
 <style type="text/css">
     label {vertical-align: middle;}
@@ -33,8 +27,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     .tab-content{padding:15px;border-radius:3px;box-shadow:-1px 1px 1px rgba(0,0,0,0.15);background:#fff}
     .tab{display:none}
     .tab.active{display:block}
-    .patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
-    .wc-patterns li {background-color: #a46497;}
+    .form-table tr {
+        border-bottom: 1px solid #ddd;
+    }
+    .form-table tr:last-child {
+        border-bottom: 0 !important;
+    }
     textarea#twp_channel_pattern {resize: vertical; width: 48%; height: auto;min-height: 128px;}
     div#output {width: 48%; display: inline-block; vertical-align: top; white-space: pre; border: 1px solid #ddd; height: 122px; background: #F1F1F1; cursor: not-allowed;padding: 2px 6px; overflow-y: auto } 
     #send-thumb-select {line-height: 2em;}
@@ -158,31 +156,48 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                             </td>
                         </tr>
                         <tr>
+                            <?php
+                            $preview = get_option('twp_web_preview');
+                            $sc = get_option('twp_send_to_channel');
+                            $cp = get_option( 'twp_channel_pattern');
+                            $s = get_option('twp_send_thumb');
+                            $m = get_option( 'twp_markdown' );
+                            ?>
                             <th scope="row"><h3><?php echo __("Always send to Telegram", "twp-plugin") ?></h3></th>
                             <td>
                                 <p class="howto"><?php echo __("By checking the below option, you don't need to check \"Send to Telegram Channel\" every time you create a new post.", "twp-plugin") ?></p><br>
-                                <input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', get_option('twp_send_to_channel') ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+                                <input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
                                 <br>
                             </td>
                         </tr>
-                                <?php 
-                                $s = get_option('twp_send_thumb');
-                                $pattern = get_option( 'twp_channel_pattern');
-                                ?>
+                                
                                 <?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
 
                         <tr>
                             <th scope="row"><h3><?php echo __("Use Markdown in messages", "twp-plugin") ?></h3></th>
                             <td>
-                            <p class="howto"><?php echo __("Telegram supports basic markdown (bold, italic, inline links). By checking the following option, your messages will be compatible with Telegram markdown format", "twp-plugin") ?></p><br>
+                            <p class="howto"><?php echo __("Telegram supports basic markdown and some HTML tags (bold, italic, inline links). By checking one of the following options, your messages will be compatible with Telegram format.", "twp-plugin") ?></p><br>
                             <fieldset>
-                                <input id="twp_markdown" type="checkbox" name="twp_markdown"  value="1" <?php checked( '1', get_option( 'twp_markdown' ) ); ?> />
-                                <label for="twp_markdown">
-                                <strong><?php echo __("Enable markdown", "twp-plugin") ?></strong>
-                                </label><br>
-                                <a href="https://core.telegram.org/bots/api#using-markdown" target="_blank" title="Learn more"><?php echo __("Learn more", "twp-plugin") ?> </a>
+                                <input type="radio" name="twp_markdown" id="twp-markdown-0" <?php echo ($m==0)?'checked=checked':'' ?> value="0">
+                                <label for="twp-markdown-0"><?php echo __("Disable Markdown and remove HTML tags", "twp-plugin"); ?></label>
+                                <br>
+                                <input type="radio" name="twp_markdown" id="twp-markdown-1" data-markdown="markdown" <?php echo ($m==1)?'checked=checked':'' ?> value="1">
+                                <label for="twp-markdown-1"><?php echo __("Use basic Markdown (less characters)", "twp-plugin"); ?></label>
+                                <br>
+                                <input type="radio" name="twp_markdown" id="twp-markdown-2" data-markdown="html" <?php echo ($m==2)?'checked=checked':'' ?> value="2">
+                                <label for="twp-markdown-2"><?php echo __("Use HTML tags (more speed)", "twp-plugin"); ?></label>
+                                <br>
+                                <a href="https://core.telegram.org/bots/api#formatting-options" target="_blank" title='<?php echo __("Learn more", "twp-plugin") ?>'><?php echo __("Learn more", "twp-plugin") ?></a>
                                 <br>
                             </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><h3><?php echo __("Web page preview in messages", "twp-plugin") ?></h3></th>
+                            <td>
+                                <p class="howto"><?php echo __("Disables link previews for links in the sent message.", "twp-plugin") ?></p><br>
+                                <input type="checkbox" id="twp_web_preview" name="twp_web_preview" value="1" <?php checked( '1', $preview ); ?>/>
+                                <label for="twp_web_preview"><?php echo __('Disable Web page preview', 'twp-plugin' ) ?> </label>
                             </td>
                         </tr>
                     </table>
@@ -208,7 +223,7 @@ function sendTest() {
         if(jQuery("#twp_hashtag").val() != ''){
             var h = '<?php  echo get_option("twp_hashtag"); ?>';
         }
-        var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
+        var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>'+ '\n' + document.URL;
         jQuery.post(ajaxurl, 
         { 
             msg: msg , api_token: api_token, subject: 'm', action:'twp_ajax_test'
@@ -223,20 +238,16 @@ function sendTest() {
     }
 };
 function channelTest() {
-    var bot_token = jQuery('input[name=twp_bot_token]').val(), channel_username = jQuery('input[name=twp_channel_username]').val(), h = '';
+    var bot_token = jQuery('input[name=twp_bot_token]').val(), channel_username = jQuery('input[name=twp_channel_username]').val(), pattern = jQuery("#twp_channel_pattern").val();
     if(bot_token != '' && channel_username != '' ) {
         var c = confirm('<?php echo __("This will send a test message to your channel. Do you want to continue?", "twp-plugin") ?>');
         if( c == true ){ 
             jQuery('#channelbtn').prop('disabled', true);
             jQuery('#channelbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> '); 
-            if(jQuery('#twp_hashtag').val() != ''){
-                var h = '<?php  echo get_option("twp_hashtag"); ?>';
-            }
-            var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>';
-
+            var msg = '<?php echo __("This is a test message", "twp-plugin") ?>'+'\n'+ pattern;
             jQuery.post(ajaxurl, 
             { 
-                channel_username: channel_username, msg: msg , bot_token: bot_token, subject: 'c', action:'twp_ajax_test'
+                channel_username: channel_username, msg: msg , bot_token: bot_token, markdown: jQuery('input[name=twp_markdown]:checked').attr("data-markdown"), web_preview: jQuery('#twp_web_preview').prop('checked'), subject: 'c', action:'twp_ajax_test'
             }, function( data ) {
                 jQuery('#channelbtn').prop('disabled', false);
                 jQuery('#channelbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>'); 

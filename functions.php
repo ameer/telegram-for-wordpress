@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 $table_name = $wpdb->prefix . "twp_logs";
 /**
 * Add table to db for logs
@@ -98,7 +99,7 @@ function twp_sanitize_text_field($str) {
 	if ( strpos($filtered, '<') !== false ) {
 		$filtered = wp_pre_kses_less_than( $filtered );
 		// This will strip extra whitespace for us.
-		$filtered = wp_strip_all_tags( $filtered, true );
+		$filtered = strip_tags( $filtered, "<b><strong><em><i><a><code><pre>");
 	}
 	$found = false;
 	while ( preg_match('/%[a-f0-9]{2}/i', $filtered, $match) ) {
@@ -370,6 +371,7 @@ function twp_post_published ( $ID, $post ) {
 	# Initialize Telegram information
 	$ch_name = get_option('twp_channel_username');
 	$token = get_option('twp_bot_token');
+	$web_preview = get_option('twp_web_preview');
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
@@ -391,7 +393,21 @@ function twp_post_published ( $ID, $post ) {
 	}
 
 	$nt = new Notifcaster_Class();
-	$nt->_telegram($token, "markdown");
+	switch (get_option('twp_markdown')) {
+		case 0:
+			$format = null;
+			break;
+		case 1:
+		$format = "markdown";
+			break;
+		case 2:
+		$format = "html";
+			break;
+		default:
+			$format = null;
+			break;
+	}
+	$nt->_telegram($token, $format, $web_preview);
 	# Preparing message for sending
 	#Wordpress default tags and substitutes array
 	$wp_tags = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
@@ -429,9 +445,9 @@ function twp_post_published ( $ID, $post ) {
 		$msg = str_replace($wc_tags, '', $msg);
 	}
 	# Applying Telegram markdown format (bold, italic, inline-url)
-	if (get_option('twp_markdown') == 1){
-		$msg = $nt->markdown($msg, 1, 1, 1 );
-	}
+	// if (get_option('twp_markdown') == 1){
+	// 	$msg = $nt->markdown($msg, 1, 1, 1 );
+	// }
 	if ($method == 'photo' && $photo != false ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {
@@ -480,8 +496,9 @@ function twp_ajax_test_callback() {
 			wp_die();
 			break;
 		case 'c':
-			$nt->_telegram($_POST['bot_token']);
-			$result = $nt->channel_text($_POST['channel_username'], $_POST['msg']);
+			$nt->_telegram($_POST['bot_token'], $_POST['markdown'], $_POST['web_preview']);
+			$msg = str_replace("\\", "", $_POST['msg']);
+			$result = $nt->channel_text($_POST['channel_username'], $msg );
 			echo json_encode($result);
 			wp_die();
 			break;

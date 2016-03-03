@@ -21,7 +21,9 @@ class Notifcaster_Class
         $api_token  = null,
         $url        = 'https://tg-notifcaster.rhcloud.com/api/v1',
         $api_method = null,
-        $parse_mode = null;
+        $excluded_tags = null,
+        $parse_mode = null,
+        $web_preview = 0;
     /**
     * Notifcaster API constructor
     * @param string $api_token
@@ -36,13 +38,17 @@ class Notifcaster_Class
      * Telegram API constructor
      *
      * @param string $bot_token
-     * @param string $parse_mode
+     * @param string $parse_mode - default 
      *
      */
-    public function _telegram($bot_token, $parse_mode = null)
+    public function _telegram($bot_token, $parse_mode = null, $web_preview = 0)
     {
         $this->url = 'https://api.telegram.org/bot'.$bot_token;
         $this->parse_mode = $parse_mode;
+        $this->web_preview = $web_preview;
+        if(strtolower($parse_mode) == "html"){
+            $this->excluded_tags = "<b><strong><em><i><a><code><pre>";
+        }
     }
     /**
      * Send Notification to user
@@ -83,11 +89,16 @@ class Notifcaster_Class
      */
     public function channel_text($chat_id , $msg)
     {
+        if(strtolower($this->parse_mode) == "markdown"){
+            $msg = $this->markdown($msg, 1, 1, 1);
+        }
         $params = array(
             'chat_id'  => $chat_id,
-            'text'        => strip_tags($msg),
-            'parse_mode' => $this->parse_mode
+            'text'        => strip_tags($msg, $this->excluded_tags),
+            'parse_mode' => $this->parse_mode,
+            'disable_web_page_preview' => $this->web_preview
         );
+
         $this->api_method = "/sendMessage";
         $response = $this->make_request($params);
         return $response;
