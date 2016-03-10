@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! is_admin() ) die;
+global $tdata;
 ?>
 <style type="text/css">
     label {vertical-align: middle;}
@@ -51,6 +52,7 @@ if ( ! is_admin() ) die;
     </style>
     ';
 }
+
 ?>
 <div id="twp-wrap" class="wrap">
     <h1><?php  echo __("Telegram for WordPress", "twp-plugin") ?></h1>
@@ -96,7 +98,7 @@ if ( ! is_admin() ) die;
                             <tr>
                                 <th scope="row"><h3>API Token</h3></th>
                                 <td>
-                                    <input id="twp_api_token" type="text" name="twp_api_token" maxlength="34" size="32" value="<?php echo get_option('twp_api_token'); ?>" dir="auto"/>
+                                    <input id="twp_api_token" type="text" name="twp_api_token" maxlength="34" size="32" value="<?php echo $tdata['twp_api_token']->option_value; ?>" dir="auto"/>
                                 </td>
                             </tr>
                             <tr>
@@ -105,7 +107,7 @@ if ( ! is_admin() ) die;
                             </tr>
                             <tr>
                                 <th scope="row"><h3><?php  echo __("Hashtag (optional)", "twp-plugin") ?></h3></th>
-                                <td><input id="twp_hashtag" type="text" name="twp_hashtag" size="32" value="<?php echo get_option('twp_hashtag'); ?>" dir="auto" />
+                                <td><input id="twp_hashtag" type="text" name="twp_hashtag" size="32" value="<?php echo $tdata['twp_hashtag']->option_value; ?>" dir="auto" />
                                     <p class="howto">
                                         <?php echo __("Insert a custom hashtag at the beginning of the messages.", "twp-plugin") ?><br>
                                         <?php echo __("Don't forget <code>#</code> at the beginning", "twp-plugin") ?>
@@ -138,7 +140,7 @@ if ( ! is_admin() ) die;
                             <tr>
                                 <th scope="row"><h3>Bot Token</h3></th>
                                 <td>
-                                    <input id="twp_bot_token" type="text" name="twp_bot_token" size="32" value="<?php echo get_option('twp_bot_token'); ?>" dir="auto" />
+                                    <input id="twp_bot_token" type="text" name="twp_bot_token" size="32" value="<?php echo $tdata['twp_bot_token']->option_value; ?>" dir="auto" />
                                     <button id="checkbot" class="button-secondary" type="button" onclick="botTest()"><?php echo __("Check bot token", "twp-plugin") ?></button>
                                     <p class="howto">
                                         <?php echo __("Bot Info: ", "twp-plugin") ?>
@@ -150,18 +152,18 @@ if ( ! is_admin() ) die;
                         <tr>
                             <th scope="row"><h3><?php echo __("Channel Username", "twp-plugin") ?></h3></th>
                             <td>
-                                <input id="twp_channel_username" type="text" name="twp_channel_username" size="32" value="<?php echo get_option('twp_channel_username'); ?>" dir="auto" />
+                                <input id="twp_channel_username" type="text" name="twp_channel_username" size="32" value="<?php echo $tdata['twp_channel_username']->option_value; ?>" dir="auto" />
                                 <button id="channelbtn" type="button" class="button-secondary" onclick="channelTest();"> <?php  echo __("Send now!", "twp-plugin") ?></button>
                                 <p class="howto"><?php echo __("Don't forget <code>@</code> at the beginning", "twp-plugin") ?></p>                
                             </td>
                         </tr>
                         <tr>
                             <?php
-                            $preview = get_option('twp_web_preview');
-                            $sc = get_option('twp_send_to_channel');
-                            $cp = get_option( 'twp_channel_pattern');
-                            $s = get_option('twp_send_thumb');
-                            $m = get_option( 'twp_markdown' );
+                            $preview = $tdata['twp_web_preview']->option_value;
+                            $sc = $tdata['twp_send_to_channel']->option_value;
+                            $cp = $tdata['twp_channel_pattern']->option_value;
+                            $s = $tdata['twp_send_thumb']->option_value;
+                            $m = $tdata['twp_markdown']->option_value;
                             ?>
                             <th scope="row"><h3><?php echo __("Always send to Telegram", "twp-plugin") ?></h3></th>
                             <td>
@@ -221,7 +223,7 @@ function sendTest() {
         jQuery('#sendbtn').prop('disabled', true);
         jQuery('#sendbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> ');
         if(jQuery("#twp_hashtag").val() != ''){
-            var h = '<?php  echo get_option("twp_hashtag"); ?>';
+            var h = '<?php  echo $tdata["twp_hashtag"]->option_value; ?>';
         }
         var msg = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>'+ '\n' + document.URL;
         jQuery.post(ajaxurl, 
@@ -244,7 +246,10 @@ function channelTest() {
         if( c == true ){ 
             jQuery('#channelbtn').prop('disabled', true);
             jQuery('#channelbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> '); 
-            var msg = '<?php echo __("This is a test message", "twp-plugin") ?>'+'\n'+ pattern;
+            var msg = '<?php echo __("This is a test message", "twp-plugin") ?>'+'\n';
+            if (pattern != null || pattern != ''){
+                msg += pattern;
+            }
             jQuery.post(ajaxurl, 
             { 
                 channel_username: channel_username, msg: msg , bot_token: bot_token, markdown: jQuery('input[name=twp_markdown]:checked').attr("data-markdown"), web_preview: jQuery('#twp_web_preview').prop('checked'), subject: 'c', action:'twp_ajax_test'

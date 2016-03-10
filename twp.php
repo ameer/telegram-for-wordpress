@@ -27,6 +27,9 @@ define( "TWP_DB_VERSION", 1 );
 
 require_once(TWP_PLUGIN_DIR."/inc/Notifcaster.class.php");
 require_once("functions.php");
+
+// Get all of our plugin options in just one query :)
+$tdata = twp_get_option();
 $twp_settings = 
 // create custom plugin settings menu
 add_action('admin_menu', 'twp_create_menu');
@@ -51,8 +54,9 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_web_preview', 'sanitize_text_field' );
 }
 
+
 // If api_token has been set, then add our hook to phpmailer.
-if (get_option('twp_api_token') != null ) {
+if ($tdata['twp_api_token'] != null ) {
     add_action( 'phpmailer_init', 'twp_phpmailer_hook' );
 }
 

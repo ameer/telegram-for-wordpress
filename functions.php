@@ -51,6 +51,18 @@ add_action('plugins_loaded', 'twp_check_db_when_loaded');
 #End forked functions
 
 /**
+ * An optimized function for getting our options from db
+ *
+ * @since 1.5
+ */
+function twp_get_option() {
+	global $wpdb;
+	$query = "SELECT option_name, option_value FROM $wpdb->options WHERE option_name LIKE 'twp_%%'";
+	$twp_data = $wpdb->get_results($query, OBJECT_K);
+	return $twp_data;
+}
+
+/**
 * Print admin settings page
 */
 function twp_settings_page() {
@@ -121,6 +133,7 @@ function twp_sanitize_text_field($str) {
 	 */
 	return apply_filters( 'twp_sanitize_text_field', $filtered, $str );
 }
+
 /**
  * Load plugin textdomain.
  *
@@ -147,11 +160,12 @@ add_action('plugin_action_links_' . plugin_basename(__FILE__), 'twp_plugin_actio
 * This will get information about sent mail from PHPMailer and send it to user
 */
 function twp_mail_action($result, $to, $cc, $bcc, $subject, $body){
+	global $tdata;
 	$nt = new Notifcaster_Class();
-	$_apitoken = get_option('twp_api_token');
+	$_apitoken = $tdata['twp_api_token']->option_value;
 	$_msg = $body;
-	if(get_option('twp_hashtag') != '') {
-		$_msg = get_option('twp_hashtag')."\n".$_msg;
+	if($tdata['twp_hashtag']->option_value != '') {
+		$_msg = $tdata['twp_hashtag']->option_value."\n".$_msg;
 	}
 	$nt->Notifcaster($_apitoken);
 	$nt->notify($_msg);
@@ -173,7 +187,7 @@ function twp_api_admin_notice($message) {
 	echo"<div class=\"$class\"> <p>$message</p></div>"; 
 }
 
-add_action( 'add_meta_boxes', 'twp_add_meta_box' );
+
 /**
 * Adds a box to the main column on the Post and Page edit screens.
 */
@@ -190,6 +204,8 @@ function twp_add_meta_box() {
 			);
 	}
 }
+add_action( 'add_meta_boxes', 'twp_add_meta_box' );
+
 /*
 * Gets the excerpt of a specific post ID or object
 * @param - $post - object - the object of the post to get the excerpt of
@@ -220,6 +236,7 @@ function excerpt_by_id($post, $length = 55, $tags = '<a><em><strong>', $extra = 
 function twp_meta_box_callback( $post ) {
 	global $wpdb;
 	global $table_name;
+	global $tdata;
 	// Add a nonce field so we can check for it later.
 	$ID = $post->ID;
 	wp_nonce_field( 'twp_save_meta_box_data', 'twp_meta_box_nonce' );
@@ -228,19 +245,19 @@ function twp_meta_box_callback( $post ) {
 	$check_state = "";
 	$is_product = false;
 	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID", ARRAY_A );
-	if (get_option('twp_channel_username') == "" || get_option('twp_bot_token') == "")
+	if ($tdata['twp_channel_username']->option_value == "" || $tdata['twp_bot_token']->option_value == "")
 		{
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	#Experimental feature : Always check the the Send to channel option
+	#Experimental feature : Always check Send to channel option
 	// $sc = get_post_meta($ID, '_twp_send_to_channel', true);
 	// $sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
-	$sc = get_option( 'twp_send_to_channel');
+	$sc = $tdata['twp_send_to_channel']->option_value;
 	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
-	$cp = $cp != "" ? $cp : get_option( 'twp_channel_pattern');
+	$cp = $cp != "" ? $cp : $tdata['twp_channel_pattern']->option_value;
 	$s = get_post_meta($ID, '_twp_send_thumb', true);
-	$s = $s != "" ? $s : get_option( 'twp_send_thumb');
+	$s = $s != "" ? $s : $tdata[ 'twp_send_thumb']->option_value;
 	if ($post->post_type == 'product'){
 		$is_product = true;
 	}
@@ -264,7 +281,18 @@ function twp_meta_box_callback( $post ) {
 	</fieldset>
 	</table>
 	<hr>
-	<p><?php echo __("Sending result: ", "twp-plugin") ?></p><span id="twp_last_publish" style="font-weight:700"><?php echo $twp_log['sending_result'].' || '.__("Date: ", "twp-plugin").$twp_log['time'] ?></span>
+	<p><?php echo __("Sending result: ", "twp-plugin") ?></p>
+	<span id="twp_last_publish" style="font-weight:700">
+	<?php 
+	if($twp_log['sending_result'] == 1){
+		# This prevents adding a repetitive phrase to db.
+		$sending_result = __("Published successfully", "twp-plugin");
+	} else {
+		$sending_result = $twp_log['sending_result'];
+	}
+	echo $sending_result.' || '.__("Date: ", "twp-plugin").$twp_log['time'] 
+	?>
+	</span>
 </div>
 
 <?php
@@ -276,6 +304,7 @@ function twp_meta_box_callback( $post ) {
 * @param int $ID The ID of the post being saved.
 */
 function twp_save_meta_box_data( $ID, $post ) {
+	global $tdata;
     /*
     * We need to verify this came from our screen and with proper authorization,
     * because the save_post action can be triggered at other times.
@@ -315,8 +344,8 @@ function twp_save_meta_box_data( $ID, $post ) {
     	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
     	# Load global options
     	# p_ prefix stands for $_POST data
-    	$tcp = get_option( 'twp_channel_pattern');
-    	$tst = get_option('twp_send_thumb');
+    	$tcp = $tdata['twp_channel_pattern']->option_value;
+    	$tst = $tdata['twp_send_thumb']->option_value;
     	if ( $tcp != $_POST['twp_channel_pattern']) {
     		$p_tcp = $_POST['twp_channel_pattern'];
     		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
@@ -346,14 +375,15 @@ add_action( 'save_post', 'twp_save_meta_box_data', 10, 2 );
 function twp_post_published ( $ID, $post ) {
 	global $wpdb;
 	global $table_name;
+	global $tdata;
 	# Checks whether user wants to send this post to channel.
 	if(get_post_meta($ID, '_twp_send_to_channel', true) == 1){
 		$pattern = get_post_meta($ID, '_twp_meta_pattern', true);
 		if ($pattern == "" || $pattern == false){
-			$pattern = get_option( 'twp_channel_pattern');
+			$pattern = $tdata['twp_channel_pattern']->option_value;
 		}
 		if( ! in_array( '_twp_send_thumb', get_post_custom_keys( $ID ) ) ) {
-			$thumb_method = get_option( 'twp_send_thumb');
+			$thumb_method = $tdata['twp_send_thumb']->option_value;
 		} else {
 			$thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
 		}
@@ -369,9 +399,9 @@ function twp_post_published ( $ID, $post ) {
 		$method = false;
 	}
 	# Initialize Telegram information
-	$ch_name = get_option('twp_channel_username');
-	$token = get_option('twp_bot_token');
-	$web_preview = get_option('twp_web_preview');
+	$ch_name = $tdata['twp_channel_username']->option_value;
+	$token = $tdata['twp_bot_token']->option_value;
+	$web_preview = $tdata['twp_web_preview']->option_value;
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
@@ -393,7 +423,7 @@ function twp_post_published ( $ID, $post ) {
 	}
 
 	$nt = new Notifcaster_Class();
-	switch (get_option('twp_markdown')) {
+	switch ($tdata['twp_markdown']->option_value) {
 		case 0:
 			$format = null;
 			break;
@@ -444,10 +474,7 @@ function twp_post_published ( $ID, $post ) {
 	if ($strip_wc){
 		$msg = str_replace($wc_tags, '', $msg);
 	}
-	# Applying Telegram markdown format (bold, italic, inline-url)
-	// if (get_option('twp_markdown') == 1){
-	// 	$msg = $nt->markdown($msg, 1, 1, 1 );
-	// }
+	
 	if ($method == 'photo' && $photo != false ) {
 		$r = $nt->channel_photo($ch_name, $msg, $photo);
 	} else {
@@ -455,7 +482,7 @@ function twp_post_published ( $ID, $post ) {
 	}
 	$publish_date = current_time( "mysql", $gmt = 0 );
 	if ($r["ok"] == true){
-		$sending_result = __('Published succesfully on ', 'twp-plugin');
+		$sending_result = 1;
 	} else {
 		$sending_result = $r["description"];  
 	}
