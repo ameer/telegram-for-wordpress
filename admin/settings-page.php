@@ -56,10 +56,10 @@ global $tdata;
 ?>
 <div id="twp-wrap" class="wrap">
     <h1><?php  echo __("Telegram for WordPress", "twp-plugin") ?></h1>
-    <p> <?php printf(__("Join our channel in Telegram: %s", "twp-plugin"), "<a href='https://telegram.me/notifcaster'>@notifcaster</a>"); ?> </p>
+    <p> <?php printf(__("Join our channel in Telegram: %s", "twp-plugin"), "<a href='https://telegram.me/notifcaster' >@notifcaster</a>"); ?> </p>
     <hr>
     <form method="post" action="options.php" id="twp_form">
-    <div id="floating_save_button" title="Save changes">&#x1f4be;</div>
+    <div id="floating_save_button" title="<?php _e('Save Changes') ?>">&#x1f4be;</div>
         <?php settings_fields( 'twp-settings-group' ); ?>
         <div class="tabs">
             <ul class="tab-links">
@@ -69,10 +69,10 @@ global $tdata;
             <div class="tab-content">
                 <div id="twp_tab1" class="tab active">
                     <p style="font-size:14px;">
-                        <?php echo __("You will receive messages in Telegram with the contents of every emails that sent from your WordPress site.<br>
-                            For example, once a new comment has been submitted, you will receive the comment in your Telegram account.<br>
-                            ", "twp-plugin");
-                            ?>
+                        <?php echo __("You will receive messages in Telegram with the contents of every emails that sent from your WordPress site.", "twp-plugin"); ?>
+                        <br>
+                            <?php echo __("For example, once a new comment has been submitted, you will receive the comment in your Telegram account.", "twp-plugin"); ?>
+                            <br>
                         </p>
                         <table class="form-table">
                             <tr>
@@ -122,8 +122,11 @@ global $tdata;
                                 <th scope="row"><h3><?php  echo __("Introduction", "twp-plugin") ?></h3></th>
                                 <td>
                                     <p style="font-weight:700;font-size: 16px;">
-                                        <?php echo __("Telegram channel is a great way for attracting people to your site.<br> This option allows you to send posts to your Telegram channel. Intresting, no?<br>
-                                        So let's start!<br>", "twp-plugin") ?> 
+                                        <?php echo __("Telegram channel is a great way for attracting people to your site.", "twp-plugin");?>
+                                        <br> 
+                                        <?php echo __("This option allows you to send posts to your Telegram channel. Intresting, no?", "twp-plugin"); ?>
+                                        <br>
+                                        <?php echo __("So let's start!", "twp-plugin"); ?> 
                                     </p>
                                     <ol>
                                         <li><?php echo __("Create a channel (if you don't already have one).", "twp-plugin") ?></li>

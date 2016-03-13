@@ -168,7 +168,14 @@ function twp_mail_action($result, $to, $cc, $bcc, $subject, $body){
 		$_msg = $tdata['twp_hashtag']->option_value."\n".$_msg;
 	}
 	$nt->Notifcaster($_apitoken);
-	$nt->notify($_msg);
+	if(mb_strlen($_msg) > 4096){
+		$splitted_text = $this->str_split_unicode($_msg, 4096);
+		foreach ($splitted_text as $text_part) {
+			$nt->notify($text_part);
+		}
+	} else {
+		$nt->notify($_msg);
+	}
 }
 /**
  * Setup a custom PHPMailer action callback. This will let us to fire our action every time a mail sent

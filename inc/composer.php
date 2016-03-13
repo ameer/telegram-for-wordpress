@@ -58,7 +58,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					<option title='<?php echo __("The whole content of this post", "twp-plugin"); ?>'>{content}</option>
 					<option title='<?php echo __("The display name of author of this post", "twp-plugin"); ?>'>{author}</option>
 					<option title='<?php echo __("The short url of this post", "twp-plugin"); ?>'>{short_url}</option>
-					<option title='<?php echo __("The permaoptionnk of this post", "twp-plugin"); ?>'>{full_url}</option>
+					<option title='<?php echo __("The permalink of this post", "twp-plugin"); ?>'>{full_url}</option>
 					<option title='<?php echo __("The tags of this post. Tags are automatically converted to Telegram hashtags", "twp-plugin"); ?>'>{tags}</option>
 					<option title='<?php echo __("The categories of this post. Categories are automatically separated by | symbol", "twp-plugin"); ?>'>{categories}</option>
 				</optgroup>

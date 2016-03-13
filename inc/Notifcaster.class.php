@@ -5,6 +5,10 @@
  * forked from Notifygram by Anton Ilzheev <ilzheev@gmail.com>
  * Attention! $method always must be started with slash " / "
  */
+
+#Remove below line if you want using this file outside of WordPress
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 if (!defined('PHP_VERSION_ID')) {
     $version = explode('.', PHP_VERSION);
 
