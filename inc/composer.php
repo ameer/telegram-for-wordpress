@@ -295,6 +295,34 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-1" <?php echo ($s==1)?'checked=checked':'' ?> value="1">
 				<label for="twp-send-thumb-1"><?php echo __("Send featured image", "twp-plugin"); ?></label>
 				<br>
+				<?php
+				$hook = get_current_screen();
+				# if we are in post pages, then show the custom image option.
+				if ($hook->base == 'post'){
+				?>
+				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-2" <?php echo ($s==2)?'checked=checked':'' ?> value="2">
+				<label for="twp-send-thumb-2"><?php echo __("Send custom image", "twp-plugin"); ?></label>
+				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload Media Of Your Chosen Persuasion") ?>" />
+				<input name="button_text" type="hidden" value="<?php echo __("Use this image") ?>" />
+				<div class="twp-img-container">
+					<?php if ( $twp_have_img ) : ?>
+						<img src="<?php echo $twp_img_src[0] ?>" alt="" style="max-width:100%;" />
+					<?php endif; ?>
+				</div>
+				<!-- twp add & remove image links -->
+				<p id="twp-upload-link" class="hide-if-no-js <?php if ($s != 2) { echo 'hidden'; } ?>">
+					<a class="upload-custom-img <?php if ( $twp_have_img  ) { echo 'hidden'; } ?>" 
+						href="<?php echo $upload_link ?>">
+						<?php _e('Set custom image') ?>
+					</a>
+					<a class="delete-custom-img <?php if ( ! $twp_have_img  ) { echo 'hidden'; } ?>" 
+						href="#">
+						<?php _e('Remove this image') ?>
+					</a>
+				</p>
+				<!-- A hidden input to set and post the chosen image id -->
+				<input class="twp-img-id" name="twp_img_id" type="hidden" value="<?php echo esc_attr( $twp_img_id ); ?>" />
+				<?php } #end if ?>
 			</div>
 		</td>
 	</tr>

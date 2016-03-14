@@ -268,6 +268,13 @@ function twp_meta_box_callback( $post ) {
 	if ($post->post_type == 'product'){
 		$is_product = true;
 	}
+	$upload_link = esc_url( get_upload_iframe_src( 'image', $ID ));
+	// See if there's a media id already saved as post meta
+	$twp_img_id = get_post_meta( $ID, '_twp_img_id', true );
+	// Get the image src
+	$twp_img_src = wp_get_attachment_image_src( $twp_img_id);
+	// For convenience, see if the array is valid
+	$twp_have_img = is_array( $twp_img_src );
 	?>
 	<div id="twp_metabox">
 	<style type="text/css">
@@ -365,6 +372,9 @@ function twp_save_meta_box_data( $ID, $post ) {
     	} else {
     		update_post_meta( $ID, '_twp_send_thumb', $tst);
     	}
+    	if (isset($_POST['twp_img_id'])){
+    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
+    	}
     } else {
     	update_post_meta( $ID, '_twp_send_to_channel', 0);
     }
@@ -399,11 +409,19 @@ function twp_post_published ( $ID, $post ) {
 	if ($pattern == ""){
 		return;
 	}
-	if($thumb_method == 1){
-		$method = 'photo';
-		$photo =  get_attached_file(get_post_thumbnail_id($ID));
-	} else {
-		$method = false;
+	switch ($thumb_method) {
+		case 1:
+			$method = 'photo';
+			$photo =  get_attached_file(get_post_thumbnail_id($ID));
+			break;
+		case 2:
+			$method = 'photo';
+			$photo =  get_attached_file(get_post_meta( $ID, '_twp_img_id', true ));
+			break;
+		
+		default:
+			$method = false;
+			break;
 	}
 	# Initialize Telegram information
 	$ch_name = $tdata['twp_channel_username']->option_value;

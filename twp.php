@@ -37,8 +37,8 @@ add_action('admin_menu', 'twp_create_menu');
 function twp_create_menu() {
  //create new top-level menu
     add_menu_page('TWP Plugin Settings', __('TWP Settings','twp-plugin'), 'administrator', 'telegram-for-wp', 'twp_settings_page',plugins_url('icon.png', __FILE__));
-//create sub-menu
-   add_submenu_page( __FILE__, __('Broadcast','twp-plugin'), __('Broadcast','twp-plugin'), 'manage_options', "/broadcast.php", 'twp_broadcast_page_callback' );
+// //create sub-menu
+//    add_submenu_page( __FILE__, __('Broadcast','twp-plugin'), __('Broadcast','twp-plugin'), 'manage_options', "/broadcast.php", 'twp_broadcast_page_callback' );
  //call register settings function
    add_action( 'admin_init', 'register_twp_settings' );
 }
