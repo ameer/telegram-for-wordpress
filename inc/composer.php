@@ -17,6 +17,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	.toolbar {margin-top: 5px;}
 	.toolbar select {margin: 5px 0 !important;}
 	#twp_metabox td, #twp_metabox th {padding-top: 0 !important;}
+	#twp_box_container * {margin-top: 0 !important;}
 	span#cheatsheet-link {padding: 5px; }
 	@media screen and (max-width: 782px) {
 		#profile-page .form-table textarea, .form-table span.description, .form-table td input[type=email], .form-table td input[type=password], .form-table td input[type=text], .form-table td select, .form-table td textarea {
@@ -302,7 +303,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				?>
 				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-2" <?php echo ($s==2)?'checked=checked':'' ?> value="2">
 				<label for="twp-send-thumb-2"><?php echo __("Send custom image", "twp-plugin"); ?></label>
-				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload Media Of Your Chosen Persuasion") ?>" />
+				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload the custom photo") ?>" />
 				<input name="button_text" type="hidden" value="<?php echo __("Use this image") ?>" />
 				<div class="twp-img-container">
 					<?php if ( $twp_have_img ) : ?>

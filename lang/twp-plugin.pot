@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telegram for WordPress 1.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/telegram-for-wp\n"
-"POT-Creation-Date: 2016-03-13 20:22+0330\n"
-"PO-Revision-Date: 2016-03-13 20:22+0330\n"
+"POT-Creation-Date: 2016-03-15 10:35+0330\n"
+"PO-Revision-Date: 2016-03-15 10:35+0330\n"
 "Last-Translator: Ameer Mousavi <me@ameer.ir>\n"
 "Language-Team: Ameer Mousavi <me@ameer.ir>\n"
 "Language: en_US\n"
@@ -13,10 +13,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.6.9\n"
 "X-Poedit-KeywordsList: __\n"
-"X-Poedit-Basepath: e:\\wamp\\www\\ameer\\wp-content\\plugins\\telegram-for-"
-"wp\n"
+"X-Poedit-Basepath: D:\\wamp\\www\\cest\\wp-content\\plugins\\telegram-for-wp"
+"\\\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: admin/settings-page.php:58
@@ -36,240 +36,240 @@ msgstr ""
 msgid "Post to Channel"
 msgstr ""
 
+#: admin/settings-page.php:72
+msgid ""
+"You will receive messages in Telegram with the contents of every emails that "
+"sent from your WordPress site."
+msgstr ""
+
 #: admin/settings-page.php:74
 msgid ""
 "For example, once a new comment has been submitted, you will receive the "
 "comment in your Telegram account."
 msgstr ""
 
-#: admin/settings-page.php:80
+#: admin/settings-page.php:79
 msgid "Instructions"
 msgstr ""
 
-#: admin/settings-page.php:83
+#: admin/settings-page.php:82
 msgid "If you want to send notifications to single user:"
 msgstr ""
 
-#: admin/settings-page.php:85
+#: admin/settings-page.php:84
 #, php-format
 msgid "In Telegram app start a new chat with %s ."
 msgstr ""
 
-#: admin/settings-page.php:85
+#: admin/settings-page.php:84
 msgid "Pay attention to underline!"
 msgstr ""
 
-#: admin/settings-page.php:86
+#: admin/settings-page.php:85
 msgid ""
 "Send <code>/token</code> command and the bot will give you an API token for "
 "the user."
 msgstr ""
 
-#: admin/settings-page.php:87 admin/settings-page.php:94
+#: admin/settings-page.php:86 admin/settings-page.php:93
 msgid "Copy and paste it in the below field and hit the save button!"
 msgstr ""
 
-#: admin/settings-page.php:88
+#: admin/settings-page.php:87
 msgid "Kaboom! You are ready to go."
 msgstr ""
 
-#: admin/settings-page.php:91
+#: admin/settings-page.php:90
 msgid "If you want to send notifications to group:"
 msgstr ""
 
-#: admin/settings-page.php:93
+#: admin/settings-page.php:92
 msgid ""
 "Add the bot to your group and bot will give you an API token for the "
 "group( token must be started with <code>g:</code> ) "
 msgstr ""
 
-#: admin/settings-page.php:106
+#: admin/settings-page.php:105
 msgid "Send a test Message"
 msgstr ""
 
-#: admin/settings-page.php:107 admin/settings-page.php:160
-#: admin/settings-page.php:239 admin/settings-page.php:262
+#: admin/settings-page.php:106 admin/settings-page.php:159
+#: admin/settings-page.php:238 admin/settings-page.php:261
 msgid "Send now!"
 msgstr ""
 
-#: admin/settings-page.php:110
+#: admin/settings-page.php:109
 msgid "Hashtag (optional)"
 msgstr ""
 
-#: admin/settings-page.php:113
+#: admin/settings-page.php:112
 msgid "Insert a custom hashtag at the beginning of the messages."
 msgstr ""
 
-#: admin/settings-page.php:114
+#: admin/settings-page.php:113
 msgid "Don't forget <code>#</code> at the beginning"
 msgstr ""
 
-#: admin/settings-page.php:123
+#: admin/settings-page.php:122
 msgid "Introduction"
 msgstr ""
 
-#: admin/settings-page.php:126
+#: admin/settings-page.php:125
 msgid "Telegram channel is a great way for attracting people to your site."
 msgstr ""
 
-#: admin/settings-page.php:128
+#: admin/settings-page.php:127
 msgid ""
 "This option allows you to send posts to your Telegram channel. Intresting, "
 "no?"
 msgstr ""
 
-#: admin/settings-page.php:130
+#: admin/settings-page.php:129
 msgid "So let's start!"
 msgstr ""
 
-#: admin/settings-page.php:133
+#: admin/settings-page.php:132
 msgid "Create a channel (if you don't already have one)."
 msgstr ""
 
-#: admin/settings-page.php:134
+#: admin/settings-page.php:133
 msgid "Create a bot (if you don't already have one)."
 msgstr ""
 
-#: admin/settings-page.php:135
+#: admin/settings-page.php:134
 msgid "Go to channel options and select 'Administrator' option."
 msgstr ""
 
-#: admin/settings-page.php:136
+#: admin/settings-page.php:135
 msgid "Select 'Add Administrator' option."
 msgstr ""
 
-#: admin/settings-page.php:137
+#: admin/settings-page.php:136
 msgid "Search the username of your bot and add it as administrator."
 msgstr ""
 
-#: admin/settings-page.php:138
+#: admin/settings-page.php:137
 msgid ""
 "Copy the bot token (you got it in step two) and paste it in the below field."
 msgstr ""
 
-#: admin/settings-page.php:139
+#: admin/settings-page.php:138
 msgid "Enter the username of the channel and hit SAVE button!!!"
 msgstr ""
 
-#: admin/settings-page.php:140
+#: admin/settings-page.php:139
 msgid ""
 "Yes! Now, whenever you publish or update a post you can choose whether send "
 "it to Telegram (from post editor page)"
 msgstr ""
 
-#: admin/settings-page.php:148 admin/settings-page.php:284
+#: admin/settings-page.php:147 admin/settings-page.php:283
 msgid "Check bot token"
 msgstr ""
 
-#: admin/settings-page.php:150
+#: admin/settings-page.php:149
 msgid "Bot Info: "
 msgstr ""
 
-#: admin/settings-page.php:157
+#: admin/settings-page.php:156
 msgid "Channel Username"
 msgstr ""
 
-#: admin/settings-page.php:161
+#: admin/settings-page.php:160
 msgid "Don't forget <code>@</code> at the beginning"
 msgstr ""
 
-#: admin/settings-page.php:172
+#: admin/settings-page.php:171
 msgid "Always send to Telegram"
 msgstr ""
 
-#: admin/settings-page.php:174
+#: admin/settings-page.php:173
 msgid ""
 "By checking the below option, you don't need to check \"Send to Telegram "
 "Channel\" every time you create a new post."
 msgstr ""
 
-#: admin/settings-page.php:175
+#: admin/settings-page.php:174
 msgid "Send to Telegram Channel"
 msgstr ""
 
-#: admin/settings-page.php:183
+#: admin/settings-page.php:182
 msgid "Use Markdown in messages"
 msgstr ""
 
-#: admin/settings-page.php:185
+#: admin/settings-page.php:184
 msgid ""
 "Telegram supports basic markdown and some HTML tags (bold, italic, inline "
 "links). By checking one of the following options, your messages will be "
 "compatible with Telegram format."
 msgstr ""
 
-#: admin/settings-page.php:188
+#: admin/settings-page.php:187
 msgid "Disable Markdown and remove HTML tags"
 msgstr ""
 
-#: admin/settings-page.php:191
+#: admin/settings-page.php:190
 msgid "Use basic Markdown (less characters)"
 msgstr ""
 
-#: admin/settings-page.php:194
+#: admin/settings-page.php:193
 msgid "Use HTML tags (more speed)"
 msgstr ""
 
-#: admin/settings-page.php:196
+#: admin/settings-page.php:195
 msgid "Learn more"
 msgstr ""
 
-#: admin/settings-page.php:202
+#: admin/settings-page.php:201
 msgid "Web page preview in messages"
 msgstr ""
 
-#: admin/settings-page.php:204
+#: admin/settings-page.php:203
 msgid "Disables link previews for links in the sent message."
 msgstr ""
 
-#: admin/settings-page.php:206
+#: admin/settings-page.php:205
 msgid "Disable Web page preview"
 msgstr ""
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 #, php-format
 msgid ""
 "If you like this plugin, please rate it in %1$s. You can also support us by "
 "%2$s"
 msgstr ""
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 msgid "Telegram for Wordpress page in wordpress.org"
 msgstr ""
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 msgid "donating"
 msgstr ""
 
-#: admin/settings-page.php:228 admin/settings-page.php:252
-#: admin/settings-page.php:273
+#: admin/settings-page.php:227 admin/settings-page.php:251
+#: admin/settings-page.php:272
 msgid "Please wait..."
 msgstr ""
 
-#: admin/settings-page.php:232 admin/settings-page.php:253
+#: admin/settings-page.php:231 admin/settings-page.php:252
 msgid "This is a test message"
 msgstr ""
 
-#: admin/settings-page.php:243
+#: admin/settings-page.php:242
 msgid "api_token field is empty"
 msgstr ""
 
-#: admin/settings-page.php:249
+#: admin/settings-page.php:248
 msgid "This will send a test message to your channel. Do you want to continue?"
 msgstr ""
 
-#: admin/settings-page.php:266
+#: admin/settings-page.php:265
 msgid "bot token/channel username field is empty"
 msgstr ""
 
-#: admin/settings-page.php:287
+#: admin/settings-page.php:286
 msgid "bot token field is empty"
-msgstr ""
-
-#: admin/settings-page.php:72
-msgid ""
-"You will receive messages in Telegram with the contents of every emails that "
-"sent from your WordPress site."
 msgstr ""
 
 #: functions.php:154
@@ -289,27 +289,27 @@ msgstr ""
 msgid "Telegram Channel Options"
 msgstr ""
 
-#: functions.php:258 functions.php:413
+#: functions.php:258 functions.php:431
 msgid "Bot token or Channel username aren't set!"
 msgstr ""
 
-#: functions.php:282
+#: functions.php:289
 msgid "Send to Telegram channel"
 msgstr ""
 
-#: functions.php:284
+#: functions.php:291
 msgid "Send this post to channel"
 msgstr ""
 
-#: functions.php:291
+#: functions.php:298
 msgid "Sending result: "
 msgstr ""
 
-#: functions.php:296
+#: functions.php:303
 msgid "Published successfully"
 msgstr ""
 
-#: functions.php:300
+#: functions.php:307
 msgid "Date: "
 msgstr ""
 
@@ -450,6 +450,14 @@ msgstr ""
 msgid "Send featured image"
 msgstr ""
 
-#: twp.php:41
-msgid "Broadcast"
+#: inc/composer.php:304
+msgid "Send custom image"
+msgstr ""
+
+#: inc/composer.php:305
+msgid "Select or Upload the custom photo"
+msgstr ""
+
+#: inc/composer.php:306
+msgid "Use this image"
 msgstr ""

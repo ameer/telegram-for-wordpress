@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telegram for WordPress 1.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/telegram-for-wp\n"
-"POT-Creation-Date: 2016-03-13 20:22+0330\n"
-"PO-Revision-Date: 2016-03-13 20:23+0330\n"
+"POT-Creation-Date: 2016-03-15 10:35+0330\n"
+"PO-Revision-Date: 2016-03-15 10:39+0330\n"
 "Last-Translator: Ameer Mousavi <me@ameer.ir>\n"
 "Language-Team: Ameer <me@ameer.ir>\n"
 "Language: fa_IR\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.6.9\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-Basepath: D:/wamp/www/test/wp-content/plugins/telegram-for-wp\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -35,6 +35,13 @@ msgstr "اطلاع‌رسانی‌ها"
 msgid "Post to Channel"
 msgstr "ارسال به کانال"
 
+#: admin/settings-page.php:72
+msgid ""
+"You will receive messages in Telegram with the contents of every emails that "
+"sent from your WordPress site."
+msgstr ""
+" یک کپی از ایمیل‌های ارسالی توسط این سایت، به اکانت تلگرام شما ارسال می شود."
+
 #: admin/settings-page.php:74
 msgid ""
 "For example, once a new comment has been submitted, you will receive the "
@@ -43,24 +50,24 @@ msgstr ""
 "برای مثال وقتی یک دیدگاه در سایت شما ثبت شود، محتویات آن دیدگاه به اکانت "
 "تلگرام شما ارسال می‌شود."
 
-#: admin/settings-page.php:80
+#: admin/settings-page.php:79
 msgid "Instructions"
 msgstr "دستور کار"
 
-#: admin/settings-page.php:83
+#: admin/settings-page.php:82
 msgid "If you want to send notifications to single user:"
 msgstr "اگر می‌خواهید اطلاع‌رسانی‌ها فقط به یک کاربر ارسال شود:"
 
-#: admin/settings-page.php:85
+#: admin/settings-page.php:84
 #, php-format
 msgid "In Telegram app start a new chat with %s ."
 msgstr "در برنامه تلگرام، به %s پیام بدهید."
 
-#: admin/settings-page.php:85
+#: admin/settings-page.php:84
 msgid "Pay attention to underline!"
 msgstr "به علامت آندِرلاین توجه کنید!"
 
-#: admin/settings-page.php:86
+#: admin/settings-page.php:85
 msgid ""
 "Send <code>/token</code> command and the bot will give you an API token for "
 "the user."
@@ -68,20 +75,20 @@ msgstr ""
 "دستور <code>/token</code> را بفرستید؛ ربات به شما یک توکن برای ارتباط با API "
 "می‌دهد."
 
-#: admin/settings-page.php:87 admin/settings-page.php:94
+#: admin/settings-page.php:86 admin/settings-page.php:93
 msgid "Copy and paste it in the below field and hit the save button!"
 msgstr ""
 "آن توکن را کپی کرده و در فیلد زیر paste کنید و دکمه ذخیره تنظیمات را بزنید."
 
-#: admin/settings-page.php:88
+#: admin/settings-page.php:87
 msgid "Kaboom! You are ready to go."
 msgstr "تمام شد! همه چیز آماده است."
 
-#: admin/settings-page.php:91
+#: admin/settings-page.php:90
 msgid "If you want to send notifications to group:"
 msgstr "اگر می‌خواهید اطلاع‌رسانی‌ها به یک گروه ارسال شود:"
 
-#: admin/settings-page.php:93
+#: admin/settings-page.php:92
 msgid ""
 "Add the bot to your group and bot will give you an API token for the "
 "group( token must be started with <code>g:</code> ) "
@@ -89,36 +96,36 @@ msgstr ""
 "ربات را به گروه موردنظر اضافه کنید و ربات یک توکن مخصوص گروه به شما می‌دهد. "
 "(توکن باید با <code>g:</code> شروع شود)"
 
-#: admin/settings-page.php:106
+#: admin/settings-page.php:105
 msgid "Send a test Message"
 msgstr "فرستادن یک پیام آزمایشی"
 
-#: admin/settings-page.php:107 admin/settings-page.php:160
-#: admin/settings-page.php:239 admin/settings-page.php:262
+#: admin/settings-page.php:106 admin/settings-page.php:159
+#: admin/settings-page.php:238 admin/settings-page.php:261
 msgid "Send now!"
 msgstr "بفرست!"
 
-#: admin/settings-page.php:110
+#: admin/settings-page.php:109
 msgid "Hashtag (optional)"
 msgstr "هشتگ (اختیاری)"
 
-#: admin/settings-page.php:113
+#: admin/settings-page.php:112
 msgid "Insert a custom hashtag at the beginning of the messages."
 msgstr "یک هشتگ دلخواه را در ابتدای پیام‌های اطلاع‌رسانی اضافه می‌کند."
 
-#: admin/settings-page.php:114
+#: admin/settings-page.php:113
 msgid "Don't forget <code>#</code> at the beginning"
 msgstr "حتما علامت <code>#</code> را در ابتدای هشتگ وارد کنید."
 
-#: admin/settings-page.php:123
+#: admin/settings-page.php:122
 msgid "Introduction"
 msgstr "معرفی"
 
-#: admin/settings-page.php:126
+#: admin/settings-page.php:125
 msgid "Telegram channel is a great way for attracting people to your site."
 msgstr "کانال تلگرام راه بسیار مناسبی برای جذب مردم به سایت شماست."
 
-#: admin/settings-page.php:128
+#: admin/settings-page.php:127
 msgid ""
 "This option allows you to send posts to your Telegram channel. Intresting, "
 "no?"
@@ -126,42 +133,42 @@ msgstr ""
 "این گزینه به شما امکان این را می‌دهد که نوشته‌های سایتتان را به کانال تلگرام "
 "بفرستید. جالب است، نه؟"
 
-#: admin/settings-page.php:130
+#: admin/settings-page.php:129
 msgid "So let's start!"
 msgstr "پس بیایید شروع کنیم!"
 
-#: admin/settings-page.php:133
+#: admin/settings-page.php:132
 msgid "Create a channel (if you don't already have one)."
 msgstr "در تلگرام یک کانال بسازید. (اگر در حال حاضر کانال ندارید)"
 
-#: admin/settings-page.php:134
+#: admin/settings-page.php:133
 msgid "Create a bot (if you don't already have one)."
 msgstr "در تلگرام یک ربات بسازید. (اگر در حال حاضر ربات ندارید)"
 
-#: admin/settings-page.php:135
+#: admin/settings-page.php:134
 msgid "Go to channel options and select 'Administrator' option."
 msgstr ""
 "در برنامه تلگرام به تنظیمات کانال بروید و گزینه Administrator را انتخاب کنید."
 
-#: admin/settings-page.php:136
+#: admin/settings-page.php:135
 msgid "Select 'Add Administrator' option."
 msgstr "گزینه Add Administrator را بزنید."
 
-#: admin/settings-page.php:137
+#: admin/settings-page.php:136
 msgid "Search the username of your bot and add it as administrator."
 msgstr "نام کاربری ربات‌تان را جستجو کنید و آن را به عنوان مدیر اضافه کنید."
 
-#: admin/settings-page.php:138
+#: admin/settings-page.php:137
 msgid ""
 "Copy the bot token (you got it in step two) and paste it in the below field."
 msgstr ""
 "توکن ربات را که از botfather گرفته‌اید کپی کنید و در فیلد زیر paste کنید."
 
-#: admin/settings-page.php:139
+#: admin/settings-page.php:138
 msgid "Enter the username of the channel and hit SAVE button!!!"
 msgstr "نام کاربری کانال را وارد کنید و دکمه ذخیره را بزنید!"
 
-#: admin/settings-page.php:140
+#: admin/settings-page.php:139
 msgid ""
 "Yes! Now, whenever you publish or update a post you can choose whether send "
 "it to Telegram (from post editor page)"
@@ -169,27 +176,27 @@ msgstr ""
 "بله! از این پس هر نوشته‌ای که منتشر یا بروزرسانی کنید، می‌توانید تعیین کنید که "
 "به تلگرام ارسال شود یا نه.(از طریق صفحه ویرایش نوشته)"
 
-#: admin/settings-page.php:148 admin/settings-page.php:284
+#: admin/settings-page.php:147 admin/settings-page.php:283
 msgid "Check bot token"
 msgstr "بررسی توکن ربات"
 
-#: admin/settings-page.php:150
+#: admin/settings-page.php:149
 msgid "Bot Info: "
 msgstr "اطلاعات ربات:"
 
-#: admin/settings-page.php:157
+#: admin/settings-page.php:156
 msgid "Channel Username"
 msgstr "نام کاربری کانال"
 
-#: admin/settings-page.php:161
+#: admin/settings-page.php:160
 msgid "Don't forget <code>@</code> at the beginning"
 msgstr "علامت <code>@</code> را حتما در ابتدای نام کاربری وارد کنید."
 
-#: admin/settings-page.php:172
+#: admin/settings-page.php:171
 msgid "Always send to Telegram"
 msgstr "همیشه به تلگرام بفرست."
 
-#: admin/settings-page.php:174
+#: admin/settings-page.php:173
 msgid ""
 "By checking the below option, you don't need to check \"Send to Telegram "
 "Channel\" every time you create a new post."
@@ -197,15 +204,15 @@ msgstr ""
 "با فعال کردن گزینه زیر، دیگر نیاز نیست که هر بار نوشته تازه‌ای منتشر می‌کنید "
 "روی گزینه \"ارسال به کانال تلگرام\" کلیک کنید."
 
-#: admin/settings-page.php:175
+#: admin/settings-page.php:174
 msgid "Send to Telegram Channel"
 msgstr "ارسال به کانال تلگرام"
 
-#: admin/settings-page.php:183
+#: admin/settings-page.php:182
 msgid "Use Markdown in messages"
 msgstr "استفاده از قابلیت Markdown در پیام‌ها"
 
-#: admin/settings-page.php:185
+#: admin/settings-page.php:184
 msgid ""
 "Telegram supports basic markdown and some HTML tags (bold, italic, inline "
 "links). By checking one of the following options, your messages will be "
@@ -215,35 +222,35 @@ msgstr ""
 "italic و لینک‌های درون خطی). با کلیک بر روی هر یک از گزینه‌های زیر پیامهای شما "
 "به قالب متناسب با تلگرام تبدیل می‌شوند."
 
-#: admin/settings-page.php:188
+#: admin/settings-page.php:187
 msgid "Disable Markdown and remove HTML tags"
 msgstr "عدم استفاده از markdown و حذف تگ‌های HTML"
 
-#: admin/settings-page.php:191
+#: admin/settings-page.php:190
 msgid "Use basic Markdown (less characters)"
 msgstr "استفاده از Basic Markdown (کارکتر کمتر)"
 
-#: admin/settings-page.php:194
+#: admin/settings-page.php:193
 msgid "Use HTML tags (more speed)"
 msgstr "استفاده از تگ‌های HTML (سرعت بیشتر)"
 
-#: admin/settings-page.php:196
+#: admin/settings-page.php:195
 msgid "Learn more"
 msgstr "بیشتر بدانید..."
 
-#: admin/settings-page.php:202
+#: admin/settings-page.php:201
 msgid "Web page preview in messages"
 msgstr "پیش‌نمایش لینک‌ها در پیام‌ها"
 
-#: admin/settings-page.php:204
+#: admin/settings-page.php:203
 msgid "Disables link previews for links in the sent message."
 msgstr "قابلیت پیش‌نمایش لینک‌های موجود در متن را غیرفعال می‌کند."
 
-#: admin/settings-page.php:206
+#: admin/settings-page.php:205
 msgid "Disable Web page preview"
 msgstr "غیرفعال کردن پیش‌نمایش لینک‌ها"
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 #, php-format
 msgid ""
 "If you like this plugin, please rate it in %1$s. You can also support us by "
@@ -252,45 +259,38 @@ msgstr ""
 "اگر از این افزونه خوشتان آمده است می‌توانید در %1$s به آن امتیاز بدهید. شما "
 "همچنین می‌توانید از ما %2$s کنید."
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 msgid "Telegram for Wordpress page in wordpress.org"
 msgstr "صفحه افزونه"
 
-#: admin/settings-page.php:219
+#: admin/settings-page.php:218
 msgid "donating"
 msgstr "حمایت مالی"
 
-#: admin/settings-page.php:228 admin/settings-page.php:252
-#: admin/settings-page.php:273
+#: admin/settings-page.php:227 admin/settings-page.php:251
+#: admin/settings-page.php:272
 msgid "Please wait..."
 msgstr "لطفا صبر کنید..."
 
-#: admin/settings-page.php:232 admin/settings-page.php:253
+#: admin/settings-page.php:231 admin/settings-page.php:252
 msgid "This is a test message"
 msgstr "این یک پیام آزمایشی است."
 
-#: admin/settings-page.php:243
+#: admin/settings-page.php:242
 msgid "api_token field is empty"
 msgstr "فیلد api_token خالی است."
 
-#: admin/settings-page.php:249
+#: admin/settings-page.php:248
 msgid "This will send a test message to your channel. Do you want to continue?"
 msgstr "این یک پیام تست را به کانال می‌فرستد. آیا ادامه می‌دهید؟"
 
-#: admin/settings-page.php:266
+#: admin/settings-page.php:265
 msgid "bot token/channel username field is empty"
 msgstr "فیلد نام کاربری کانال یا توکن ربات خالی است."
 
-#: admin/settings-page.php:287
+#: admin/settings-page.php:286
 msgid "bot token field is empty"
 msgstr "فیلد توکن ربات خالی است."
-
-#: admin/settings-page.php:72
-msgid ""
-"You will receive messages in Telegram with the contents of every emails that "
-"sent from your WordPress site."
-msgstr ""
-" یک کپی از ایمیل‌های ارسالی توسط این سایت، به اکانت تلگرام شما ارسال می شود."
 
 #: functions.php:154
 msgid "Persian Tutorial in HamyarWP"
@@ -309,27 +309,27 @@ msgstr "تنظیمات TWP"
 msgid "Telegram Channel Options"
 msgstr "گزینه‌های کانال تلگرام"
 
-#: functions.php:258 functions.php:413
+#: functions.php:258 functions.php:431
 msgid "Bot token or Channel username aren't set!"
 msgstr "توکن ربات یا نام کاربری کانال تنظیم نشده‌اند."
 
-#: functions.php:282
+#: functions.php:289
 msgid "Send to Telegram channel"
 msgstr "ارسال به کانال تلگرام"
 
-#: functions.php:284
+#: functions.php:291
 msgid "Send this post to channel"
 msgstr "ارسال این نوشته به کانال"
 
-#: functions.php:291
+#: functions.php:298
 msgid "Sending result: "
 msgstr "نتیجه ارسال: "
 
-#: functions.php:296
+#: functions.php:303
 msgid "Published successfully"
 msgstr "با موفقیت منتشر شد."
 
-#: functions.php:300
+#: functions.php:307
 msgid "Date: "
 msgstr "تاریخ:"
 
@@ -473,9 +473,20 @@ msgstr "تصویر شاخص را نفرست."
 msgid "Send featured image"
 msgstr "ارسال تصویر شاخص"
 
-#: twp.php:41
-msgid "Broadcast"
-msgstr ""
+#: inc/composer.php:304
+msgid "Send custom image"
+msgstr "ارسال تصویر دلخواه"
+
+#: inc/composer.php:305
+msgid "Select or Upload the custom photo"
+msgstr "تصویر دلخواهتان را انتخاب یا بارگذاری کنید."
+
+#: inc/composer.php:306
+msgid "Use this image"
+msgstr "استفاده از این تصویر"
+
+#~ msgid "Select or Upload Media Of Your Chosen Persuasion"
+#~ msgstr "تصویر مورد نظرتان را انتخاب یا آپلود کنید."
 
 #~ msgid ""
 #~ "You will receive messages in Telegram with the contents of every emails "

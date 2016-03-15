@@ -229,7 +229,7 @@ function excerpt_by_id($post, $length = 55, $tags = '<a><em><strong>', $extra = 
 	} else {
 		$the_excerpt = $post->post_content;
 	}
-	$the_excerpt = preg_split('/\b/', $the_excerpt, $length * 2+1);
+	$the_excerpt = mb_split('/\w+/u', $the_excerpt, $length * 2+1);
 	$excerpt_waste = array_pop($the_excerpt);
 	$the_excerpt = implode($the_excerpt);
  
@@ -469,7 +469,7 @@ function twp_post_published ( $ID, $post ) {
 	$wp_subs = array(
 		$post->post_title,
 		#Change the below number to change the number of words in excerpt
-		excerpt_by_id($post, 55),
+		wp_trim_excerpt($post->post_content),
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),
