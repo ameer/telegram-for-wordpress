@@ -3,7 +3,7 @@ Contributors: amir-mousavi
 Tags: telegram,notifications,email,admin,plugin,channel
 Requires at least: 3.5
 Tested up to: 4.4
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
@@ -11,17 +11,15 @@ This plugin based on Notifcaster service by Ameer Mousavi and allows WordPress s
 
 == Description ==
 Hi,
-If you are admin of a WordPress website and want to receive notifications about your website (comment submit, user register, new core update and etc.) in your telegram account, you are welcome to use this plugin. This will help you to integrate Telegram with WordPress.
-
-You can also publish your posts to Telegram channel, right from your post-editor page.
+Whether you want to receive notifications about your website (e.g. comment submit, user register, new core update and etc.) or you just want to share your posts/products in Telegram Channel; you are welcome to use this plugin. This will help you to integrate Telegram with WordPress.
 
 This plugin based on <a href="http://notifcaster.com" target="_blank">Notifcaster</a> service by Ameer Mousavi and allows WordPress site to send notifications to telegram.
 
 Note: You have to turn on WordPress email notifications in order to receive Telegram notifications. Because in this version you will receive the body of any email that WordPrss is sending.
 
-Please feedback to make this plugin better.
+Please feedback and rate to make this plugin better.
 
-Here is a  <a href="http://hamyarwp.com/telegram-for-wp" target="_blank">Persian Tutorial </a>
+Here is a  <a href="http://ameer.ir/telegram-for-wp" target="_blank">Persian Tutorial</a>
 
 == Installation ==
 1. Download Telegram for WordPress plugin from Wordpress Plugin directory. 
@@ -35,6 +33,18 @@ Here is a  <a href="http://hamyarwp.com/telegram-for-wp" target="_blank">Persian
 5. Follow the guides in the TWP Settings page.
 
 == Changelog ==
+
+= 1.5 =
+* Using patterns for sending messages.
+* Using markdown and HTML format in messages.
+* Added support for sending long messages (Messages will be splitted).
+* Added support for emojis.
+* Added support for scheduled posts.
+* Initial Support for WooCommerce.
+* Better report for sent messages.
+* Allow disabling link previews for links in the sent message.
+* Improved UI and UX.
+* Optimized codes for faster and safer operation.
 
 = 1.4 =
 * Sending posts to Telegram channel.

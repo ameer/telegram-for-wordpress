@@ -469,7 +469,7 @@ function twp_post_published ( $ID, $post ) {
 	$wp_subs = array(
 		$post->post_title,
 		#Change the below number to change the number of words in excerpt
-		wp_trim_excerpt($post->post_content),
+		wp_trim_words($post->post_content, 55, "..."),
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),
