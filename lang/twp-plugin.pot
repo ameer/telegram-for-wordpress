@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telegram for WordPress 1.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/telegram-for-wp\n"
-"POT-Creation-Date: 2016-03-15 10:35+0330\n"
-"PO-Revision-Date: 2016-03-15 10:35+0330\n"
+"POT-Creation-Date: 2016-03-17 15:31+0330\n"
+"PO-Revision-Date: 2016-03-17 15:31+0330\n"
 "Last-Translator: Ameer Mousavi <me@ameer.ir>\n"
 "Language-Team: Ameer Mousavi <me@ameer.ir>\n"
 "Language: en_US\n"
@@ -313,151 +313,163 @@ msgstr ""
 msgid "Date: "
 msgstr ""
 
-#: inc/composer.php:44
+#: inc/composer.php:45
 msgid "Message Pattern"
 msgstr ""
 
-#: inc/composer.php:49
+#: inc/composer.php:50
 msgid ""
 "Define the structure of messages that are sent to the channel. Use tags, "
 "emoji shortnames and any other text."
 msgstr ""
 
-#: inc/composer.php:54
+#: inc/composer.php:55
 msgid "Select a tag..."
 msgstr ""
 
-#: inc/composer.php:56
+#: inc/composer.php:57
 msgid "The title of this post"
 msgstr ""
 
-#: inc/composer.php:57
+#: inc/composer.php:58
 msgid "The first 55 words of this post"
 msgstr ""
 
-#: inc/composer.php:58
+#: inc/composer.php:59
 msgid "The whole content of this post"
 msgstr ""
 
-#: inc/composer.php:59
+#: inc/composer.php:60
 msgid "The display name of author of this post"
 msgstr ""
 
-#: inc/composer.php:60
+#: inc/composer.php:61
 msgid "The short url of this post"
 msgstr ""
 
-#: inc/composer.php:61
+#: inc/composer.php:62
 msgid "The permalink of this post"
 msgstr ""
 
-#: inc/composer.php:62
+#: inc/composer.php:63
 msgid ""
 "The tags of this post. Tags are automatically converted to Telegram hashtags"
 msgstr ""
 
-#: inc/composer.php:63
+#: inc/composer.php:64
 msgid ""
 "The categories of this post. Categories are automatically separated by | "
 "symbol"
 msgstr ""
 
-#: inc/composer.php:68
+#: inc/composer.php:69
 msgid "The width of this product"
 msgstr ""
 
-#: inc/composer.php:69
+#: inc/composer.php:70
 msgid "The length of this product"
 msgstr ""
 
-#: inc/composer.php:70
+#: inc/composer.php:71
 msgid "The height of this product"
 msgstr ""
 
-#: inc/composer.php:71
+#: inc/composer.php:72
 msgid "The weight of this product"
 msgstr ""
 
-#: inc/composer.php:72
+#: inc/composer.php:73
 msgid "The price of this product"
 msgstr ""
 
-#: inc/composer.php:73
+#: inc/composer.php:74
 msgid "The regular price of this product"
 msgstr ""
 
-#: inc/composer.php:74
+#: inc/composer.php:75
 msgid "The sale price of this product"
 msgstr ""
 
-#: inc/composer.php:75
+#: inc/composer.php:76
 msgid "The SKU (Stock Keeping Unit) of this product"
 msgstr ""
 
-#: inc/composer.php:76
+#: inc/composer.php:77
 msgid "The stock amount of this product"
 msgstr ""
 
-#: inc/composer.php:77
+#: inc/composer.php:78
 msgid "Is this product downloadable? (Yes or No)"
 msgstr ""
 
-#: inc/composer.php:78
+#: inc/composer.php:79
 msgid "Is this product virtual? (Yes or No)"
 msgstr ""
 
-#: inc/composer.php:79
+#: inc/composer.php:80
 msgid "Is this product sold individually? (Yes or No)"
 msgstr ""
 
-#: inc/composer.php:80
+#: inc/composer.php:81
 msgid "The tax status of this product"
 msgstr ""
 
-#: inc/composer.php:81
+#: inc/composer.php:82
 msgid "The tax class of this product"
 msgstr ""
 
-#: inc/composer.php:82
+#: inc/composer.php:83
 msgid "The stock status of this product"
 msgstr ""
 
-#: inc/composer.php:83
+#: inc/composer.php:84
 msgid "Whether or not backorders allowed? "
 msgstr ""
 
-#: inc/composer.php:84
+#: inc/composer.php:85
 msgid "Is this a featured product? (Yes or No)"
 msgstr ""
 
-#: inc/composer.php:85
+#: inc/composer.php:86
 msgid "Is this product visible? (Yes or No)"
 msgstr ""
 
-#: inc/composer.php:90
+#: inc/composer.php:91
 msgid "Emoji..."
 msgstr ""
 
-#: inc/composer.php:284
+#: inc/composer.php:285
+msgid "Click to see a full list of available emojis and their shortnames"
+msgstr ""
+
+#: inc/composer.php:285
 msgid "Emoji full list"
 msgstr ""
 
-#: inc/composer.php:293
+#: inc/composer.php:286
+msgid "Click to see some patterns template"
+msgstr ""
+
+#: inc/composer.php:286
+msgid "Patterns Template"
+msgstr ""
+
+#: inc/composer.php:295
 msgid "Don't send featured image"
 msgstr ""
 
-#: inc/composer.php:296
+#: inc/composer.php:298
 msgid "Send featured image"
 msgstr ""
 
-#: inc/composer.php:304
+#: inc/composer.php:306
 msgid "Send custom image"
 msgstr ""
 
-#: inc/composer.php:305
+#: inc/composer.php:307
 msgid "Select or Upload the custom photo"
 msgstr ""
 
-#: inc/composer.php:306
+#: inc/composer.php:308
 msgid "Use this image"
 msgstr ""

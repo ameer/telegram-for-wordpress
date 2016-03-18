@@ -7,7 +7,7 @@ The plugin allows user to receive WordPress notifications in their Telegram acco
 2. Go to TWP Settings Page in Wordpress dashboard.
 3. Follow the guides in the page.
 
-There is also an online document in <a href="https://notifcaster.com"> Notifcaster </a>
+There is also an online document in <a href="http://notifcaster.com"> Notifcaster </a>
 
 ###Feedback
 Call me on Telegram: @ameer_mousavi

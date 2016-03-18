@@ -378,9 +378,6 @@ function twp_save_meta_box_data( $ID, $post ) {
     } else {
     	update_post_meta( $ID, '_twp_send_to_channel', 0);
     }
-    if (get_post_status( $ID ) == 'publish'){
-   		twp_post_published ( $ID, $post );
-    }
 }
 add_action( 'save_post', 'twp_save_meta_box_data', 10, 2 );
 
@@ -393,6 +390,30 @@ function twp_post_published ( $ID, $post ) {
 	global $wpdb;
 	global $table_name;
 	global $tdata;
+	if ( isset( $_POST['twp_send_to_channel'] ) ) {
+    	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
+    	# Load global options
+    	# p_ prefix stands for $_POST data
+    	$tcp = $tdata['twp_channel_pattern']->option_value;
+    	$tst = $tdata['twp_send_thumb']->option_value;
+    	if ( $tcp != $_POST['twp_channel_pattern']) {
+    		$p_tcp = $_POST['twp_channel_pattern'];
+    		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
+    	} else {
+    		update_post_meta( $ID, '_twp_meta_pattern', $tcp);
+    	}
+    	if ( $tst != $_POST['twp_send_thumb']){
+    		$p_tst = $_POST['twp_send_thumb'];
+    		update_post_meta( $ID, '_twp_send_thumb', $p_tst);
+    	} else {
+    		update_post_meta( $ID, '_twp_send_thumb', $tst);
+    	}
+    	if (isset($_POST['twp_img_id'])){
+    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
+    	}
+    } else {
+    	update_post_meta( $ID, '_twp_send_to_channel', 0);
+    }
 	# Checks whether user wants to send this post to channel.
 	if(get_post_meta($ID, '_twp_send_to_channel', true) == 1){
 		$pattern = get_post_meta($ID, '_twp_meta_pattern', true);
@@ -418,7 +439,6 @@ function twp_post_published ( $ID, $post ) {
 			$method = 'photo';
 			$photo =  get_attached_file(get_post_meta( $ID, '_twp_img_id', true ));
 			break;
-		
 		default:
 			$method = false;
 			break;

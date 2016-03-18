@@ -282,7 +282,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					</optgroup>
 				</select>
 				<?php 
-				echo "<span id='cheatsheet-link'>🔗<a href='http://ameer.ir/emoji-cheatsheet?utm_source=emoji&utm_medium=twp_settings&utm_campaign=twp' title='Click to see a full list of available emojis and their shortnames' target='_blank'>".__("Emoji full list", "twp-plugin")."</a></span>";
+				echo "<span id='cheatsheet-link'>🔗<a href='http://ameer.ir/emoji-cheatsheet?utm_source=emoji&utm_medium=twp_settings&utm_campaign=twp' title='".__("Click to see a full list of available emojis and their shortnames", "twp-plugin")."' target='_blank'>".__("Emoji full list", "twp-plugin")."</a></span>";
+				echo "<span id='patterns-template'>🔗<a href='http://ameer.ir/telegram-for-wp#twp-patterns?utm_source=patterns&utm_medium=twp_settings&utm_campaign=twp' title='".__("Click to see some patterns template", "twp-plugin")."' target='_blank'>".__("Patterns Template", "twp-plugin")."</a></span>";
 				?>
 			</div>
 			<div id="twp_box_container">

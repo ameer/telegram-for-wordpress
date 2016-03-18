@@ -174,8 +174,16 @@ class Notifcaster_Class
                 CURLOPT_POSTFIELDS => $params
             ));
             $response = curl_exec($curl);
+            curl_close($curl);
             // if text
             if (isset($splitted_text)) {
+                $curl = curl_init($this->url."/sendMessage");
+                curl_setopt_array($curl, array(
+                    CURLOPT_SSL_VERIFYPEER => 0,
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                    CURLOPT_RETURNTRANSFER => 1,
+                    CURLOPT_POST => 1
+                    ));
                 foreach ($splitted_text as $text_part) {
                     $params = array(
                         'chat_id'  => $default_params['chat_id'],
@@ -183,14 +191,12 @@ class Notifcaster_Class
                         'parse_mode' => $this->parse_mode
                         );
                     $params = http_build_query($params);
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => $this->url."/sendMessage",
-                        CURLOPT_POSTFIELDS => $params
-                        ));
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
                     $response = curl_exec($curl);
                 }
+                curl_close($curl);
             }
-            curl_close($curl);                     
+                              
         } else {
             $context = stream_context_create(array(
                 'http' => array(
