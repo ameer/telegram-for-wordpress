@@ -167,6 +167,7 @@ global $tdata;
                             $cp = $tdata['twp_channel_pattern']->option_value;
                             $s = $tdata['twp_send_thumb']->option_value;
                             $m = $tdata['twp_markdown']->option_value;
+                            $ipos = $tdata['twp_img_position']->option_value;
                             ?>
                             <th scope="row"><h3><?php echo __("Always send to Telegram", "twp-plugin") ?></h3></th>
                             <td>
@@ -203,6 +204,24 @@ global $tdata;
                                 <p class="howto"><?php echo __("Disables link previews for links in the sent message.", "twp-plugin") ?></p><br>
                                 <input type="checkbox" id="twp_web_preview" name="twp_web_preview" value="1" <?php checked( '1', $preview ); ?>/>
                                 <label for="twp_web_preview"><?php echo __('Disable Web page preview', 'twp-plugin' ) ?> </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><h3><?php echo __("Image position", "twp-plugin") ?></h3></th>
+                            <td>
+                                <p class="howto"><?php echo __("Telegram limits the image caption to 200 characters. Here are two options if your message text exceeds this limit:", "twp-plugin") ?></p><br>
+                                <fieldset>
+                                <input type="radio" name="twp_img_position" id="twp-img-0" <?php echo ($ipos==0)?'checked=checked':'' ?> value="0">
+                                    <label for="twp-img-0"><strong><?php echo __("Send photo before text", "twp-plugin"); ?></strong></label>
+                                    <br>
+                                    <p class="howto"><?php echo __("This will send the photo without caption and send the text after it. (Each one in a separate message)", "twp-plugin") ?></p>
+                                    <br>
+                                    <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':'' ?> value="1">
+                                    <label for="twp-img-1"><strong><?php echo __("Send photo after text", "twp-plugin"); ?></strong></label>
+                                    <br>
+                                    <p class="howto"><?php echo __("This will attach an invisible link of your photo to the beginning of your message. People wouldn't see the link, but Telegram clients will show the photo at the bottom of the message (All in one message)", "twp-plugin") ?></p>
+                                    <br>
+                                    </fieldset>
                             </td>
                         </tr>
                     </table>

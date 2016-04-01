@@ -1,13 +1,13 @@
 <?php
 /**
  * @package Telegram for Wordpress
- * @version 1.5.1
+ * @version 1.6
  */
 /*
 Plugin Name: Telegram for WordPress
 Description: Receive your WordPress site notifications in your Telegram account and publish your posts to Telegram channel.
 Author: Ameer Mousavi
-Version: 1.5.1
+Version: 1.6
 Author URI: http://ameer.ir/
 Plugin URI: http://notifcaster.com
 License: GPLv3 or later.
@@ -53,6 +53,7 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_hashtag', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_markdown', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_web_preview', 'sanitize_text_field' );
+            register_setting( 'twp-settings-group', 'twp_img_position', 'sanitize_text_field' );
 }
 
 
@@ -60,5 +61,4 @@ function register_twp_settings() {
 if ($tdata['twp_api_token'] != null ) {
     add_action( 'phpmailer_init', 'twp_phpmailer_hook' );
 }
-
 ?>

@@ -258,9 +258,9 @@ function twp_meta_box_callback( $post ) {
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
 	#Experimental feature : Always check Send to channel option
-	// $sc = get_post_meta($ID, '_twp_send_to_channel', true);
-	// $sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
-	$sc = $tdata['twp_send_to_channel']->option_value;
+	$sc = get_post_meta($ID, '_twp_send_to_channel', true);
+	$sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
+	//$sc = $tdata['twp_send_to_channel']->option_value;
 	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
 	$cp = $cp != "" ? $cp : $tdata['twp_channel_pattern']->option_value;
 	$s = get_post_meta($ID, '_twp_send_thumb', true);
@@ -317,7 +317,7 @@ function twp_meta_box_callback( $post ) {
 *
 * @param int $ID The ID of the post being saved.
 */
-function twp_save_meta_box_data( $ID, $post ) {
+function twp_save_meta_box_data( $ID, $post, $update ) {
 	global $tdata;
     /*
     * We need to verify this came from our screen and with proper authorization,
@@ -356,30 +356,35 @@ function twp_save_meta_box_data( $ID, $post ) {
     // Make sure that it is set.
     if ( isset( $_POST['twp_send_to_channel'] ) ) {
     	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
-    	# Load global options
-    	# p_ prefix stands for $_POST data
-    	$tcp = $tdata['twp_channel_pattern']->option_value;
-    	$tst = $tdata['twp_send_thumb']->option_value;
-    	if ( $tcp != $_POST['twp_channel_pattern']) {
-    		$p_tcp = $_POST['twp_channel_pattern'];
-    		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
-    	} else {
-    		update_post_meta( $ID, '_twp_meta_pattern', $tcp);
-    	}
-    	if ( $tst != $_POST['twp_send_thumb']){
-    		$p_tst = $_POST['twp_send_thumb'];
-    		update_post_meta( $ID, '_twp_send_thumb', $p_tst);
-    	} else {
-    		update_post_meta( $ID, '_twp_send_thumb', $tst);
-    	}
-    	if (isset($_POST['twp_img_id'])){
-    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
-    	}
     } else {
     	update_post_meta( $ID, '_twp_send_to_channel', 0);
     }
+	# Load global options
+	# p_ prefix stands for $_POST data
+    $tcp = $tdata['twp_channel_pattern']->option_value;
+    $tst = $tdata['twp_send_thumb']->option_value;
+    if ( $tcp != $_POST['twp_channel_pattern']) {
+    	$p_tcp = $_POST['twp_channel_pattern'];
+    	update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
+    } else {
+    	update_post_meta( $ID, '_twp_meta_pattern', $tcp);
+    }
+    if ( $tst != $_POST['twp_send_thumb']){
+    	$p_tst = $_POST['twp_send_thumb'];
+    	update_post_meta( $ID, '_twp_send_thumb', $p_tst);
+    } else {
+    	update_post_meta( $ID, '_twp_send_thumb', $tst);
+    }
+    if (isset($_POST['twp_img_id'])){
+    	update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
+    } else {
+    	delete_post_meta( $ID, '_twp_img_id');
+    }
+    if ($post->post_status == "publish"){
+    	twp_post_published ( $ID, $post );
+    }
 }
-add_action( 'save_post', 'twp_save_meta_box_data', 10, 2 );
+add_action( 'wp_insert_post', 'twp_save_meta_box_data', 10, 3 );
 
 /**
 * When the post is published, send the messages.
@@ -390,30 +395,30 @@ function twp_post_published ( $ID, $post ) {
 	global $wpdb;
 	global $table_name;
 	global $tdata;
-	if ( isset( $_POST['twp_send_to_channel'] ) ) {
-    	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
-    	# Load global options
-    	# p_ prefix stands for $_POST data
-    	$tcp = $tdata['twp_channel_pattern']->option_value;
-    	$tst = $tdata['twp_send_thumb']->option_value;
-    	if ( $tcp != $_POST['twp_channel_pattern']) {
-    		$p_tcp = $_POST['twp_channel_pattern'];
-    		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
-    	} else {
-    		update_post_meta( $ID, '_twp_meta_pattern', $tcp);
-    	}
-    	if ( $tst != $_POST['twp_send_thumb']){
-    		$p_tst = $_POST['twp_send_thumb'];
-    		update_post_meta( $ID, '_twp_send_thumb', $p_tst);
-    	} else {
-    		update_post_meta( $ID, '_twp_send_thumb', $tst);
-    	}
-    	if (isset($_POST['twp_img_id'])){
-    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
-    	}
-    } else {
-    	update_post_meta( $ID, '_twp_send_to_channel', 0);
-    }
+	// if ( isset( $_POST['twp_send_to_channel'] ) ) {
+ //    	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
+ //    	# Load global options
+ //    	# p_ prefix stands for $_POST data
+ //    	$tcp = $tdata['twp_channel_pattern']->option_value;
+ //    	$tst = $tdata['twp_send_thumb']->option_value;
+ //    	if ( $tcp != $_POST['twp_channel_pattern']) {
+ //    		$p_tcp = $_POST['twp_channel_pattern'];
+ //    		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
+ //    	} else {
+ //    		update_post_meta( $ID, '_twp_meta_pattern', $tcp);
+ //    	}
+ //    	if ( $tst != $_POST['twp_send_thumb']){
+ //    		$p_tst = $_POST['twp_send_thumb'];
+ //    		update_post_meta( $ID, '_twp_send_thumb', $p_tst);
+ //    	} else {
+ //    		update_post_meta( $ID, '_twp_send_thumb', $tst);
+ //    	}
+ //    	if (isset($_POST['twp_img_id'])){
+ //    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
+ //    	}
+ //    } else {
+ //    	update_post_meta( $ID, '_twp_send_to_channel', 0);
+ //    }
 	# Checks whether user wants to send this post to channel.
 	if(get_post_meta($ID, '_twp_send_to_channel', true) == 1){
 		$pattern = get_post_meta($ID, '_twp_meta_pattern', true);
@@ -433,17 +438,33 @@ function twp_post_published ( $ID, $post ) {
 	switch ($thumb_method) {
 		case 1:
 			$method = 'photo';
-			$photo =  get_attached_file(get_post_thumbnail_id($ID));
+			$img_id = get_post_thumbnail_id($ID);
+			$photo =  get_attached_file($img_id);
 			break;
 		case 2:
 			$method = 'photo';
-			$photo =  get_attached_file(get_post_meta( $ID, '_twp_img_id', true ));
+			$img_id = get_post_meta( $ID, '_twp_img_id', true );
+			$photo =  get_attached_file($img_id);
 			break;
 		default:
 			$method = false;
 			break;
 	}
-	# Initialize Telegram information
+	// Initialize Telegram information
+	switch ($tdata['twp_markdown']->option_value) {
+		case 0:
+		$parse_mode = null;
+			break;
+		case 1:
+		$parse_mode = "Markdown";
+			break;
+		case 2:
+		$parse_mode = "HTML";
+			break;
+		default:
+		$parse_mode = null;
+			break;
+	}
 	$ch_name = $tdata['twp_channel_username']->option_value;
 	$token = $tdata['twp_bot_token']->option_value;
 	$web_preview = $tdata['twp_web_preview']->option_value;
@@ -466,23 +487,6 @@ function twp_post_published ( $ID, $post ) {
 	foreach ($categories_array as $cat) {
 		$categories .= "|".$cat;
 	}
-
-	$nt = new Notifcaster_Class();
-	switch ($tdata['twp_markdown']->option_value) {
-		case 0:
-			$format = null;
-			break;
-		case 1:
-		$format = "markdown";
-			break;
-		case 2:
-		$format = "html";
-			break;
-		default:
-			$format = null;
-			break;
-	}
-	$nt->_telegram($token, $format, $web_preview);
 	# Preparing message for sending
 	#Wordpress default tags and substitutes array
 	$wp_tags = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
@@ -503,25 +507,63 @@ function twp_post_published ( $ID, $post ) {
 		$p = $product;
 		$wc_subs = array ($p->width, $p->length, $p->height, $p->weight, $p->price, $p->regular_price, $p->sale_price, $p->sku, $p->stock, $p->downloadable, $p->virtual, $p->sold_individually, $p->tax_status, $p->tax_class, $p->stock_status, $p->backorders, $p->featured, $p->visibility);
 	}
-	
 	# The variables are case-sensitive.
-	$re = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$re = $wp_tags;
 	$subst = $wp_subs;
 	if ($post->post_type == 'product'){
 		$p = $product;
-		array_merge($re, $wc_tags);
-		array_merge($subst, $wc_subs);
+		$re = array_merge($re, $wc_tags);
+		$subst = array_merge($subst, $wc_subs);
 	} else {
 	#if it's not a product post then strip out all of the WooCommerce tags
-		$strip_wc = true;
+		$strip_wc = 1;
 	}
+
+	if($parse_mode == "Markdown"){
+		$subst = str_replace(array("_", "*"), array("\_", "\*"), $subst);
+	}
+
 	$msg = str_replace($re, $subst, $pattern);
-	if ($strip_wc){
+
+	if ($strip_wc == 1){
 		$msg = str_replace($wc_tags, '', $msg);
 	}
 	
+	#Search for custom field pattern
+	$re = "/%(#)?([\w\s]+)%/iu";
+	$number_of_cf = preg_match_all($re, $msg, $matches);
+	if ($number_of_cf != 0){
+		$cf_tags_array = array();
+		$cf_value_array = array();
+		for ($i=0; $i < $number_of_cf; $i++) { 
+		$cf_value = get_post_meta($ID, $matches[2][$i], true);
+		if ($matches[1][0] != ""){
+			if ($parse_mode == "Markdown") {
+				$cf_value = str_replace(" ", "\_", $cf_value);
+			} else {
+				$cf_value = str_replace(" ", "_", $cf_value);
+			}
+		}
+		array_push($cf_tags_array, $matches[0][$i]);
+		array_push($cf_value_array, "#".$cf_value);
+		}
+		$msg = str_replace($cf_tags_array, $cf_value_array, $msg);
+	}
+	
+	$msg = str_replace('&nbsp;','', $msg);
+
+	$nt = new Notifcaster_Class();
+	$nt->_telegram($token, $parse_mode, $web_preview);
 	if ($method == 'photo' && $photo != false ) {
-		$r = $nt->channel_photo($ch_name, $msg, $photo);
+
+		if($tdata['twp_img_position']->option_value == 1){
+			$msg = "<a href=\"".wp_get_attachment_url($img_id)."\">‌</a>".$msg;
+			$nt->web_preview = 0;
+			$r = $nt->channel_text($ch_name, $msg);
+		} else {
+			$r = $nt->channel_photo($ch_name, $msg, $photo);
+		}
+		
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
 	}
@@ -552,10 +594,11 @@ function twp_post_published ( $ID, $post ) {
 			array ('post_id' => $ID)
 			);
 	}
-	update_post_meta( $ID, '_twp_send_to_channel', 0);
+	//update_post_meta( $ID, '_twp_send_to_channel', 0);
 	//unset($_POST['twp_send_to_channel']);
 }
-add_action( 'publish_post', 'twp_post_published', 10, 2 );
+//add_action( 'publish_post', 'twp_post_published', 10, 2 );
+//add_action( 'publish_page', 'twp_post_published', 10, 2 );
 
 function twp_ajax_test_callback() {
 	$nt = new Notifcaster_Class();
