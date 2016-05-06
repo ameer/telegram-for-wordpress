@@ -28,7 +28,7 @@ require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 dbDelta( $sql );
 }
 
-#forked from alo-easymail plugin. Thanks!
+//forked from alo-easymail plugin. Thanks!
 /**
  * Check if plugin tables are already properly installed
  */
@@ -48,7 +48,7 @@ function twp_check_db_when_loaded() {
    if ( twp_db_need_update() ) twp_install_db_tables();
 }
 add_action('plugins_loaded', 'twp_check_db_when_loaded');
-#End forked functions
+//End forked functions
 
 /**
  * An optimized function for getting our options from db
@@ -169,7 +169,7 @@ function twp_mail_action($result, $to, $cc, $bcc, $subject, $body){
 	}
 	$nt->Notifcaster($_apitoken);
 	if(mb_strlen($_msg) > 4096){
-		$splitted_text = $this->str_split_unicode($_msg, 4096);
+		$splitted_text = $nt->str_split_unicode($_msg, 4096);
 		foreach ($splitted_text as $text_part) {
 			$nt->notify($text_part);
 		}
@@ -380,11 +380,13 @@ function twp_save_meta_box_data( $ID, $post, $update ) {
     } else {
     	delete_post_meta( $ID, '_twp_img_id');
     }
-    if ($post->post_status == "publish"){
+    if ($post->post_status == "publish" && $post->post_password == ""){
     	twp_post_published ( $ID, $post );
     }
 }
-add_action( 'wp_insert_post', 'twp_save_meta_box_data', 10, 3 );
+add_action( 'post_updated', 'twp_save_meta_box_data', 10, 3 );
+add_action( 'transition_post_status', 'twp_save_meta_box_data', 10, 3 );
+
 
 /**
 * When the post is published, send the messages.
@@ -395,31 +397,7 @@ function twp_post_published ( $ID, $post ) {
 	global $wpdb;
 	global $table_name;
 	global $tdata;
-	// if ( isset( $_POST['twp_send_to_channel'] ) ) {
- //    	update_post_meta( $ID, '_twp_send_to_channel', $_POST['twp_send_to_channel']);
- //    	# Load global options
- //    	# p_ prefix stands for $_POST data
- //    	$tcp = $tdata['twp_channel_pattern']->option_value;
- //    	$tst = $tdata['twp_send_thumb']->option_value;
- //    	if ( $tcp != $_POST['twp_channel_pattern']) {
- //    		$p_tcp = $_POST['twp_channel_pattern'];
- //    		update_post_meta( $ID, '_twp_meta_pattern', $p_tcp);
- //    	} else {
- //    		update_post_meta( $ID, '_twp_meta_pattern', $tcp);
- //    	}
- //    	if ( $tst != $_POST['twp_send_thumb']){
- //    		$p_tst = $_POST['twp_send_thumb'];
- //    		update_post_meta( $ID, '_twp_send_thumb', $p_tst);
- //    	} else {
- //    		update_post_meta( $ID, '_twp_send_thumb', $tst);
- //    	}
- //    	if (isset($_POST['twp_img_id'])){
- //    		update_post_meta( $ID, '_twp_img_id', $_POST['twp_img_id']);
- //    	}
- //    } else {
- //    	update_post_meta( $ID, '_twp_send_to_channel', 0);
- //    }
-	# Checks whether user wants to send this post to channel.
+	// Checks whether user wants to send this post to channel.
 	if(get_post_meta($ID, '_twp_send_to_channel', true) == 1){
 		$pattern = get_post_meta($ID, '_twp_meta_pattern', true);
 		if ($pattern == "" || $pattern == false){
@@ -431,7 +409,7 @@ function twp_post_published ( $ID, $post ) {
 			$thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
 		}
 	}
-	# If there is no pattern then return!
+	// If there is no pattern then return!
 	if ($pattern == ""){
 		return;
 	}
@@ -487,12 +465,12 @@ function twp_post_published ( $ID, $post ) {
 	foreach ($categories_array as $cat) {
 		$categories .= "|".$cat;
 	}
-	# Preparing message for sending
-	#Wordpress default tags and substitutes array
+	// Preparing message for sending
+	// Wordpress default tags and substitutes array
 	$wp_tags = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
 	$wp_subs = array(
 		$post->post_title,
-		#Change the below number to change the number of words in excerpt
+		// Change the below number to change the number of words in excerpt
 		wp_trim_words($post->post_content, 55, "..."),
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
@@ -501,13 +479,13 @@ function twp_post_published ( $ID, $post ) {
 		$tags,
 		$categories
 		);
-	#WooCommerce tags and substitutes array
+	// WooCommerce tags and substitutes array
 	$wc_tags = array("{width}", "{length}", "{height}", "{weight}", "{price}", "{regular_price}", "{sale_price}", "{sku}", "{stock}", "{downloadable}", "{virtual}", "{sold_indiidually}", "{tax_status}", "{tax_class}", "{stock_status}", "{backorders}", "{featured}", "{visibility}");
 	 if ($post->post_type == 'product'){
 		$p = $product;
 		$wc_subs = array ($p->width, $p->length, $p->height, $p->weight, $p->price, $p->regular_price, $p->sale_price, $p->sku, $p->stock, $p->downloadable, $p->virtual, $p->sold_individually, $p->tax_status, $p->tax_class, $p->stock_status, $p->backorders, $p->featured, $p->visibility);
 	}
-	# The variables are case-sensitive.
+	// The variables are case-sensitive.
 	$re = $wp_tags;
 	$subst = $wp_subs;
 	if ($post->post_type == 'product'){
@@ -515,7 +493,7 @@ function twp_post_published ( $ID, $post ) {
 		$re = array_merge($re, $wc_tags);
 		$subst = array_merge($subst, $wc_subs);
 	} else {
-	#if it's not a product post then strip out all of the WooCommerce tags
+	// If it's not a product post then strip out all of the WooCommerce tags
 		$strip_wc = 1;
 	}
 
@@ -529,7 +507,7 @@ function twp_post_published ( $ID, $post ) {
 		$msg = str_replace($wc_tags, '', $msg);
 	}
 	
-	#Search for custom field pattern
+	// Search for custom field pattern
 	$re = "/%(#)?([\w\s]+)%/iu";
 	$number_of_cf = preg_match_all($re, $msg, $matches);
 	if ($number_of_cf != 0){
@@ -597,8 +575,8 @@ function twp_post_published ( $ID, $post ) {
 	//update_post_meta( $ID, '_twp_send_to_channel', 0);
 	//unset($_POST['twp_send_to_channel']);
 }
-//add_action( 'publish_post', 'twp_post_published', 10, 2 );
-//add_action( 'publish_page', 'twp_post_published', 10, 2 );
+// add_action( 'publish_post', 'twp_post_published', 10, 2 );
+// add_action( 'publish_page', 'twp_post_published', 10, 2 );
 
 function twp_ajax_test_callback() {
 	$nt = new Notifcaster_Class();
@@ -629,4 +607,5 @@ function twp_ajax_test_callback() {
 	}
 }
 add_action( 'wp_ajax_twp_ajax_test', 'twp_ajax_test_callback' );
+
 ?>
