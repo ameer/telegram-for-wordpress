@@ -259,7 +259,7 @@ function twp_meta_box_callback( $post ) {
 		}
 	#Experimental feature : Always check Send to channel option
 	$sc = get_post_meta($ID, '_twp_send_to_channel', true);
-	$sc = $sc != "" ? $sc : get_option( 'twp_send_to_channel');
+	$sc = $sc != "" ? $sc : $tdata['twp_send_to_channel']->option_value;
 	//$sc = $tdata['twp_send_to_channel']->option_value;
 	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
 	$cp = $cp != "" ? $cp : $tdata['twp_channel_pattern']->option_value;
@@ -354,12 +354,12 @@ function twp_save_meta_box_data( $ID, $post, $update ) {
     }
     # OK, it's safe for us to save the data now.
     // Make sure that it is set.
-    if ( isset( $_POST['twp_send_to_channel'] ) ) {
+    $tstc = $tdata['twp_send_to_channel']->option_value;
+    if ( $tstc != $_POST['twp_send_to_channel']) {
     	$tstc = $_POST['twp_send_to_channel'];
     	update_post_meta( $ID, '_twp_send_to_channel', $tstc);
     } else {
-    	$tstc = 0;
-    	update_post_meta( $ID, '_twp_send_to_channel', $tstc);
+    	delete_post_meta( $ID, '_twp_send_to_channel');
     }
 	# Load global options
     $pattern = $tdata['twp_channel_pattern']->option_value;
@@ -389,7 +389,19 @@ function twp_save_meta_box_data( $ID, $post, $update ) {
 }
 add_action( 'save_post', 'twp_save_meta_box_data', 10, 3 );
 
-
+function twp_on_publish_future_post( $post ) {
+    global $tdata;
+    $ID = $post->ID;
+    $tstc = get_post_meta($ID, '_twp_send_to_channel', true);
+    $tstc = $tstc != "" ? $tstc : $tdata['twp_send_to_channel']->option_value;
+    $pattern = get_post_meta($ID, '_twp_meta_pattern', true);
+    $pattern = $pattern != "" ? $pattern : $tdata['twp_channel_pattern']->option_value;
+    $thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
+    $thumb_method = $thumb_method != "" ? $thumb_method : $tdata[ 'twp_send_thumb']->option_value;
+    $twp_img_id = get_post_meta( $ID, '_twp_img_id', true );
+    twp_post_published ( $ID, $post, $tstc, $pattern, $thumb_method, $twp_img_id );
+}
+add_action(  'future_to_publish',  'twp_on_publish_future_post', 10, 1 );
 
 /**
 * When the post is published, send the messages.
