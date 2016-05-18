@@ -145,6 +145,43 @@ class Notifcaster_Class
         $response = $this->make_request($params, $file_upload);
         return $response;
     }
+    /**
+     * Send file to channel based on its format
+     *
+     * @param string $chat_id
+     * @param string $caption
+     * @param string $file relative path to file
+     *
+     * @return string
+     */
+    public function channel_file($chat_id , $caption , $file, $file_format)
+    {
+        switch ($file_format) {
+            case 'jpg':
+            case 'png':
+            case 'gif':
+                $method = 'photo';
+                break;
+            case 'mp3':
+                $method = 'audio';
+                break;
+            case 'mp4':
+                $method = 'video';
+                break;
+            default:
+                $method = 'document';
+                break;
+        }
+        $params = array(
+            'chat_id'  => $chat_id,
+            'caption'  => $caption,
+            $method    => $file
+        );
+        $this->api_method = "/send".$method;
+        $file_upload = true;
+        $response = $this->make_request($params, $file_upload, $method);
+        return $response;
+    }
 
     /**
      * Request Function
@@ -154,7 +191,7 @@ class Notifcaster_Class
      *
      * @return string "success" || error message
      */    
-    protected function make_request(array $params = array(), $file_upload = false)
+    protected function make_request(array $params = array(), $file_upload = false, $file_param = '')
     {
         $default_params = $params;
         if (!empty($params)) {
@@ -177,9 +214,9 @@ class Notifcaster_Class
             }
             if ($file_upload) {
                 if (class_exists('CURLFile')) {
-                    $params['photo'] = new CURLFile($params['photo']);
+                    $params[$file_param] = new CURLFile($params[$file_param]);
                 } else {
-                    $params = $this->curl_custom_postfields($curl, array('chat_id'  => $params['chat_id'], 'caption' => $params['caption']), array('photo' => $params['photo']));
+                    $params = $this->curl_custom_postfields($curl, array('chat_id'  => $params['chat_id'], 'caption' => $params['caption']), array($file_param => $params[$file_param]));
                 }
             } else {
                 $params = http_build_query($params);
@@ -372,5 +409,9 @@ class Notifcaster_Class
         }
         return $str;
     }
+
+    /**
+     * Get file info and send it to Telegram using the correct method
+     */
 }
 ?>

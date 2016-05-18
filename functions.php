@@ -257,10 +257,8 @@ function twp_meta_box_callback( $post ) {
 			$dis = "disabled=disabled"; 
 			$error = "<span style='color:red;font-weight:700;'>".__("Bot token or Channel username aren't set!", "twp-plugin")."</span><br>";
 		}
-	#Experimental feature : Always check Send to channel option
-	$sc = get_post_meta($ID, '_twp_send_to_channel', true);
-	$sc = $sc != "" ? $sc : $tdata['twp_send_to_channel']->option_value;
-	//$sc = $tdata['twp_send_to_channel']->option_value;
+	$tstc = get_post_meta($ID, '_twp_send_to_channel', true);
+	$tstc = $tstc != "" ? $tstc : $tdata['twp_send_to_channel']->option_value;
 	$cp = get_post_meta($ID, '_twp_meta_pattern', true);
 	$cp = $cp != "" ? $cp : $tdata['twp_channel_pattern']->option_value;
 	$s = get_post_meta($ID, '_twp_send_thumb', true);
@@ -268,27 +266,44 @@ function twp_meta_box_callback( $post ) {
 	if ($post->post_type == 'product'){
 		$is_product = true;
 	}
-	$upload_link = esc_url( get_upload_iframe_src( 'image', $ID ));
+	// Custom image upload-link
+	$twp_img_upload_link = esc_url( get_upload_iframe_src( 'image', $ID ));
 	// See if there's a media id already saved as post meta
 	$twp_img_id = get_post_meta( $ID, '_twp_img_id', true );
 	// Get the image src
 	$twp_img_src = wp_get_attachment_image_src( $twp_img_id);
 	// For convenience, see if the array is valid
 	$twp_have_img = is_array( $twp_img_src );
+
+	// File upload-link
+	$twp_file_upload_link = esc_url( get_upload_iframe_src());
+	// See if there's a media id already saved as post meta
+	$twp_file_id = get_post_meta( $ID, '_twp_file_id', true);
+	if(!empty($twp_file_id)){
+		$attachment = wp_get_attachment($twp_file_id);
+		$parsed = parse_url( wp_get_attachment_url($attachment['ID']) );
+		$twp_file_src = dirname( $parsed [ 'path' ] ) . '/' . rawurlencode( basename( $parsed[ 'path' ] ) );
+		$twp_file_icon = get_icon_for_attachment($twp_file_id);
+		$twp_have_file = 1;
+	}
+
 	?>
 	<div id="twp_metabox">
 	<style type="text/css">
 		.patterns li {display: inline-block; width: auto; padding: 2px 7px 2px 7px; margin-bottom: 10px; border-radius: 3px; text-decoration: none; background-color: #309152; color: white; cursor: pointer;}
 		.wc-patterns li {background-color: #a46497;}
-		#send-thumb-select {line-height: 2em;}
-		#send-thumb-select input {margin-top:1px;}
+		.twp-radio-group {line-height: 2em;}
+		.twp-radio-group input {margin-top:1px;}
 	</style>
 	<?php echo $error ?>
 	<table class="form-table">
 	<tr>
-	<th scope="row"><h3><?php echo __('Send to Telegram channel', 'twp-plugin' ) ?></h3> </th>
+	<th scope="row"><h3><?php echo __('Send to Telegram Status', 'twp-plugin' ) ?></h3> </th>
 	<td>
-	<input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send this post to channel', 'twp-plugin' ) ?> </label>
+	<div class="twp-radio-group">
+	<input type="radio" id="twp_send_to_channel_yes" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $tstc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send this post to channel', 'twp-plugin' ) ?> </label><br>
+	<input type="radio" id="twp_send_to_channel_no" name="twp_send_to_channel" <?php echo $dis ?> value="0" <?php checked( '0', $tstc ); ?>/><label for="twp_send_to_channel"><?php echo __('Don\'t send this post to channel', 'twp-plugin' ) ?> </label>
+	</div>
 	</td>
 	</tr>
 	<?php require_once(TWP_PLUGIN_DIR."/inc/composer.php");?>
@@ -383,8 +398,17 @@ function twp_save_meta_box_data( $ID, $post, $update ) {
     	$twp_img_id = 0;
     	delete_post_meta( $ID, '_twp_img_id');
     }
-    if ($post->post_status == "publish" && $post->post_password == ""){
-    	twp_post_published ( $ID, $post, $tstc, $pattern, $thumb_method, $twp_img_id );
+    if (isset($_POST['twp_file_id'])){
+    	$twp_file_id = $_POST['twp_file_id'];
+    	update_post_meta( $ID, '_twp_file_id', $twp_file_id);
+    } else {
+    	$twp_file_id = 0;
+    	delete_post_meta( $ID, '_twp_file_id');
+    }
+    if($tstc == 1){
+    	if ($post->post_status == "publish" && $post->post_password == ""){
+    		twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, $twp_file_id );
+    	}
     }
 }
 add_action( 'save_post', 'twp_save_meta_box_data', 10, 3 );
@@ -399,7 +423,10 @@ function twp_on_publish_future_post( $post ) {
     $thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
     $thumb_method = $thumb_method != "" ? $thumb_method : $tdata[ 'twp_send_thumb']->option_value;
     $twp_img_id = get_post_meta( $ID, '_twp_img_id', true );
-    twp_post_published ( $ID, $post, $tstc, $pattern, $thumb_method, $twp_img_id );
+    $twp_file_id = get_post_meta( $ID, '_twp_file_id', true );
+    if($tstc == 1){
+    	twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, $twp_file_id );
+    }
 }
 add_action(  'future_to_publish',  'twp_on_publish_future_post', 10, 1 );
 
@@ -408,18 +435,15 @@ add_action(  'future_to_publish',  'twp_on_publish_future_post', 10, 1 );
 * @param int $ID
 * @param obj $post
 */
-function twp_post_published ( $ID, $post, $tstc , $pattern, $thumb_method, $twp_img_id ) {
+function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, $twp_file_id ) {
 	global $wpdb;
 	global $table_name;
 	global $tdata;
-	// Checks whether user wants to send this post to channel.
-	if($tstc == 1){
-		if ($pattern == "" || $pattern == false){
-			$pattern = $tdata['twp_channel_pattern']->option_value;
-		}
-		if( $thumb_method != $tdata['twp_send_thumb']->option_value ) {
-			$thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
-		}
+	if ($pattern == "" || $pattern == false){
+		$pattern = $tdata['twp_channel_pattern']->option_value;
+	}
+	if( $thumb_method != $tdata['twp_send_thumb']->option_value ) {
+		$thumb_method = get_post_meta($ID, '_twp_send_thumb', true);
 	}
 	// If there is no pattern then return!
 	if ($pattern == ""){
@@ -557,6 +581,13 @@ function twp_post_published ( $ID, $post, $tstc , $pattern, $thumb_method, $twp_
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
 	}
+	if($twp_file_id != 0){
+		$file = get_attached_file($twp_file_id);
+		$attachment = wp_get_attachment($twp_file_id);
+		$file_caption = $attachment['caption'];
+		$file_format = $attachment['fileformat'];
+		$nt->channel_file($ch_name, $file_caption, $file, $file_format);
+	}
 	$publish_date = current_time( "mysql", $gmt = 0 );
 	if ($r["ok"] == true){
 		$sending_result = 1;
@@ -589,6 +620,37 @@ function twp_post_published ( $ID, $post, $tstc , $pattern, $thumb_method, $twp_
 }
 // add_action( 'publish_post', 'twp_post_published', 10, 2 );
 // add_action( 'publish_page', 'twp_post_published', 10, 2 );
+
+function get_icon_for_attachment($attachment_id) {
+	$base = includes_url() . "images/media/";
+	$type = get_post_mime_type($attachment_id);
+	switch ($type) {
+		case 'audio/mpeg':
+		case 'audio/vorbis':
+		case 'application/ogg':
+		return $base . "image.png"; break;
+		case 'video/mpeg':
+		case 'video/mp4': 
+		case 'video/quicktime':
+		return $base . "video.png"; break;
+		default:
+		return $base . "default.png";
+	}
+}
+function wp_get_attachment( $attachment_id ) {
+
+    $attachment = get_post( $attachment_id );
+    $attachment_md = wp_get_attachment_metadata($attachment_id);
+    return array(
+    	'ID' => $attachment->ID,
+        'caption' => $attachment->post_excerpt,
+        'href' => get_permalink( $attachment->ID ),
+        'src' => $attachment->guid,
+        'title' => $attachment->post_title,
+        'size' => $attachment_md['filesize'],
+        'fileformat' => $attachment_md['fileformat']
+    );
+}
 
 function twp_ajax_test_callback() {
 	$nt = new Notifcaster_Class();

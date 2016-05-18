@@ -36,8 +36,8 @@ global $tdata;
     }
     textarea#twp_channel_pattern {resize: vertical; width: 48%; height: auto;min-height: 128px;}
     div#output {width: 48%; display: inline-block; vertical-align: top; white-space: pre; border: 1px solid #ddd; height: 122px; background: #F1F1F1; cursor: not-allowed;padding: 2px 6px; overflow-y: auto } 
-    #send-thumb-select {line-height: 2em;}
-    #send-thumb-select input {margin-top:1px;}
+    .twp-radio-group {line-height: 2em;}
+    .twp-radio-group input {margin-top:1px;}
     .emojione{font-size:inherit;height:3ex;width:3.1ex;min-height:20px;min-width:20px;display:inline-block;margin:-.2ex .15em .2ex;line-height:normal;vertical-align:middle}
     img.emojione{width:auto}
     @media screen and (max-width: 415px){
@@ -163,16 +163,21 @@ global $tdata;
                         <tr>
                             <?php
                             $preview = $tdata['twp_web_preview']->option_value;
-                            $sc = $tdata['twp_send_to_channel']->option_value;
+                            $tstc = $tdata['twp_send_to_channel']->option_value;
+                            $tstc = $tstc != "" ? $tstc : 0 ;
                             $cp = $tdata['twp_channel_pattern']->option_value;
                             $s = $tdata['twp_send_thumb']->option_value;
                             $m = $tdata['twp_markdown']->option_value;
                             $ipos = $tdata['twp_img_position']->option_value;
                             ?>
-                            <th scope="row"><h3><?php echo __("Always send to Telegram", "twp-plugin") ?></h3></th>
+                            <th scope="row"><h3><?php echo __("Send to Telegram Status (Global)", "twp-plugin") ?></h3></th>
                             <td>
-                                <p class="howto"><?php echo __("By checking the below option, you don't need to check \"Send to Telegram Channel\" every time you create a new post.", "twp-plugin") ?></p><br>
-                                <input type="checkbox" id="twp_send_to_channel" name="twp_send_to_channel" <?php echo $dis ?> value="1" <?php checked( '1', $sc ); ?>/><label for="twp_send_to_channel"><?php echo __('Send to Telegram Channel', 'twp-plugin' ) ?> </label>
+                                <p class="howto"><?php echo __("By checking one of the below options, you don't need to set \"Send to Telegram Status\" every time you create a new post.", "twp-plugin") ?></p><br>
+                                <div class="twp-radio-group">
+                                <input type="radio" id="twp_send_to_channel_yes" name="twp_send_to_channel" value="1" <?php checked( '1', $tstc ); ?>/><label for="twp_send_to_channel"><?php echo __('Always send', 'twp-plugin' ) ?> </label><br>
+                                    <input type="radio" id="twp_send_to_channel_no" name="twp_send_to_channel" value="0" <?php checked( '0', $tstc ); ?>/><label for="twp_send_to_channel"><?php echo __('Never Send', 'twp-plugin' ) ?> </label>
+                                </div>
+                                <p class="howto"><?php echo __("You can override the above settings in post-edit screen", "twp-plugin") ?></p>
                                 <br>
                             </td>
                         </tr>
