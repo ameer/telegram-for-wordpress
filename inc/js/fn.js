@@ -19,7 +19,7 @@ jQuery(document).ready(function ($) {
      * from https://codex.wordpress.org/Javascript_Reference/wp.media
      */
     // Set all variables to be used in scope
-    var frame,
+    var frame, file_frame,
         metaBox = $('#twp_meta_box.postbox'), // Your meta box id here
         addImgLink = metaBox.find('.upload-custom-img'),
         delImgLink = metaBox.find('.delete-custom-img'),
@@ -99,12 +99,12 @@ jQuery(document).ready(function ($) {
     addFileLink.on('click', function (event) {
         event.preventDefault();
         // If the media frame already exists, reopen it.
-        if (frame) {
-            frame.open();
+        if (file_frame) {
+            file_frame.open();
             return;
         }
         // Create a new media frame
-        frame = wp.media({
+        file_frame = wp.media({
             title: frame_title_file,
             button: {
                 text: button_text_file
@@ -114,9 +114,9 @@ jQuery(document).ready(function ($) {
             multiple: false // Set to true to allow multiple files to be selected
         });
         // When an file is selected in the media frame...
-        frame.on('select', function () {
+        file_frame.on('select', function () {
             // Get media attachment details from the frame state
-            var attachment = frame.state().get('selection').first().toJSON();
+            var attachment = file_frame.state().get('selection').first().toJSON();
             // Send the attachment URL to our custom file input field.
             console.log(attachment);
             var a = attachment;
@@ -140,7 +140,7 @@ jQuery(document).ready(function ($) {
         });
 
         // Finally, open the modal on click
-        frame.open();
+        file_frame.open();
     });
     // DELETE FILE LINK
     delFileLink.on('click', function (event) {
