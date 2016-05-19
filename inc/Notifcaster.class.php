@@ -126,12 +126,7 @@ class Notifcaster_Class
     }
     /**
      * Send photo message to channel
-     *
-     * @param string $chat_id
-     * @param string $caption
-     * @param string $photo relative path to image file
-     *
-     * @return string
+     * @deprecated deprecated since version 1.6
      */
     public function channel_photo($chat_id , $caption , $photo)
     {
@@ -157,9 +152,7 @@ class Notifcaster_Class
     public function channel_file($chat_id , $caption , $file, $file_format)
     {
         switch ($file_format) {
-            case 'jpg':
-            case 'png':
-            case 'gif':
+            case 'image':
                 $method = 'photo';
                 break;
             case 'mp3':
@@ -179,7 +172,8 @@ class Notifcaster_Class
         );
         $this->api_method = "/send".$method;
         $file_upload = true;
-        $response = $this->make_request($params, $file_upload, $method);
+        $file_param = $method;
+        $response = $this->make_request($params, $file_upload, $file_param);
         return $response;
     }
 

@@ -332,7 +332,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			</div>
 		</td>
 	</tr>
-	<hr>
+	<?php 
+	// if we are in post pages, then show the custom image option.
+	if ($hook->base == 'post'){
+	?>
 	<tr>
 		<th scope="row">
 			<h3><?php echo __("Send file", "twp-plugin"); ?></h3>
@@ -351,7 +354,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						<a href="<?php echo $twp_file_src ?>" target="_blank"><img src="<?php echo $twp_file_icon ?>" alt="" style="max-width:100%;" /></a>
 					</div>
 					<div id="twp-file-details">
-						<p> Title: <span><?php echo $attachment['title'].$attachment['fileformat'] ?></span></p>
+						<p> Title: <span><?php echo $attachment['filename'] ?></span></p>
 						<p> Caption: <span><?php echo $attachment['caption'] ?></span></p>
 						<p> Size: <span id="filesize-span"><?php echo $attachment['size'] ?></span></p>
 						<input name="filesize" type="hidden" value="<?php echo $attachment['size'] ?>"/>
@@ -373,3 +376,4 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			<input class="twp-file-id" name="twp_file_id" type="hidden" value="<?php echo esc_attr( $twp_file_id ); ?>" />
 		</td>
 	</tr>
+	<?php } #end if ?>

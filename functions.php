@@ -569,15 +569,18 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	$nt = new Notifcaster_Class();
 	$nt->_telegram($token, $parse_mode, $web_preview);
 	if ($method == 'photo' && $photo != false ) {
-
 		if($tdata['twp_img_position']->option_value == 1){
 			$msg = "<a href=\"".wp_get_attachment_url($img_id)."\">‌</a>".$msg;
 			$nt->web_preview = 0;
 			$r = $nt->channel_text($ch_name, $msg);
 		} else {
-			$r = $nt->channel_photo($ch_name, $msg, $photo);
+			$attachment = wp_get_attachment_metadata($img_id);
+			$file_caption = $attachment['image_meta']['caption'];
+			$file_format = 'image';
+			$file = $photo;
+			$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
+			$r = $nt->channel_text($ch_name, $msg);
 		}
-		
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
 	}
@@ -640,7 +643,9 @@ function get_icon_for_attachment($attachment_id) {
 function wp_get_attachment( $attachment_id ) {
 
     $attachment = get_post( $attachment_id );
+    $attachment_path = basename(get_attached_file($attachment_id));
     $attachment_md = wp_get_attachment_metadata($attachment_id);
+    error_log(print_r($attachment,1));
     return array(
     	'ID' => $attachment->ID,
         'caption' => $attachment->post_excerpt,
@@ -648,7 +653,7 @@ function wp_get_attachment( $attachment_id ) {
         'src' => $attachment->guid,
         'title' => $attachment->post_title,
         'size' => $attachment_md['filesize'],
-        'fileformat' => $attachment_md['fileformat']
+        'filename' => $attachment_path
     );
 }
 

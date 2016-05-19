@@ -212,19 +212,19 @@ global $tdata;
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><h3><?php echo __("Image position", "twp-plugin") ?></h3></th>
+                            <th scope="row"><h3><?php echo __("Photo position", "twp-plugin") ?></h3></th>
                             <td>
-                                <p class="howto"><?php echo __("Telegram limits the image caption to 200 characters. Here are two options if your message text exceeds this limit:", "twp-plugin") ?></p><br>
+                                <p class="howto"><?php echo __("Telegram limits the photo caption to 200 characters. Here are two options if your message text exceeds this limit:", "twp-plugin") ?></p><br>
                                 <fieldset>
                                 <input type="radio" name="twp_img_position" id="twp-img-0" <?php echo ($ipos==0)?'checked=checked':'' ?> value="0">
                                     <label for="twp-img-0"><strong><?php echo __("Send photo before text", "twp-plugin"); ?></strong></label>
                                     <br>
-                                    <p class="howto"><?php echo __("This will send the photo without caption and send the text after it. (Each one in a separate message)", "twp-plugin") ?></p>
+                                    <p class="howto"><?php echo __("This will send the photo without caption and send the text after it. (Each one in a separate message). \r\n You can set a caption for photo in the media library.", "twp-plugin") ?></p>
                                     <br>
                                     <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':'' ?> value="1">
                                     <label for="twp-img-1"><strong><?php echo __("Send photo after text", "twp-plugin"); ?></strong></label>
                                     <br>
-                                    <p class="howto"><?php echo __("This will attach an invisible link of your photo to the beginning of your message. People wouldn't see the link, but Telegram clients will show the photo at the bottom of the message (All in one message)", "twp-plugin") ?></p>
+                                    <p class="howto"><?php echo __("This will attach an invisible link of your photo to the beginning of your message. People wouldn't see the link, but Telegram clients will show the photo at the bottom of the message (All in one message). This will ignore any caption that has been set using media library.", "twp-plugin") ?></p>
                                     <br>
                                     </fieldset>
                             </td>
