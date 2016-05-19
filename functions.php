@@ -644,15 +644,15 @@ function wp_get_attachment( $attachment_id ) {
 
     $attachment = get_post( $attachment_id );
     $attachment_path = basename(get_attached_file($attachment_id));
-    $attachment_md = wp_get_attachment_metadata($attachment_id);
-    error_log(print_r($attachment,1));
+    $filesize = filesize($attachment_path);
+    error_log(print_r($attachment_md,1));
     return array(
     	'ID' => $attachment->ID,
         'caption' => $attachment->post_excerpt,
         'href' => get_permalink( $attachment->ID ),
         'src' => $attachment->guid,
         'title' => $attachment->post_title,
-        'size' => $attachment_md['filesize'],
+        'size' => $filesize,
         'filename' => $attachment_path
     );
 }
