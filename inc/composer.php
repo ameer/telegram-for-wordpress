@@ -308,8 +308,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				?>
 				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-2" <?php echo ($s==2)?'checked=checked':'' ?> value="2">
 				<label for="twp-send-thumb-2"><?php echo __("Send custom image", "twp-plugin"); ?></label>
-				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload the custom photo") ?>" />
-				<input name="button_text" type="hidden" value="<?php echo __("Use this image") ?>" />
+				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload the custom photo", "twp-plugin") ?>" />
+				<input name="button_text" type="hidden" value="<?php echo __("Use this image", "twp-plugin") ?>" />
 				<div class="twp-img-container">
 					<?php if ( $twp_have_img ) : ?>
 						<img src="<?php echo $twp_img_src[0] ?>" alt="" style="max-width:100%;" />
@@ -346,20 +346,23 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				echo __("Select the file that you want to send with this post.", "twp-plugin");
 				?>
 			</p>
-			<input name="frame_title_file" type="hidden" value="<?php echo __("Select or Upload the files") ?>" />
-			<input name="button_text_file" type="hidden" value="<?php echo __("Use this file(s)") ?>" />
+			<input name="frame_title_file" type="hidden" value="<?php echo __("Select or Upload the files", "twp-plugin") ?>" />
+			<input name="button_text_file" type="hidden" value="<?php echo __("Use this file(s)", "twp-plugin") ?>" />
+			<input name="edit_text_file" type="hidden" value="<?php echo __("Edit file", "twp-plugin") ?>" />
 			<div class="twp-file-container">
-				<?php if ( $twp_have_file ) : ?>
-					<div id="twp-file-icon">
-						<a href="<?php echo $twp_file_src ?>" target="_blank"><img src="<?php echo $twp_file_icon ?>" alt="" style="max-width:100%;" /></a>
-					</div>
-					<div id="twp-file-details">
+				<div id="twp-file-icon">
+					<?php if ( $twp_have_file ) : ?>
+						<a href="#" title="<?php echo __("Edit file", "twp-plugin") ?>"><img src="<?php echo $twp_file_icon ?>" alt="" style="max-width:100%;" /></a>
+					<?php endif; ?>
+				</div>
+				<div id="twp-file-details">
+					<?php if ( $twp_have_file ) : ?>
 						<p> Title: <span><?php echo $attachment['filename'] ?></span></p>
 						<p> Caption: <span><?php echo $attachment['caption'] ?></span></p>
 						<p> Size: <span id="filesize-span"><?php echo $attachment['size'] ?></span></p>
 						<input name="filesize" type="hidden" value="<?php echo $attachment['size'] ?>"/>
-					</div>
-				<?php endif; ?>
+					<?php endif; ?>
+				</div>
 			</div>
 			<!-- twp add & remove image links -->
 			<p id="twp-upload-link" class="hide-if-no-js">
