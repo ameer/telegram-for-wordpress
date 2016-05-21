@@ -58,6 +58,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			<select id="patterns-select">
 			<option selected="true" style="display:none;"><?php echo __("Select a tag...", "twp-plugin"); ?></option>
 				<optgroup label="WordPress Tags">
+					<option title='<?php echo __("The ID of this post", "twp-plugin"); ?>'>{ID}</option>
 					<option title='<?php echo __("The title of this post", "twp-plugin"); ?>'>{title}</option>
 					<option title='<?php echo __("The first 55 words of this post", "twp-plugin"); ?>'>{excerpt}</option>
 					<option title='<?php echo __("The whole content of this post", "twp-plugin"); ?>'>{content}</option>
@@ -308,8 +309,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				?>
 				<input type="radio" name="twp_send_thumb" id="twp-send-thumb-2" <?php echo ($s==2)?'checked=checked':'' ?> value="2">
 				<label for="twp-send-thumb-2"><?php echo __("Send custom image", "twp-plugin"); ?></label>
-				<input name="frame_title" type="hidden" value="<?php echo __("Select or Upload the custom photo", "twp-plugin") ?>" />
-				<input name="button_text" type="hidden" value="<?php echo __("Use this image", "twp-plugin") ?>" />
 				<div class="twp-img-container">
 					<?php if ( $twp_have_img ) : ?>
 						<img src="<?php echo $twp_img_src[0] ?>" alt="" style="max-width:100%;" />
@@ -346,21 +345,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				echo __("Select the file that you want to send with this post.", "twp-plugin");
 				?>
 			</p>
-			<input name="frame_title_file" type="hidden" value="<?php echo __("Select or Upload the files", "twp-plugin") ?>" />
-			<input name="button_text_file" type="hidden" value="<?php echo __("Use this file(s)", "twp-plugin") ?>" />
-			<input name="edit_text_file" type="hidden" value="<?php echo __("Edit file", "twp-plugin") ?>" />
 			<div class="twp-file-container">
 				<div id="twp-file-icon">
 					<?php if ( $twp_have_file ) : ?>
-						<a href="#" title="<?php echo __("Edit file", "twp-plugin") ?>"><img src="<?php echo $twp_file_icon ?>" alt="" style="max-width:100%;" /></a>
+						<a href="#" title="<?php echo __("Edit file", "twp-plugin") ?>"><img src="<?php echo $attachment['icon'] ?>" alt="" style="max-width:100%;" /></a>
 					<?php endif; ?>
 				</div>
 				<div id="twp-file-details">
 					<?php if ( $twp_have_file ) : ?>
 						<p> Title: <span><?php echo $attachment['filename'] ?></span></p>
 						<p> Caption: <span><?php echo $attachment['caption'] ?></span></p>
-						<p> Size: <span id="filesize-span"><?php echo $attachment['size'] ?></span></p>
-						<input name="filesize" type="hidden" value="<?php echo $attachment['size'] ?>"/>
+						<p> Size: <span id="filesize-span"><?php echo $attachment['filesizeHumanReadable'] ?></span></p>
 					<?php endif; ?>
 				</div>
 			</div>

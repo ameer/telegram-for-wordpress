@@ -7,7 +7,7 @@
 Plugin Name: Telegram for WordPress
 Description: Receive your WordPress site notifications in your Telegram account and publish your posts to Telegram channel.
 Author: Ameer Mousavi
-Version: 1.6
+Version: 1.6-beta
 Author URI: http://ameer.ir/
 Plugin URI: http://notifcaster.com
 License: GPLv3 or later.

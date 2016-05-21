@@ -89,6 +89,14 @@ function twp_enqueue_script( $hook ) {
 	wp_enqueue_script( 'textrange', TWP_PLUGIN_URL. '/inc/js/textrange.js', array(), '', true );
 	wp_enqueue_script( 'emojione', TWP_PLUGIN_URL. '/inc/js/emojione.js', array(), '', true );
 	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array(), '', true );
+	$translation_array = array(
+		'frame_title' => __("Select or Upload the custom photo", "twp-plugin"),
+		'button_text' => __("Use this image", "twp-plugin"),
+		'file_frame_title' => __("Select or Upload the files", "twp-plugin"),
+		'file_button_text' => __("Use this file(s)", "twp-plugin"),
+		'edit_file' => __("Edit file", "twp-plugin")
+		);
+	wp_localize_script( 'twp-functions', 'twp_js_obj', $translation_array );
 }
 add_action( 'admin_enqueue_scripts', 'twp_enqueue_script' );
 
@@ -280,10 +288,9 @@ function twp_meta_box_callback( $post ) {
 	// See if there's a media id already saved as post meta
 	$twp_file_id = get_post_meta( $ID, '_twp_file_id', true);
 	if(!empty($twp_file_id)){
-		$attachment = wp_get_attachment($twp_file_id);
-		$parsed = parse_url( wp_get_attachment_url($attachment['ID']) );
+		$attachment = wp_prepare_attachment_for_js($twp_file_id);
+		$parsed = $attachment->url;
 		$twp_file_src = dirname( $parsed [ 'path' ] ) . '/' . rawurlencode( basename( $parsed[ 'path' ] ) );
-		$twp_file_icon = get_icon_for_attachment($twp_file_id);
 		$twp_have_file = 1;
 	}
 
@@ -503,8 +510,9 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	}
 	// Preparing message for sending
 	// Wordpress default tags and substitutes array
-	$wp_tags = array("{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
 	$wp_subs = array(
+		$post->ID,
 		$post->post_title,
 		// Change the below number to change the number of words in excerpt
 		wp_trim_words($post->post_content, 55, "..."),
@@ -644,17 +652,8 @@ function wp_get_attachment( $attachment_id ) {
 
     $attachment = get_post( $attachment_id );
     $attachment_path = basename(get_attached_file($attachment_id));
-    $filesize = filesize($attachment_path);
-    error_log(print_r($attachment_md,1));
-    return array(
-    	'ID' => $attachment->ID,
-        'caption' => $attachment->post_excerpt,
-        'href' => get_permalink( $attachment->ID ),
-        'src' => $attachment->guid,
-        'title' => $attachment->post_title,
-        'size' => $filesize,
-        'filename' => $attachment_path
-    );
+    error_log(print_r(wp_prepare_attachment_for_js($attachment_id),1));
+    return true;
 }
 
 function twp_ajax_test_callback() {

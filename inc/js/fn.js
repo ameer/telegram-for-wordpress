@@ -1,19 +1,5 @@
 jQuery(document).ready(function ($) {
-    /**
-     * Converts Bytes to Human readable
-     * @param  {int}
-     * @return {string}
-     */
-    function bytesToSize(bytes) {
-       var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-       if (bytes == 0) return '0 Byte';
-       var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-       return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-   };
-   var filesize = $("input[name=filesize]").val();
-   if (filesize > 0){
-    $("#filesize-span").html(bytesToSize(filesize));
-   }
+    
     /*
      * Select and upload custom image using WordPress Media dialog
      * from https://codex.wordpress.org/Javascript_Reference/wp.media
@@ -24,9 +10,7 @@ jQuery(document).ready(function ($) {
         addImgLink = metaBox.find('.upload-custom-img'),
         delImgLink = metaBox.find('.delete-custom-img'),
         imgContainer = metaBox.find('.twp-img-container'),
-        imgIdInput = metaBox.find('.twp-img-id'),
-        frame_title = metaBox.find('input[name=frame_title]').val(),
-        button_text = metaBox.find('input[name=button_text]').val();
+        imgIdInput = metaBox.find('.twp-img-id');
     // ADD IMAGE LINK
     addImgLink.on('click', function (event) {
         event.preventDefault();
@@ -37,9 +21,9 @@ jQuery(document).ready(function ($) {
         }
         // Create a new media frame
         frame = wp.media({
-            title: frame_title,
+            title: twp_js_obj.frame_title,
             button: {
-                text: button_text
+                text: twp_js_obj.button_text
             },
             library: {
                 type: 'image'
@@ -92,92 +76,55 @@ jQuery(document).ready(function ($) {
     fileContainer = metaBox.find('.twp-file-container'),
     fileIcon =  metaBox.find('#twp-file-icon'),
     fileDetails =  metaBox.find('#twp-file-details'),
-    fileIdInput = metaBox.find('.twp-file-id'),
-    frame_title_file = metaBox.find('input[name=frame_title_file]').val(),
-    button_text_file = metaBox.find('input[name=button_text_file]').val();
-        // Define file_frame
+    fileIdInput = metaBox.find('.twp-file-id');
+    if (wp.media != undefined) {
         file_frame = wp.media({
-            title: frame_title_file,
+            title: twp_js_obj.file_frame_title,
             button: {
-                text: button_text_file
+                text: twp_js_obj.file_button_text
             },
-            library: {
-            },
-            multiple: false // Set to true to allow multiple files to be selected
+            library: {},
+            multiple: false
         });
-
-        // When a file is selected in the media frame...
-        file_frame.on('select', function () {
-            // Get media attachment details from the frame state
-            var attachment = file_frame.state().get('selection').first().toJSON();
-            // Send the attachment URL to our custom file input field.
-            var a = attachment;
-            if (a.filesizeInBytes > 25000000){
-                var warning = '<p style="color:#FFA700">Warning! The file size is larger than <strong> 25 MB </strong>. It may cause unexpected errors. </p>';
-            } else if(a.filesizeInBytes > 50000000){
-                var warning = '<p style="color:#FF0000">Error! The file size is larger than <strong> 50 MB </strong>. Telegram Bots can currently send files of up to 50 MB. Please select a smaller file.</p>';
-            } else {
-                var warning = '';
-            }
-
-            // Clear out the preview file
-            fileIcon.html('');
-            fileDetails.html('');
-            
-            fileIcon.append('<a href="#" title="'+a.filename+'"><img src="' + a.icon + '" alt="'+a.filename+'" style="max-width:100%;"/></a>');
-            fileDetails.append('<p>Title: <span>'+a.filename+'</span></p><p>Caption: <span>'+a.caption+'</span></p><p>Size: <span>'+a.filesizeHumanReadable+'</span></p>'+warning);
-            // Send the attachment id to our hidden input
-            fileIdInput.val(attachment.id);
-
-            // Hide the add file link
-            addFileLink.addClass('hidden');
-
-            // Unhide the remove file link
-            delFileLink.removeClass('hidden');
-
+        file_frame.on("select", function() {
+            var a = file_frame.state().get("selection").first().toJSON();
+            console.log(a)
+            var b = a;
+            if (b.filesizeInBytes > 25e6) var c = '<p style="color:#FFA700">Warning! The file size is larger than <strong> 25 MB </strong>. It may cause unexpected errors. </p>'; else if (b.filesizeInBytes > 5e7) var c = '<p style="color:#FF0000">Error! The file size is larger than <strong> 50 MB </strong>. Telegram Bots can currently send files of up to 50 MB. Please select a smaller file.</p>'; else var c = "";
+            fileIcon.html("");
+            fileDetails.html("");
+            fileIcon.append('<a href="#" title="' + b.filename + '"><img src="' + b.icon + '" alt="' + b.filename + '" style="max-width:100%;"/></a>');
+            fileDetails.append("<p>Title: <span>" + b.filename + "</span></p><p>Caption: <span>" + b.caption + "</span></p><p>Size: <span>" + b.filesizeHumanReadable + "</span></p>" + c);
+            fileIdInput.val(a.id);
+            addFileLink.addClass("hidden");
+            delFileLink.removeClass("hidden");
         });
-        file_frame.on('open',function() {
-            var selection = file_frame.state().get('selection');
-            id = jQuery('input[name=twp_file_id]').val();
+        file_frame.on("open", function() {
+            var a = file_frame.state().get("selection");
+            id = jQuery("input[name=twp_file_id]").val();
             if (id) {
                 attachment = wp.media.attachment(id);
                 attachment.fetch();
-                selection.add( attachment ? [ attachment ] : [] );
+                a.add(attachment ? [ attachment ] : []);
             }
         });
-
-        fileIcon.on('click', function(event){
-            event.preventDefault();
-            console.log("Hastam")
-            // Open the modal on click
+        fileIcon.on("click", function(a) {
+            a.preventDefault();
             file_frame.open();
-        })
-    // ADD File LINK
-    addFileLink.on('click', function (event) {
-        event.preventDefault();
-        // Open the modal on click
-        file_frame.open();
-    });
-    
-    // DELETE FILE LINK
-    delFileLink.on('click', function (event) {
-
-        event.preventDefault();
-
-        // Clear out the preview file
-        fileIcon.html('');
-        fileDetails.html('');
-
-        // Un-hide the add file link
-        addFileLink.removeClass('hidden');
-
-        // Hide the delete file link
-        delFileLink.addClass('hidden');
-
-        // Delete the file id from the hidden input
-        fileIdInput.val('');
-
-    });
+        });
+        addFileLink.on("click", function(a) {
+            a.preventDefault();
+            file_frame.open();
+        });
+        delFileLink.on("click", function(a) {
+            a.preventDefault();
+            fileIcon.html("");
+            fileDetails.html("");
+            addFileLink.removeClass("hidden");
+            delFileLink.addClass("hidden");
+            fileIdInput.val("");
+        });
+    }
     $("input[name=twp_send_thumb]").change(function () {
         if ($(this).val() == 2) {
             $("#twp-upload-link").removeClass("hidden");
@@ -194,6 +141,17 @@ jQuery(document).ready(function ($) {
 
             // Delete the image id from the hidden input
             imgIdInput.val('');
+        }
+    })
+
+    $("input[name=twp_markdown]").change(function () {
+        if ($(this).val() == 0) {
+            $("input:radio[name=twp_img_position][id=twp-img-0]").prop('checked', true);
+            $("input:radio[name=twp_img_position][id=twp-img-1]").prop('disabled', true);
+            $("#twp-img-1-error").removeClass('hidden');
+        } else {
+            $("input:radio[name=twp_img_position][id=twp-img-1]").prop('disabled', false);
+            $("#twp-img-1-error").addClass('hidden');
         }
     })
 

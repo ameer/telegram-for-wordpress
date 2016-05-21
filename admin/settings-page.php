@@ -55,8 +55,13 @@ global $tdata;
 
 ?>
 <div id="twp-wrap" class="wrap">
-    <h1><?php  echo __("Telegram for WordPress", "twp-plugin") ?></h1>
+    <h1><?php  echo __("Telegram for WordPress", "twp-plugin") ?><sup>Beta Version</sup></h1>
     <p> <?php printf(__("Join our channel in Telegram: %s", "twp-plugin"), "<a href='https://telegram.me/notifcaster' >@notifcaster</a>"); ?> </p>
+    <?php if( isset($_GET['settings-updated']) ) { ?>
+    <div id="message" class="updated">
+        <p><strong><?php _e('Settings saved.') ?></strong></p>
+    </div>
+    <?php } ?>
     <hr>
     <form method="post" action="options.php" id="twp_form">
     <div id="floating_save_button" title="<?php _e('Save Changes') ?>">&#x1f4be;</div>
@@ -185,7 +190,7 @@ global $tdata;
                                 <?php require_once(TWP_PLUGIN_DIR."/inc/composer.php"); ?>
 
                         <tr>
-                            <th scope="row"><h3><?php echo __("Use Markdown in messages", "twp-plugin") ?></h3></th>
+                            <th scope="row"><h3><?php echo __("Formatting messages", "twp-plugin") ?></h3></th>
                             <td>
                             <p class="howto"><?php echo __("Telegram supports basic markdown and some HTML tags (bold, italic, inline links). By checking one of the following options, your messages will be compatible with Telegram format.", "twp-plugin") ?></p><br>
                             <fieldset>
@@ -221,9 +226,10 @@ global $tdata;
                                     <br>
                                     <p class="howto"><?php echo __("This will send the photo without caption and send the text after it. (Each one in a separate message). \r\n You can set a caption for photo in the media library.", "twp-plugin") ?></p>
                                     <br>
-                                    <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':'' ?> value="1">
+                                    <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':''; echo ($m==0)?'disabled=disabled':'' ?> value="1">
                                     <label for="twp-img-1"><strong><?php echo __("Send photo after text", "twp-plugin"); ?></strong></label>
                                     <br>
+                                    <span id="twp-img-1-error" class="notice notice-error <?php if($m!=0){echo 'hidden';}?>"><?php echo __("Can't use this option while formatting is disabled", "twp-plugin")?></span>
                                     <p class="howto"><?php echo __("This will attach an invisible link of your photo to the beginning of your message. People wouldn't see the link, but Telegram clients will show the photo at the bottom of the message (All in one message). This will ignore any caption that has been set using media library.", "twp-plugin") ?></p>
                                     <br>
                                     </fieldset>
