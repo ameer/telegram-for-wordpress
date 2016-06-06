@@ -4,7 +4,7 @@
  * @version 1.6
  */
 /*
-Plugin Name: Telegram for WordPress
+Plugin Name: Telegram for WordPress (Beta)
 Description: Receive your WordPress site notifications in your Telegram account and publish your posts to Telegram channel.
 Author: Ameer Mousavi
 Version: 1.6-beta

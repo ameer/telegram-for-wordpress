@@ -35,6 +35,7 @@ jQuery(document).ready(function ($) {
 
             // Get media attachment details from the frame state
             var attachment = frame.state().get('selection').first().toJSON();
+
             // Send the attachment URL to our custom image input field.
             imgContainer.append('<img src="' + attachment.sizes.thumbnail.url + '" alt="" style="max-width:100%;"/>');
 
@@ -90,6 +91,7 @@ jQuery(document).ready(function ($) {
             var a = file_frame.state().get("selection").first().toJSON();
             console.log(a)
             var b = a;
+            console.log(b);
             if (b.filesizeInBytes > 25e6) var c = '<p style="color:#FFA700">Warning! The file size is larger than <strong> 25 MB </strong>. It may cause unexpected errors. </p>'; else if (b.filesizeInBytes > 5e7) var c = '<p style="color:#FF0000">Error! The file size is larger than <strong> 50 MB </strong>. Telegram Bots can currently send files of up to 50 MB. Please select a smaller file.</p>'; else var c = "";
             fileIcon.html("");
             fileDetails.html("");

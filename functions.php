@@ -565,9 +565,9 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 			} else {
 				$cf_value = str_replace(" ", "_", $cf_value);
 			}
+		array_push($cf_value_array, "#".$cf_value);
 		}
 		array_push($cf_tags_array, $matches[0][$i]);
-		array_push($cf_value_array, "#".$cf_value);
 		}
 		$msg = str_replace($cf_tags_array, $cf_value_array, $msg);
 	}
@@ -578,16 +578,23 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	$nt->_telegram($token, $parse_mode, $web_preview);
 	if ($method == 'photo' && $photo != false ) {
 		if($tdata['twp_img_position']->option_value == 1){
-			$msg = "<a href=\"".wp_get_attachment_url($img_id)."\">‌</a>".$msg;
+			$msg = '<a href="'.wp_get_attachment_url($img_id).'">‌</a>'.$msg;
 			$nt->web_preview = 0;
 			$r = $nt->channel_text($ch_name, $msg);
 		} else {
-			$attachment = wp_get_attachment_metadata($img_id);
-			$file_caption = $attachment['image_meta']['caption'];
-			$file_format = 'image';
-			$file = $photo;
-			$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
-			$r = $nt->channel_text($ch_name, $msg);
+			$attachment = wp_prepare_attachment_for_js($img_id);
+			if (mb_strlen($msg) < 200){
+				$file_caption = $msg;
+				$file_format = 'image';
+				$file = $photo;
+				$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
+			} else {
+				$file_caption = $attachment['caption'];
+				$file_format = 'image';
+				$file = $photo;
+				$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
+				$r = $nt->channel_text($ch_name, $msg);
+			}
 		}
 	} else {
 		$r = $nt->channel_text($ch_name, $msg);
@@ -603,7 +610,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	if ($r["ok"] == true){
 		$sending_result = 1;
 	} else {
-		$sending_result = $r["description"];  
+		$sending_result = $r["description"]."|| ".$msg;  
 	}
 	$twp_log = $wpdb->get_row( "SELECT * FROM $table_name WHERE post_id = $ID");
 	if($twp_log == null){
@@ -660,13 +667,14 @@ function twp_ajax_test_callback() {
 	$nt = new Notifcaster_Class();
 	switch ($_POST['subject']) {
 		case 'm':
-			//This will send a test message.
+		//Send a test message using Notifcaster.
 			$nt->Notifcaster($_POST['api_token']);
 			$result = $nt->notify($_POST['msg']);
 			echo json_encode($result);
 			wp_die();
 			break;
 		case 'c':
+		//Send a test message to channel
 			$nt->_telegram($_POST['bot_token'], $_POST['markdown'], $_POST['web_preview']);
 			$msg = str_replace("\\", "", $_POST['msg']);
 			$result = $nt->channel_text($_POST['channel_username'], $msg );
@@ -674,8 +682,16 @@ function twp_ajax_test_callback() {
 			wp_die();
 			break;
 		case 'b':
+		//Get bot info
 			$nt->_telegram($_POST['bot_token']);
 			$result = $nt->get_bot();
+			echo json_encode($result);
+			wp_die();
+			break;
+		case 'gm':
+		//Get the number of members in a chat.
+			$nt->_telegram($_POST['bot_token']);
+			$result = $nt->get_members_count($_POST['channel_username']);
 			echo json_encode($result);
 			wp_die();
 			break;

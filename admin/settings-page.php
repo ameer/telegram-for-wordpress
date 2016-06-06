@@ -160,9 +160,10 @@ global $tdata;
                         <tr>
                             <th scope="row"><h3><?php echo __("Channel Username", "twp-plugin") ?></h3></th>
                             <td>
-                                <input id="twp_channel_username" type="text" name="twp_channel_username" size="32" value="<?php echo $tdata['twp_channel_username']->option_value; ?>" dir="auto" />
+                                <input id="twp_channel_username" type="text" name="twp_channel_username" size="32" value="<?php echo $tdata['twp_channel_username']->option_value; ?>" onblur="getMembersCount()" dir="auto" />
                                 <button id="channelbtn" type="button" class="button-secondary" onclick="channelTest();"> <?php  echo __("Send now!", "twp-plugin") ?></button>
-                                <p class="howto"><?php echo __("Don't forget <code>@</code> at the beginning", "twp-plugin") ?></p>                
+                                <p><span id="refresh_count" style="margin: auto 4px;" title='<?php echo __("Click here to refresh members count", "twp-plugin") ?>' onclick="getMembersCount()">&#128260;</span><?php  echo __("Members Count:", "twp-plugin") ?> <span style="color:royalblue; font-weight: bolder" id="members_count"></span></p>
+                                <p class="howto"><?php echo __("Don't forget <code>@</code> at the beginning", "twp-plugin") ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -224,7 +225,7 @@ global $tdata;
                                 <input type="radio" name="twp_img_position" id="twp-img-0" <?php echo ($ipos==0)?'checked=checked':'' ?> value="0">
                                     <label for="twp-img-0"><strong><?php echo __("Send photo before text", "twp-plugin"); ?></strong></label>
                                     <br>
-                                    <p class="howto"><?php echo __("This will send the photo without caption and send the text after it. (Each one in a separate message). \r\n You can set a caption for photo in the media library.", "twp-plugin") ?></p>
+                                    <p class="howto"><?php echo __("This will send the photo with the pattern content as the caption. If pattern content exceeds 200 characters limit, then this will send the photo with the caption specified in WordPress media gallery and the pattern content afterward(Each one in a separate message). \r\n You can set a caption for photo in the media library.", "twp-plugin") ?></p>
                                     <br>
                                     <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':''; echo ($m==0)?'disabled=disabled':'' ?> value="1">
                                     <label for="twp-img-1"><strong><?php echo __("Send photo after text", "twp-plugin"); ?></strong></label>
@@ -314,6 +315,24 @@ function botTest() {
         }, 'json'); 
     } else {
         alert(' <?php  echo __("bot token field is empty", "twp-plugin") ?>') 
+    }
+}
+function getMembersCount() {
+    var channel_username = jQuery('input[name=twp_channel_username]').val();
+    var bot_token = jQuery('input[name=twp_bot_token]').val();
+    if(channel_username !== '' && bot_token !== '') {
+        jQuery.post(ajaxurl, 
+        { 
+            bot_token: bot_token, channel_username: channel_username, subject: 'gm', action:'twp_ajax_test'
+        }, function( data ) {
+            if (data != undefined && data.ok != false){
+                jQuery('#members_count').text(data.result);
+            }else {
+                jQuery('#members_count').text(data.description);
+            }
+        }, 'json'); 
+    } else {
+        return;
     }
 }
 </script>

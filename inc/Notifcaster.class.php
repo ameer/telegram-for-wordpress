@@ -105,6 +105,24 @@ class Notifcaster_Class
         return $response;
     }
     /**
+     *  Get the number of members in a chat.
+     *  @param  string $chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+     *
+     *  @return JSON
+     */
+    public function get_members_count($chat_id)
+    {
+        if($chat_id == null || $chat_id == ''){
+            return;
+        }
+        $params = array(
+            'chat_id' => $chat_id
+            );
+        $this->api_method = "/getChatMembersCount";
+        $response = $this->make_request($params);
+        return $response;
+    }
+    /**
      * Send text message to channel
      *
      * @param string $chat_id
@@ -191,8 +209,8 @@ class Notifcaster_Class
         if (!empty($params)) {
             if (isset($params['caption'])) {
                 if (mb_strlen($params['caption']) > 200){
-                    $splitted_text = $this->str_split_unicode($params['caption'], 4096);
-                    $params['caption'] = '';
+                    $params['caption'] = $this->str_split_unicode($params['caption'], 200);
+                    $params['caption'] = $params['caption'][0];
                 }
             }
             if (isset($params['text'])) {
@@ -389,6 +407,7 @@ class Notifcaster_Class
      * @return string
      */
     public function prepare_text($str){
+            $str = stripslashes($str);
         if (strtolower($this->parse_mode) == "markdown") {
             $str = $this->markdown($str, 1, 1, 1);
         } elseif (strtolower($this->parse_mode) == "html") {
