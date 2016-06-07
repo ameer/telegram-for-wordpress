@@ -221,28 +221,6 @@ function twp_add_meta_box() {
 }
 add_action( 'add_meta_boxes', 'twp_add_meta_box' );
 
-/*
-* Gets the excerpt of a specific post ID or object
-* @param - $post - object - the object of the post to get the excerpt of
-* @param - $length - int - the length of the excerpt in words
-* @param - $tags - string - the allowed HTML tags. These will not be stripped out
-* @param - $extra - string - text to append to the end of the excerpt
-* @author https://pippinsplugins.com
-*/
-function excerpt_by_id($post, $length = 55, $tags = '<a><em><strong>', $extra = '') {
- 
-	if(has_excerpt($post->ID)) {
-		$the_excerpt = $post->post_excerpt;
-		return apply_filters('the_content', $the_excerpt);
-	} else {
-		$the_excerpt = $post->post_content;
-	}
-	$the_excerpt = mb_split('/\w+/u', $the_excerpt, $length * 2+1);
-	$excerpt_waste = array_pop($the_excerpt);
-	$the_excerpt = implode($the_excerpt);
- 
-	return apply_filters('the_content', $the_excerpt);
-}
 /**
 * Prints the box content.
 * 
@@ -489,6 +467,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	$ch_name = $tdata['twp_channel_username']->option_value;
 	$token = $tdata['twp_bot_token']->option_value;
 	$web_preview = $tdata['twp_web_preview']->option_value;
+	$excerpt_length = intval($tdata['twp_excerpt_length']->option_value);
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
@@ -514,8 +493,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	$wp_subs = array(
 		$post->ID,
 		$post->post_title,
-		// Change the below number to change the number of words in excerpt
-		wp_trim_words($post->post_content, 55, "..."),
+		wp_trim_words($post->post_content, $excerpt_length, "..."),
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),
