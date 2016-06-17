@@ -234,7 +234,7 @@
                                         <input type="radio" name="twp_img_position" id="twp-img-0" <?php echo ($ipos==0)?'checked=checked':'' ?> value="0">
                                         <label for="twp-img-0"><strong><?php echo __("Send photo before text", "twp-plugin"); ?></strong></label>
                                         <br>
-                                        <p class="howto"><?php echo __("This will send the photo with the pattern content as the caption. If pattern content exceeds 200 characters limit, then this will send the photo with the caption specified in WordPress media library and the pattern content afterward (Each one in a separate message). \r\n You can set a caption for the photo in the media library.", "twp-plugin") ?></p>
+                                        <p class="howto"><?php echo __("This will send the photo with the pattern content as the caption. If pattern content exceeds 200 characters limit, then this will send the photo with the caption specified in WordPress media library and the pattern content afterward (Each one in a separate message). <br> You can set a caption for the photo in the media library.", "twp-plugin") ?></p>
                                         <br>
                                         <input type="radio" name="twp_img_position" id="twp-img-1" <?php echo ($ipos==1)?'checked=checked':''; echo ($m==0)?'disabled=disabled':'' ?> value="1">
                                         <label for="twp-img-1"><strong><?php echo __("Send photo after text", "twp-plugin"); ?></strong></label>
@@ -259,7 +259,7 @@
                                 <td style="text-align: center;">
                                     <h3><?php echo __("From anywhere", "twp-plugin") ?> &#127758;</h3>
                                     <p>
-                                        <?php echo __("From anywhere on this planet, you can make me happy 😍 <br> Just click on the below button:", "twp-plugin") ?><br>
+                                        <?php echo __("From anywhere on this planet, you can make me happy &#128525; <br> Just click on the below button:", "twp-plugin") ?><br>
                                     </p>
                                     <p>
                                         <a href="https://flattr.com/profile/Ameer_Mousavi" target="_blank" style="border-bottom: 0 !important; margin: 5px;"><img src="//button.flattr.com/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" style="vertical-align: middle; ">
@@ -366,7 +366,7 @@
                 bot_token: bot_token, channel_username: channel_username, subject: 'gm', action:'twp_ajax_test'
             }, function( data ) {
                 if (data != undefined && data.ok != false){
-                    jQuery('#members_count').text(data.result);
+                    jQuery('#members_count').text(data.result+ " " +"<?php echo __("members", "twp-plugin"); ?>");
                 }else {
                     jQuery('#members_count').text(data.description);
                 }
