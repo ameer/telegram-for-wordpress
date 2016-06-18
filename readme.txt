@@ -2,12 +2,12 @@
 Contributors: amir-mousavi
 Tags: telegram,notifications,email,admin,plugin,channel
 Requires at least: 3.5
-Tested up to: 4.4
-Stable tag: 1.5.1
+Tested up to: 4.5.2
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
-This plugin based on Notifcaster service by Ameer Mousavi and allows WordPress site to send notifications to Telegram. You can also send your posts/products to Telegram Channel.
+Allows WordPress site to send notifications to Telegram. You can also send files/posts/products to Telegram Channel.
 
 == Description ==
 Hi,
@@ -39,6 +39,18 @@ Here is a  <a href="http://ameer.ir/telegram-for-wp" target="_blank">Persian Tut
 3. Metabox in post editor allows you to override global settings.
 
 == Changelog ==
+
+= 1.6 =
+* Fixed request timed-out when publishing a new post.
+* Added support for pages/products and any other post type.
+* Added feature for sending photo and text; all in one message.
+* Added feature for sending almost any file (limited to 50MB).
+* Fix the Internal Server Error in WooCommerce and Gravity Forms.
+* Optimized codes for faster and safer operation.
+* Better support for scheduled posts/products.
+* Added custom field support. Use following format for any custom field: %custom field name% or %#custom field name% for converting them to hashtags.
+* Added feature for controlling excerpt length.
+* Support supergroups in notifications.
 
 = 1.5 =
 * Using patterns for sending messages.
