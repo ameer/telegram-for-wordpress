@@ -506,7 +506,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		strip_shortcodes($post->post_content),
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),
-		get_permalink($ID),
+		urldecode(get_permalink($ID)),
 		$tags,
 		$categories
 		);
