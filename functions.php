@@ -467,7 +467,9 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	$ch_name = $tdata['twp_channel_username']->option_value;
 	$token = $tdata['twp_bot_token']->option_value;
 	$web_preview = $tdata['twp_web_preview']->option_value;
-	$excerpt_length = intval($tdata['twp_excerpt_length']->option_value);
+  $excerpt_length = intval($tdata['twp_excerpt_length']->option_value);
+	$excerpt_status = intval($tdata["twp_excerpt_status"]->option_value);
+
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
@@ -490,10 +492,17 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	// Preparing message for sending
 	// Wordpress default tags and substitutes array
 	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
-	$wp_subs = array(
+	
+  if($excerpt_status) {
+    $post_excerpt = $post->post_excerpt;
+  } else {
+    $post_excerpt = wp_trim_words($post->post_content, $excerpt_length, "...");
+  }
+
+  $wp_subs = array(
 		$post->ID,
 		$post->post_title,
-		wp_trim_words($post->post_content, $excerpt_length, "..."),
+		$post_excerpt,
 		$post->post_content,
 		get_the_author_meta("display_name",$post->post_author),
 		wp_get_shortlink($ID),

@@ -44,6 +44,10 @@
             .twp_label {display: none;}
             .tab-links img {width: 32px !important;height: auto !important;}
         }
+        .disabled-twp-excerpt-length {
+            cursor: not-allowed!important;
+            background-color: #f1f1f1!important;
+        }
     </style>
     <?php if(is_rtl()){
         echo '<style type="text/css"> 
@@ -211,11 +215,24 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th scope="row"><h3><?php echo __("Excerpt length", "twp-plugin") ?></h3></th>
+                                <th scope="row"><h3><?php echo __("Excerpt setting", "twp-plugin") ?></h3></th>
                                 <td>
                                     <p class="howto"><?php echo __("By default, the plugin replaces {excerpt} tag with 55 first words of your post content. You can change the number of words here:", "twp-plugin") ?></p><br>
-                                    <input type="text" onkeypress="return event.charCode >= 48 && event.charCode <= 57" id="twp_excerpt_length" name="twp_excerpt_length" value="<?php echo $excerpt_length ?>"/>
+                                    <?php
+                                    $disabled = intval($tdata["twp_excerpt_status"]->option_value) == true?'disabled':'';
+                                    $disabled_class = intval($tdata["twp_excerpt_status"]->option_value) == true?'disabled-twp-excerpt-length':'';
+                                    ?>
+                                    <input type="text" class="<?php echo $disabled_class;?>" <?php echo $disabled;?> onkeypress="return event.charCode >= 48 && event.charCode <= 57" id="twp_excerpt_length" name="twp_excerpt_length" value="<?php echo $excerpt_length ?>"/>
                                     <label for="twp_excerpt_length"><?php echo __('words in excerpt', 'twp-plugin' ) ?> </label>
+                                    <br>
+                                    <br>
+                                    <p class="notice notice-info "><?php echo __('This option let you to use wordpress excerpt field, instead of using part of post content.', 'twp-plugin.' ) ?></p>
+                                    <input type="checkbox" value="1" name="twp_excerpt_status" id="twp_excerpt_status"
+                                    <?php
+                                    checked('1', $tdata["twp_excerpt_status"]->option_value);
+                                    ?>
+                                    ></input>
+                                     <label for="twp_excerpt_status"><?php echo __('Use wordpress excerpt field', 'twp-plugin' ) ?> </label>
                                 </td>
                             </tr>
                             <tr>
@@ -375,4 +392,14 @@
             return;
         }
     }
+
+    jQuery('#twp_excerpt_status').on('click', function() {
+        var twp_excerpt_status = jQuery(this).prop('checked')
+        ;
+        if(twp_excerpt_status) {
+            jQuery('#twp_excerpt_length').addClass('disabled-twp-excerpt-length').attr('disabled', 'disabled');
+        } else {
+            jQuery('#twp_excerpt_length').removeClass('disabled-twp-excerpt-length').attr('disabled', '');
+        }
+    });
     </script>
