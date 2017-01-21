@@ -484,7 +484,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		$categories_array = wp_get_post_categories($ID, array( 'fields' => 'names' ));	
 	}
 	foreach ($tags_array as $tag) {
-		$tags .= " #".$tag;
+		$tags .= " #".str_replace(" ", "_", $tag);
 	}
 	foreach ($categories_array as $cat) {
 		$categories .= "|".$cat;
