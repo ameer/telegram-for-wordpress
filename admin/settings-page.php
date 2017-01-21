@@ -226,7 +226,7 @@
                                     <label for="twp_excerpt_length"><?php echo __('words in excerpt', 'twp-plugin' ) ?> </label>
                                     <br>
                                     <br>
-                                    <p class="notice notice-info "><?php echo __('This option let you to use wordpress excerpt field, instead of using part of post content.', 'twp-plugin.' ) ?></p>
+                                    <p class="notice notice-info "><?php echo __('This option let you to use wordpress excerpt field, instead of using part of post content.', 'twp-plugin' ) ?></p>
                                     <input type="checkbox" value="1" name="twp_excerpt_status" id="twp_excerpt_status"
                                     <?php
                                     checked('1', $tdata["twp_excerpt_status"]->option_value);
@@ -397,9 +397,9 @@
         var twp_excerpt_status = jQuery(this).prop('checked')
         ;
         if(twp_excerpt_status) {
-            jQuery('#twp_excerpt_length').addClass('disabled-twp-excerpt-length').attr('disabled', 'disabled');
+            jQuery('#twp_excerpt_length').addClass('disabled-twp-excerpt-length').attr('disabled', true);
         } else {
-            jQuery('#twp_excerpt_length').removeClass('disabled-twp-excerpt-length').attr('disabled', '');
+            jQuery('#twp_excerpt_length').removeClass('disabled-twp-excerpt-length').attr('disabled', false);
         }
     });
     </script>
