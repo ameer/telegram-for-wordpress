@@ -334,7 +334,7 @@
 			alert(' <?php  echo __("bot_token/chat_id field is empty", "twp-plugin") ?>') 
 		}
 	};
-	function channelTest() {
+	function channelTest() { 
 		var bot_token = jQuery('input[name=twp_bot_token]').val(), channel_username = jQuery('input[name=twp_channel_username]').val(), pattern = jQuery("#twp_channel_pattern").val();
 		if(bot_token != '' && channel_username != '' ) {
 			var c = confirm('<?php echo __("This will send a test message to your channel. Do you want to continue?", "twp-plugin") ?>');
