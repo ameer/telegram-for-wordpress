@@ -1,0 +1,18 @@
+.s-title, .s-subtitle {
+    color: #414857;
+    line-height: 1.8rem;
+    margin-bottom: 0;
+    padding-top: 1rem;
+}
+a:focus {
+    box-shadow: 0 0 0 0 rgba(87,85,217,.2);
+}
+.twp-tab-content {
+	padding: 15px;
+    border-radius: 0 3px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.25);
+    background: #fff;
+}
+.tab, li.tab-item {
+    margin-bottom: 0 !important;
+}
