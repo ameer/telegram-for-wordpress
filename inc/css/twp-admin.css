@@ -3,6 +3,7 @@
     line-height: 1.8rem;
     margin-bottom: 0;
     padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 a:focus {
     box-shadow: 0 0 0 0 rgba(87,85,217,.2);

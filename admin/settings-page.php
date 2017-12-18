@@ -101,30 +101,45 @@
 								</div>
 							</div>
 						</div>
-						<h3 class="s-title">How to Notify?</h3>
-						<ul>
-							<li>If you want to send notifications only to your account:
-							<ol>
-								<li><?php printf(__("Send %s command to this bot : %s", "twp-plugin"),"<code>/start</code>","<a href='https://t.me/userinfobot'>@UserInfoBot</a>") ?>
-								</li>
-								<li><?php printf(__("The bot will give your %s to you. Copy/Paste your %s in the below field.", "twp-plugin"), "<code>chat_id</code>", "<code>chat_id</code>") ?></li>
-								<li><?php echo __("Send a test message.", "twp-plugin") ?></li>
-							</ol>
-							</li>
-							<li>If you want to send notifications to a group (includes you and other site admins):
-							<ol>
-								<li><?php echo __("Add your bot to your group.", "twp-plugin") ?>
-								</li>
-								<li><?php printf(__("Add %s to your group.", "twp-plugin"),"<a href='https://t.me/groupinfobot'>@GroupInfoBot</a>") ?>
-								</li>
-								<li><?php printf(__("The bot will give you the %s of the group. Copy/Paste group %s in the below field.", "twp-plugin"), "<code>chat_id</code>", "<code>chat_id</code>") ?></li>
-									<dd class="howto">
-										<?php echo __("Note: @GroupInfoBot will leave your group after showing the chat_id.", "twp-plugin") ?>
-									</dd>
-								<li><?php echo __("Send a test message.", "twp-plugin") ?></li>
-							</ol>
-							</li>
-						</ul>
+						<div class="divider text-center" data-content=""></div>
+						<h3 class="s-title text-center"><?php echo __("Send notifications to:", "twp-plugin") ?></h3>
+						<div class="columns">
+							<div class="column">
+								<div class="col-6 col-mx-auto">
+									<div class="card text-center">
+										<figure class="avatar avatar-xl centered mt-2">
+										  &#x1f464;
+										</figure>
+									  <div class="card-header">
+										<div class="card-title h5" id="bot-name">Bot Name</div>
+										<div class="card-subtitle text-gray" id="bot-username">Bot user name</div>
+									  </div>
+									</div>
+								</div>
+								<?php echo __("If you want to send notifications only to your account:", "twp-plugin") ?>
+								<ol>
+									<li><?php printf(__("Send %s command to this bot : %s", "twp-plugin"),"<code>/start</code>","<a href='https://t.me/userinfobot'>@UserInfoBot</a>") ?>
+									</li>
+									<li><?php printf(__("The bot will give your %s to you. Copy/Paste your %s in the below field.", "twp-plugin"), "<code>chat_id</code>", "<code>chat_id</code>") ?></li>
+									<li><?php echo __("Send a test message.", "twp-plugin") ?></li>
+								</ol>
+							</div>
+							<div class="divider-vert" data-content="OR"></div>
+							<div class="column">
+								<?php echo __("If you want to send notifications to a group (includes you and other site admins):", "twp-plugin") ?>
+								<ol>
+									<li><?php echo __("Add your bot to your group.", "twp-plugin") ?>
+									</li>
+									<li><?php printf(__("Add %s to your group.", "twp-plugin"),"<a href='https://t.me/groupinfobot'>@GroupInfoBot</a>") ?>
+									</li>
+									<li><?php printf(__("The bot will give you the %s of the group. Copy/Paste group %s in the below field.", "twp-plugin"), "<code>chat_id</code>", "<code>chat_id</code>") ?></li>
+										<dd class="howto">
+											<?php echo __("Note: @GroupInfoBot will leave your group after showing the chat_id.", "twp-plugin") ?>
+										</dd>
+									<li><?php echo __("Send a test message.", "twp-plugin") ?></li>
+								</ol>
+							</div>
+						</div>
 						<div class="columns">
 							<div class="column col-sm-6">
 								<div class="input-group">
@@ -325,8 +340,21 @@
 			{ 
 				chat_id: chat_id, text: text , bot_token: bot_token, subject: 'm', action:'twp_ajax_test'
 			}, function( data ) {
-				alert(data.ok);
-				jQuery('#user_info').text(data.result.chat.first_name + " " + data.result.chat.last_name);
+
+				if (data != undefined && data.ok != false){
+					var res = data.result;
+					if(res.chat.type == "private"){
+						jQuery('#user_info').text(res.chat.first_name + " " + res.chat.last_name);
+					} else {
+						jQuery('#user_info').text(res.chat.title + " " + res.chat.last_name);
+					}
+					
+				}else {
+					alert(data.ok);
+					jQuery('#bot_name').text(data.description)
+				}
+				
+				
 				jQuery('#sendbtn').toggleClass('loading');
 			}, 
 			'json'); 
