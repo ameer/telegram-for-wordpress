@@ -495,7 +495,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		return;
 	}
 	if ($instant_view_rhash != ''){
-		$instant_view_url = "http://t.me?url=".urlencode(get_permalink($ID))."&rhash=".$instant_view_rhash;
+		$instant_view_url = "http://t.me/iv?url=".urlencode(get_permalink($ID))."&rhash=".$instant_view_rhash;
 	}
 	if($post->post_type == 'product'){
 		$_pf = new WC_Product_Factory();
