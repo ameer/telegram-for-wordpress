@@ -576,7 +576,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		if($tdata['twp_img_position']->option_value == 1){
 			$msg = '<a href="'.wp_get_attachment_url($img_id).'">‌</a>'.$msg;
 			$nt->web_preview = 0;
-			$r = $nt->channel_text($ch_name, $msg);
+			$r = $nt->sendmessage($ch_name, $msg);
 		} else {
 			$attachment = wp_prepare_attachment_for_js($img_id);
 			if (mb_strlen($msg) < 200){
@@ -589,11 +589,11 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 				$file_format = 'image';
 				$file = $photo;
 				$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
-				$r = $nt->channel_text($ch_name, $msg);
+				$r = $nt->sendmessage($ch_name, $msg);
 			}
 		}
 	} else {
-		$r = $nt->channel_text($ch_name, $msg);
+		$r = $nt->sendmessage($ch_name, $msg);
 	}
 	if($twp_file_id != 0){
 		$file = get_attached_file($twp_file_id);
@@ -673,7 +673,7 @@ function twp_ajax_test_callback() {
 		//Send a test message to channel
 			$nt->_telegram($_POST['bot_token'], $_POST['markdown'], $_POST['web_preview']);
 			$msg = str_replace("\\", "", $_POST['msg']);
-			$result = $nt->channel_text($_POST['channel_username'], $msg );
+			$result = $nt->sendmessage($_POST['channel_username'], $msg );
 			echo json_encode($result);
 			wp_die();
 			break;
