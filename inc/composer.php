@@ -67,6 +67,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					<option title='<?php echo __("The permalink of this post", "twp-plugin"); ?>'>{full_url}</option>
 					<option title='<?php echo __("The tags of this post. Tags are automatically converted to Telegram hashtags", "twp-plugin"); ?>'>{tags}</option>
 					<option title='<?php echo __("The categories of this post. Categories are automatically separated by | symbol", "twp-plugin"); ?>'>{categories}</option>
+					<option title='<?php echo __("The instant view url for this post if template is present", "twp-plugin"); ?>'>{instant_view_url}</option>
 				</optgroup>
 				<?php if ($is_wc_active) {
 					?>

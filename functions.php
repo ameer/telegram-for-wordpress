@@ -482,13 +482,20 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		$parse_mode = null;
 			break;
 	}
+	$tags = "";
+	$categories = "";
+	$instant_view_url = "[rhash not set]";
 	$ch_name = $tdata['twp_channel_username']->option_value;
 	$token = $tdata['twp_bot_token']->option_value;
 	$web_preview = $tdata['twp_web_preview']->option_value;
 	$excerpt_length = intval($tdata['twp_excerpt_length']->option_value);
+	$instant_view_rhash = $tdata['twp_instant_view_rhash']->option_value;
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
+	}
+	if ($instant_view_rhash != ''){
+		$instant_view_url = "http://t.me?url=".urlencode(get_permalink($ID))."&rhash=".$instant_view_rhash;
 	}
 	if($post->post_type == 'product'){
 		$_pf = new WC_Product_Factory();
@@ -507,7 +514,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	}
 	// Preparing message for sending
 	// Wordpress default tags and substitutes array
-	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}", "{instant_view_url}");
 	$wp_subs = array(
 		$post->ID,
 		$post->post_title,
@@ -517,7 +524,8 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		wp_get_shortlink($ID),
 		get_permalink($ID),
 		$tags,
-		$categories
+		$categories,
+		$instant_view_url,
 		);
 	// WooCommerce tags and substitutes array
 	$wc_tags = array("{width}", "{length}", "{height}", "{weight}", "{price}", "{regular_price}", "{sale_price}", "{sku}", "{stock}", "{downloadable}", "{virtual}", "{sold_indiidually}", "{tax_status}", "{tax_class}", "{stock_status}", "{backorders}", "{featured}", "{visibility}");
