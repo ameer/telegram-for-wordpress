@@ -496,6 +496,8 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	}
 	if ($instant_view_rhash != ''){
 		$instant_view_url = "http://t.me/iv?url=".urlencode(get_permalink($ID))."&rhash=".$instant_view_rhash;
+		// temporarily replace percent sign to avoid unwanted replacements and broken links
+		$instant_view_url = str_replace("%", "@@@instantViewLinkPercentSign@@@", $instant_view_url);
 	}
 	if($post->post_type == 'product'){
 		$_pf = new WC_Product_Factory();
@@ -554,7 +556,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	if ($strip_wc == 1){
 		$msg = str_replace($wc_tags, '', $msg);
 	}
-	
+
 	// Search for custom field pattern
 	$re = "/%(#)?([\w\s]+)%/iu";
 	$number_of_cf = preg_match_all($re, $msg, $matches);
@@ -575,7 +577,10 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		}
 		$msg = str_replace($cf_tags_array, $cf_value_array, $msg);
 	}
-	
+
+	// get back percent inside instant view url
+	$msg = str_replace("@@@instantViewLinkPercentSign@@@", "%", $msg);
+
 	$msg = str_replace('&nbsp;','', $msg);
 
 	$nt = new Notifcaster_Class();
