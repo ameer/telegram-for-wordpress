@@ -106,7 +106,7 @@ function twp_enqueue_script( $hook ) {
 	}
 	wp_enqueue_script( 'textrange', TWP_PLUGIN_URL. '/inc/js/textrange.js', array(), '', true );
 	wp_enqueue_script( 'emojione', TWP_PLUGIN_URL. '/inc/js/emojione.js', array(), '', true );
-	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array(), '', true );
+	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array('jQuery'), '', true );
 	$translation_array = array(
 		'frame_title' => __("Select or Upload the custom photo", "twp-plugin"),
 		'button_text' => __("Use this image", "twp-plugin"),

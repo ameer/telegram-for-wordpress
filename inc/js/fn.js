@@ -198,13 +198,13 @@ jQuery(document).ready(function ($) {
         var objDiv = document.getElementById("output");
         objDiv.scrollTop = objDiv.scrollHeight;
     })
-    currnetTab = sessionStorage.currnetTab || '#twp_tab1';
-    $('.tabs ' + currnetTab).fadeIn(400).siblings().hide();
-    $('a[href="' + currnetTab + '"]').parent('li').addClass('active').siblings().removeClass('active');
+    currentTab = sessionStorage.currentTab || '#twp_tab1';
+    $('.tabs').first().fadeIn(400).siblings().hide();
+    $('.tabs .tab-item a').first().parent('li').addClass('active').siblings().removeClass('active');
     $('.tabs .tab-item a').on('click', function (e) {
         var currentAttrValue = $(this).attr('href');
         if (typeof (Storage) !== 'undefined') {
-            sessionStorage.currnetTab = currentAttrValue;
+            sessionStorage.currentTab = currentAttrValue;
         }
 
         // Show/Hide Tabs
