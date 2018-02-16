@@ -7,7 +7,7 @@
  * @category Telegram Bot API
  * @package Telegram for WordPress
  * @author Ameer Mousavi <me@ameer.ir>
- * @copyright 2015-2016 Ameer Mousavi
+ * @copyright 2015-2018 Ameer Mousavi
  * @license GPLv3 or later.
  * @version 1.6
  * @link http://notifcaster.com
@@ -30,7 +30,7 @@ class Notifcaster_Class
 {
     protected
         $api_token  = null,
-        $url        = 'https://tg-notifcaster.rhcloud.com/api/v1',
+        $url        = 'https://api.telegram.org/bot',
         $api_method = null,
         $parse_mode = null;
     public

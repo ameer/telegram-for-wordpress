@@ -3,48 +3,6 @@
 	if ( ! is_admin() ) die;
 	global $tdata;
 	?>
-	<!-- <style type="text/css">
-		label {vertical-align: middle;}
-		#twp-wrap div {transition:opacity linear .15s;}
-		#twp-wrap h1, h2, h3, h4, h5, h6 {line-height: normal;}
-		#twp-wrap .howto span {color:#6495ED;font-weight:700;font-style: normal;}
-		#twp-wrap input, button {vertical-align: middle !important;}
-		#twp-wrap a {text-decoration: none !important; border-bottom: 1px solid #0091CD;padding-bottom: 2px;} #twp-wrap code {padding: 2px 4px; font-size: 90%; color: #c7254e; background-color: #f9f2f4; border-radius: 4px;font-style: normal;}
-		#twp-wrap a:hover {border-bottom: 2px solid #0091EA;}
-		#twp-wrap input[type=text] {font-size: 1.5em; font-family: monospace; font-weight: 300; }
-		#twp-wrap table {width: 100%}
-		#twp-wrap tr, #twp-wrap th,#twp-wrap td {vertical-align: baseline !important;padding-top: 0 !important;}
-		#floating_save_button {width: 65px;height: 65px; position: absolute;background: #CFD8DC; border-radius: 50%; right: 25px;text-align: center;opacity:0.5;cursor: pointer;}
-		#floating_save_button img {position: relative; top: 20px; width: 24px !important; height: 24px !important;} 
-		#floating_save_button:hover{opacity: 1;}
-		.tabs{width:100%;display:inline-block}
-		ul.tab-links {margin-bottom: 0px !important}
-		.tab-links:after{display:block;clear:both;content:''}
-		.tab-links li{margin:0 5px;float:left;list-style:none}
-		.tab-links img {width: 24px !important;height: auto !important;vertical-align: -0.4em !important;margin: 0 5px !important;}
-		.tab-links a{padding:9px 15px !important;display:inline-block;border-bottom:0 !important;border-radius:3px 3px 0 0;background:#E0E0E0;font-size:16px;font-weight:600;color:#4c4c4c;transition:all linear .15s;outline: 0 !important;box-shadow: none !important;}
-		.tab-links a:hover{background:#D6D6D6;text-decoration:none}
-		li.active a,li.active a:hover{background:#fff;color:#4c4c4c}
-		.tab-content{padding:15px;border-radius:3px;box-shadow:-1px 1px 1px rgba(0,0,0,0.15);background:#fff}
-		.tab{display:none}
-		.tab.active{display:block}
-		.form-table tr {
-			border-bottom: 1px solid #ddd;
-		}
-		.form-table tr:last-child {
-			border-bottom: 0 !important;
-		}
-		textarea#twp_channel_pattern {resize: vertical; width: 48%; height: auto;min-height: 128px;}
-		div#output {width: 48%; display: inline-block; vertical-align: top; white-space: pre; border: 1px solid #ddd; height: 122px; background: #F1F1F1; cursor: not-allowed;padding: 2px 6px; overflow-y: auto } 
-		.twp-radio-group {line-height: 2em;}
-		.twp-radio-group input {margin-top:1px;}
-		.emojione{font-size:inherit;height:3ex;width:3.1ex;min-height:20px;min-width:20px;display:inline-block;margin:-.2ex .15em .2ex;line-height:normal;vertical-align:middle}
-		img.emojione{width:auto}
-		@media screen and (max-width: 415px){
-			.twp_label {display: none;}
-			.tab-links img {width: 32px !important;height: auto !important;}
-		}
-	</style> -->
 	<?php if(is_rtl()){
 		echo '<style type="text/css"> 
 		#floating_save_button{left: 25px !important; right: auto !important;}
@@ -68,18 +26,18 @@
 			
 			<div class="tabs">
 				<ul class="tab">
-					<li class="tab-item active"><a href="#twp_tab1">&#128276;<span class="twp_label"><?php echo __("Notifications and Bot", "twp-plugin") ?></span></a></li>
+					<li class="tab-item"><a href="#twp_tab1">&#128276;<span class="twp_label"><?php echo __("Notifications and Bot", "twp-plugin") ?></span></a></li>
 					<li class="tab-item"><a href="#twp_tab2">&#x1f4e3;<span class="twp_label"><?php echo __("Post to Channel and Group", "twp-plugin") ?></span></a></li>
 					<li class="tab-item"><a href="#twp_tab3">&#x1f4b0;<span class="twp_label"><?php echo __("Donate", "twp-plugin") ?></span></a></li>
 				</ul>
 				<div class="twp-tab-content">
-					<div id="twp_tab1" class="container active">
+					<div id="twp_tab1" class="container">
 						<div class="columns">
 							<div class="column col-6 col-xs-12">
 								<div class="panel">
 									<div class="panel-header text-center">
-										<div id="bot_name" class="panel-title h5 mt-10">Bot Name</div>
-										<div id="bot_username" class="panel-subtitle">@bot_username</div>
+										<div class="panel-title h5 mt-10">Bot Info</div>
+										<div class="panel-subtitle">This bot will be used for all actions.</div>
 									</div>
 									<div class="panel-body">
 										<ol>
@@ -89,12 +47,19 @@
 											<li><?php echo __("Click on authorize button to make sure everything is correct.", "twp-plugin") ?></li>
 											<li><?php printf(__("Send %s command to your bot. It's very important to start chat with your bot", "twp-plugin"),"<code>/start</code>") ?></li>
 										</ol>
+										<div class="chip">
+											<figure class="avatar avatar-sm" data-initial="" style="background-color: #5755d9;">
+											</figure>
+											<span id="bot_info_chip"><?=$tdata['twp_bot_name']->option_value."(".$tdata['twp_bot_username']->option_value.")"?></span>
+										</div>
+										<input type="hidden" name="twp_bot_name" value="<?=$tdata['twp_bot_name']->option_value?>" />
+										<input type="hidden" name="twp_bot_username" value="<?=$tdata['twp_bot_username']->option_value?>" />
 									</div>
 									<div class="panel-footer">
 										<div class="input-group">
 											<span class="input-group-addon">Bot Token</span>
 											<input class="form-input" id="twp_bot_token" type="text" name="twp_bot_token" value="<?php echo $tdata['twp_bot_token']->option_value; ?>" dir="auto" />
-											<button id="checkbot" class="btn" type="button" onclick="botTest()"><?php echo __("Authorize", "twp-plugin") ?></button>
+											<button id="checkbot" class="btn" type="button"><?php echo __("Authorize", "twp-plugin") ?></button>
 										</div>
 									</div>
 								</div>
@@ -107,7 +72,7 @@
 									</div>
 									<nav class="tabs panel-nav">
 										<ul class="tab tab-block">
-											<li class="tab-item active">
+											<li class="tab-item">
 												<a href="#send_to_user_help">
 													User
 												</a>
@@ -117,15 +82,10 @@
 													Group
 												</a>
 											</li>
-											<li class="tab-item">
-												<a href="#panels">
-													Channel
-												</a>
-											</li>
 										</ul>
 									</nav>
 									<div class="panel-body">
-										<div id="send_to_user_help" class="active">
+										<div id="send_to_user_help">
 											<?php echo __("If you want to send notifications only to your account:", "twp-plugin") ?>
 											<ol>
 												<li><?php printf(__("Send %s command to this bot : %s", "twp-plugin"),"<code>/start</code>","<a href='https://t.me/userinfobot'>@UserInfoBot</a>") ?>
@@ -152,14 +112,18 @@
 									</div>
 									<div class="panel-footer">
 										<div class="input-group">
-											<span class="input-group-addon">Bot Token</span>
-											<input class="form-input" id="twp_bot_token" type="text" name="twp_bot_token" value="<?php echo $tdata['twp_bot_token']->option_value; ?>" dir="auto" />
-											<button id="checkbot" class="btn" type="button" onclick="botTest()"><?php echo __("Authorize", "twp-plugin") ?></button>
+											<span class="input-group-addon">Chat ID</span>
+											<input class="form-input" id="twp_chat_id" type="text" name="twp_chat_id" value="<?=$tdata['twp_chat_id']->option_value?>" dir="auto" />
+											<button id="send_test_msg" class="btn" type="button"><?php  echo __("Send now!", "twp-plugin") ?></button>
+										</div>
+										<div class="input-group mt-2">
+											<span class="input-group-addon"><?=__("Hashtag (optional)", "twp-plugin")?></span>
+											<input id="twp_hashtag" class="form-input" type="text" name="twp_hashtag" size="32" value="<?=$tdata['twp_hashtag']->option_value?>" dir="auto" />
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> <!-- .columns -->
 					</div>
 					<div id="twp_tab2">
 						<table class="form-table">
@@ -188,8 +152,8 @@
 							<tr>
 								<th scope="row"><h3>Bot Token</h3></th>
 								<td>
-									<input id="twp_bot_token" type="text" name="twp_bot_token" size="32" value="<?php echo $tdata['twp_bot_token']->option_value; ?>" dir="auto" />
-									<button id="checkbot" class="button-secondary" type="button" onclick="botTest()"><?php echo __("Check bot token", "twp-plugin") ?></button>
+									
+									<button id="checkbot" class="button-secondary" type="button"><?php echo __("Check bot token", "twp-plugin") ?></button>
 									<p class="howto">
 										<?php echo __("Bot Info: ", "twp-plugin") ?>
 										<span id="bot_name"></span>
@@ -200,8 +164,8 @@
 								<th scope="row"><h3><?php echo __("Channel Username", "twp-plugin") ?></h3></th>
 								<td>
 									<input id="twp_channel_username" type="text" name="twp_channel_username" size="32" value="<?php echo $tdata['twp_channel_username']->option_value; ?>" onblur="getMembersCount()" dir="auto" />
-									<button id="channelbtn" type="button" class="button-secondary" onclick="channelTest();"> <?php  echo __("Send now!", "twp-plugin") ?></button>
-									<p><span id="refresh_count" style="margin: auto 4px;" title='<?php echo __("Click here to refresh members count", "twp-plugin") ?>' onclick="getMembersCount()">&#128260;</span><?php  echo __("Members Count:", "twp-plugin") ?> <span style="color:royalblue; font-weight: bolder" id="members_count"></span></p>
+									<button id="channelbtn" type="button" class="button-secondary"> <?php  echo __("Send now!", "twp-plugin") ?></button>
+									<p><span id="get_members_count" style="margin: auto 4px;" title='<?php echo __("Click here to refresh members count", "twp-plugin") ?>' ">&#128260;</span><?php  echo __("Members Count:", "twp-plugin") ?> <span style="color:royalblue; font-weight: bolder" id="members_count"></span></p>
 									<p class="howto"><?php echo __("Don't forget <code>@</code> at the beginning", "twp-plugin") ?></p>
 								</td>
 							</tr>
@@ -315,10 +279,9 @@
 								</td>
 							</tr>
 						</table>
-						
 					</div>
 				</div>
-			</div>
+			</div> <!-- .tabs -->
 			<p class="submit">
 				<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 			</p>
@@ -330,99 +293,5 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		function sendTest() {
-			var bot_token = jQuery('input[name=twp_bot_token]').val(), chat_id = jQuery('input[name=twp_chat_id]').val()  , h = '';
-			if(bot_token != '' && chat_id != '') {
-				jQuery('#sendbtn').toggleClass('loading');
-				if(jQuery("#twp_hashtag").val() != ''){
-					var h = '<?php  echo $tdata["twp_hashtag"]->option_value; ?>';
-				}
-				var text = h +'\n'+'<?php echo __("This is a test message", "twp-plugin") ?>'+ '\n' + document.URL;
-				jQuery.post(ajaxurl, 
-				{ 
-					chat_id: chat_id, text: text , bot_token: bot_token, subject: 'm', action:'twp_ajax_test'
-				}, function( data ) {
-
-					if (data != undefined && data.ok != false){
-						var res = data.result;
-						if(res.chat.type == "private"){
-							jQuery('#user_info').text(res.chat.first_name + " " + res.chat.last_name);
-						} else {
-							jQuery('#user_info').text(res.chat.title + " " + res.chat.last_name);
-						}
-
-					}else {
-						alert(data.ok);
-						jQuery('#bot_name').text(data.description)
-					}
-
-
-					jQuery('#sendbtn').toggleClass('loading');
-				}, 
-				'json'); 
-			} else {
-				alert(' <?php  echo __("bot_token/chat_id field is empty", "twp-plugin") ?>') 
-			}
-		};
-		function channelTest() { 
-			var bot_token = jQuery('input[name=twp_bot_token]').val(), channel_username = jQuery('input[name=twp_channel_username]').val(), pattern = jQuery("#twp_channel_pattern").val();
-			if(bot_token != '' && channel_username != '' ) {
-				var c = confirm('<?php echo __("This will send a test message to your channel. Do you want to continue?", "twp-plugin") ?>');
-				if( c == true ){ 
-					jQuery('#channelbtn').prop('disabled', true);
-					jQuery('#channelbtn').text('<?php echo __("Please wait...", "twp-plugin") ?> '); 
-					var msg = '<?php echo __("This is a test message", "twp-plugin") ?>'+'\n';
-					if (pattern != null || pattern != ''){
-						msg += pattern;
-					}
-					jQuery.post(ajaxurl, 
-					{ 
-						channel_username: channel_username, msg: msg , bot_token: bot_token, markdown: jQuery('input[name=twp_markdown]:checked').attr("data-markdown"), web_preview: jQuery('#twp_web_preview').prop('checked'), subject: 'c', action:'twp_ajax_test'
-					}, function( data ) {
-						jQuery('#channelbtn').prop('disabled', false);
-						jQuery('#channelbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>'); 
-						alert((data.ok == true ? 'The message sent succesfully.' : data.description))}, 'json');
-				}
-			} else {
-				alert(' <?php  echo __("bot token/channel username field is empty", "twp-plugin") ?>') 
-			}
-		}
-		function botTest() {
-			if(jQuery('input[name=twp_bot_token]').val() != '' ) {
-				var bot_token = jQuery('input[name=twp_bot_token]').val();
-				jQuery('#checkbot').toggleClass('loading');
-				jQuery.post(ajaxurl, 
-				{ 
-					bot_token: bot_token, subject: 'b', action:'twp_ajax_test'
-				}, function( data ) {
-					if (data != undefined && data.ok != false){
-						jQuery('#bot_name').text(data.result.first_name + ' ' + (data.result.last_name == undefined ? ' ' :  data.result.last_name ))
-						jQuery('#bot_username').text('(@' + data.result.username + ')')
-					}else {
-						jQuery('#bot_name').text(data.description)
-					}
-					jQuery('#checkbot').toggleClass('loading');
-				}, 'json'); 
-			} else {
-				alert(' <?php  echo __("bot token field is empty", "twp-plugin") ?>') 
-			}
-		}
-		function getMembersCount() {
-			var channel_username = jQuery('input[name=twp_channel_username]').val();
-			var bot_token = jQuery('input[name=twp_bot_token]').val();
-			if(channel_username !== '' && bot_token !== '') {
-				jQuery.post(ajaxurl, 
-				{ 
-					bot_token: bot_token, channel_username: channel_username, subject: 'gm', action:'twp_ajax_test'
-				}, function( data ) {
-					if (data != undefined && data.ok != false){
-						jQuery('#members_count').text(data.result+ " " +"<?php echo __("members", "twp-plugin"); ?>");
-					}else {
-						jQuery('#members_count').text(data.description);
-					}
-				}, 'json'); 
-			} else {
-				return;
-			}
-		}
+		
 	</script>

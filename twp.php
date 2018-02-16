@@ -42,8 +42,11 @@ function twp_create_menu() {
 }
 function register_twp_settings() {
             //register our settings
-            register_setting( 'twp-settings-group', 'twp_api_token' , 'sanitize_text_field');
+            register_setting( 'twp-settings-group', 'twp_api_token' , 'sanitize_text_field'); // Need to be unregister
             register_setting( 'twp-settings-group', 'twp_bot_token', 'sanitize_text_field');
+            register_setting( 'twp-settings-group', 'twp_bot_name', 'sanitize_text_field');
+            register_setting( 'twp-settings-group', 'twp_bot_username', 'sanitize_text_field');
+            register_setting( 'twp-settings-group', 'twp_chat_id', 'sanitize_text_field');
             register_setting( 'twp-settings-group', 'twp_channel_username', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_send_to_channel', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_channel_pattern', 'twp_sanitize_text_field');
@@ -55,7 +58,7 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_excerpt_length', 'sanitize_text_field' );
 }
 // If api_token has been set, then add our hook to phpmailer.
-if ($tdata['twp_api_token'] != null ) {
+if ($tdata['twp_bot_token'] != null ) {
     add_action( 'phpmailer_init', 'twp_phpmailer_hook' );
 }
 

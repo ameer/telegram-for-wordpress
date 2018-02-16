@@ -198,61 +198,166 @@ jQuery(document).ready(function ($) {
         var objDiv = document.getElementById("output");
         objDiv.scrollTop = objDiv.scrollHeight;
     })
-    currentTab = sessionStorage.currentTab || '#twp_tab1';
-    $('.tabs').first().fadeIn(400).siblings().hide();
-    $('.tabs .tab-item a').first().parent('li').addClass('active').siblings().removeClass('active');
-    $('.tabs .tab-item a').on('click', function (e) {
-        var currentAttrValue = $(this).attr('href');
-        if (typeof (Storage) !== 'undefined') {
-            sessionStorage.currentTab = currentAttrValue;
-        }
+    $('ul.tab').each(function(){
+        // For each set of tabs, we want to keep track of
+        // which tab is active and it's associated content
+        var $active, $content, $links = $(this).find('a');
 
-        // Show/Hide Tabs
-        $('.tabs ' + currentAttrValue).fadeIn(400).siblings().hide();
+        // If the location.hash matches one of the links, use that as the active tab.
+        // If no match is found, use the first link as the initial active tab.
+        $active = $($links.filter('[href="'+sessionStorage.currentTab+'"]')[0] || $links[0]);
+        $active.addClass('active');
 
-        // Change/remove current tab to active
-        $(this).parent('li').addClass('active').siblings().removeClass('active');
+        $content = $($active[0].hash);
 
-        e.preventDefault();
+        // Hide the remaining content
+        $links.not($active).each(function () {
+            $(this.hash).hide();
+        });
+
+        // Bind the click event handler
+        $(this).on('click', 'a', function(e){
+            if (typeof (Storage) !== 'undefined' && this.hash.startsWith("#twp")) {
+                sessionStorage.currentTab = this.hash;
+            }
+            // Make the old tab inactive.
+            $active.removeClass('active');
+            $content.hide();
+
+            // Update the variables with the new link and content
+            $active = $(this);
+            $content = $(this.hash);
+
+            // Make the tab active.
+            $active.addClass('active');
+            $content.fadeIn(400);
+
+            //Prevent the anchor's default click action
+            e.preventDefault();
+        });
     });
+    $('#bot_info_chip').siblings('figure').attr('data-initial', $('#bot_info_chip').text().substr(0,2))
+    $("#checkbot").click(function() {
+        if($('input[name=twp_bot_token]').val() != '' ) {
+            var bot_token = $('input[name=twp_bot_token]').val();
+            $('#checkbot').toggleClass('loading');
+            $.post(ajaxurl, 
+            { 
+                bot_token: bot_token, subject: 'b', action:'twp_ajax_test'
+            }, function( data ) {
+                if (data != undefined && data.ok != false){
+                    $('#bot_info_chip').text(data.result.first_name + " (@"+data.result.username+")").siblings('figure').attr('data-initial', data.result.first_name.substr(0,2))
+                    $('input[name=twp_bot_name]').val(data.result.first_name);
+                    $('input[name=twp_bot_username]').val("@"+data.result.username);
+                    toastr["success"]("Token was successfully authorized.", "Success!")
+                }else {
+                    $('#bot_info_chip').text("Bot Name").siblings('figure').attr('data-initial', "N/A")
+                    $('input[name=twp_bot_name]').val("");
+                    $('input[name=twp_bot_username]').val("");
+                    toastr["error"](data.description, "Oops! Error")
+                }
+                $('#checkbot').toggleClass('loading');
+            }, 'json'); 
+        } else {
+            alert(twp_js_obj.bot_token_empty) 
+        }
+    });
+    $('#send_test_msg').click(function () {
+        var bot_token = $('input[name=twp_bot_token]').val(), chat_id = $('input[name=twp_chat_id]').val()  , h = '';
+        if(bot_token != '' && chat_id != '') {
+            $('#send_test_msg').toggleClass('loading');
+            if($("#twp_hashtag").val() != ''){
+                var h = $('#twp_hashtag').val();
+            }
+            var text = h +'\n'+twp_js_obj.test_message+ '\n' + document.URL;
+            $.post(ajaxurl, 
+            { 
+                chat_id: chat_id, text: text , bot_token: bot_token, subject: 'm', action:'twp_ajax_test'
+            }, function( data ) {
+
+                if (data != undefined && data.ok != false){
+                    var res = data.result;
+                    if(res.chat.type == "private"){
+                        $('#user_info').text(res.chat.first_name + " " + res.chat.last_name);
+                    } else {
+                        $('#user_info').text(res.chat.title + " " + res.chat.last_name);
+                    }
+
+                }else {
+                    alert(data.ok);
+                    $('#bot_name').text(data.description)
+                }
+
+
+                $('#send_test_msg').toggleClass('loading');
+            }, 
+            'json'); 
+        } else {
+            alert(twp_js_obj.token_chat_id_empty) 
+        }
+    });
+    $('#channelbtn').click(function() { 
+        var bot_token = $('input[name=twp_bot_token]').val(), channel_username = $('input[name=twp_channel_username]').val(), pattern = $("#twp_channel_pattern").val();
+        if(bot_token != '' && channel_username != '' ) {
+            var c = confirm(twp_js_obj.channel_test);
+            if( c == true ){ 
+                $('#channelbtn').prop('disabled', true);
+                $('#channelbtn').toggleClass('loading'); 
+                var msg = '<?php echo __("This is a test message", "twp-plugin") ?>'+'\n';
+                if (pattern != null || pattern != ''){
+                    msg += pattern;
+                }
+                $.post(ajaxurl, 
+                { 
+                    channel_username: channel_username, msg: msg , bot_token: bot_token, markdown: $('input[name=twp_markdown]:checked').attr("data-markdown"), web_preview: $('#twp_web_preview').prop('checked'), subject: 'c', action:'twp_ajax_test'
+                }, function( data ) {
+                    $('#channelbtn').prop('disabled', false);
+                    $('#channelbtn').text('<?php  echo __("Send now!", "twp-plugin") ?>'); 
+                    alert((data.ok == true ? 'The message sent succesfully.' : data.description))}, 'json');
+            }
+        } else {
+            alert(' <?php  echo __("bot token/channel username field is empty", "twp-plugin") ?>') 
+        }
+    });
+    $('#get_members_count').click(function() {
+        var channel_username = $('input[name=twp_channel_username]').val();
+        var bot_token = $('input[name=twp_bot_token]').val();
+        if(channel_username !== '' && bot_token !== '') {
+            $.post(ajaxurl, 
+            { 
+                bot_token: bot_token, channel_username: channel_username, subject: 'gm', action:'twp_ajax_test'
+            }, function( data ) {
+                if (data != undefined && data.ok != false){
+                    $('#members_count').text(data.result+ " " +"<?php echo __('members', 'twp-plugin'); ?>");
+                }else {
+                    $('#members_count').text(data.description);
+                }
+            }, 'json'); 
+        } else {
+            return;
+        }
+    })
     $("#floating_save_button").click(function () {
         $("#twp_form").submit();
     });
-    // (function ($) {
-    //     $.fn.jScroll = function (e) {
-    //         var f = $.extend({}, $.fn.jScroll.defaults, e);
-    //         return this.each(function () {
-    //             var a = $(this);
-    //             var b = $(window);
-    //             var c = new location(a);
-    //             b.scroll(function () {
-    //                 a.stop().animate(c.getMargin(b), f.speed)
-    //             })
-    //         });
-
-    //         function location(d) {
-    //             this.min = d.offset().top;
-    //             this.originalMargin = parseInt(d.css("margin-top"), 10) || 0;
-    //             this.getMargin = function (a) {
-    //                 var b = d.parent().height() - d.outerHeight();
-    //                 var c = this.originalMargin;
-    //                 if (a.scrollTop() >= this.min) c = c + f.top + a.scrollTop() - this.min;
-    //                 if (c > b) c = b;
-    //                 return ({
-    //                     "marginTop": c + 'px'
-    //                 })
-    //             }
-    //         }
-    //     };
-    //     $.fn.jScroll.defaults = {
-    //         speed: "slow",
-    //         top: 10
-    //     }
-    // })($);
-    // $(function () {
-    //     $('#floating_save_button').jScroll({
-    //         top: 34,
-    //         speed: 600
-    //     });
-    // });
 });
+/* Toaster */
+!function(e){e(["jquery"],function(e){return function(){function t(e,t,n){return g({type:O.error,iconClass:m().iconClasses.error,message:e,optionsOverride:n,title:t})}function n(t,n){return t||(t=m()),v=e("#"+t.containerId),v.length?v:(n&&(v=d(t)),v)}function o(e,t,n){return g({type:O.info,iconClass:m().iconClasses.info,message:e,optionsOverride:n,title:t})}function s(e){C=e}function i(e,t,n){return g({type:O.success,iconClass:m().iconClasses.success,message:e,optionsOverride:n,title:t})}function a(e,t,n){return g({type:O.warning,iconClass:m().iconClasses.warning,message:e,optionsOverride:n,title:t})}function r(e,t){var o=m();v||n(o),u(e,o,t)||l(o)}function c(t){var o=m();return v||n(o),t&&0===e(":focus",t).length?void h(t):void(v.children().length&&v.remove())}function l(t){for(var n=v.children(),o=n.length-1;o>=0;o--)u(e(n[o]),t)}function u(t,n,o){var s=!(!o||!o.force)&&o.force;return!(!t||!s&&0!==e(":focus",t).length)&&(t[n.hideMethod]({duration:n.hideDuration,easing:n.hideEasing,complete:function(){h(t)}}),!0)}function d(t){return v=e("<div/>").attr("id",t.containerId).addClass(t.positionClass),v.appendTo(e(t.target)),v}function p(){return{tapToDismiss:!0,toastClass:"toast",containerId:"toast-container",debug:!1,showMethod:"fadeIn",showDuration:300,showEasing:"swing",onShown:void 0,hideMethod:"fadeOut",hideDuration:1e3,hideEasing:"swing",onHidden:void 0,closeMethod:!1,closeDuration:!1,closeEasing:!1,closeOnHover:!0,extendedTimeOut:1e3,iconClasses:{error:"toast-error",info:"toast-info",success:"toast-success",warning:"toast-warning"},iconClass:"toast-info",positionClass:"toast-top-right",timeOut:5e3,titleClass:"toast-title",messageClass:"toast-message",escapeHtml:!1,target:"body",closeHtml:'<button type="button">&times;</button>',closeClass:"toast-close-button",newestOnTop:!0,preventDuplicates:!1,progressBar:!1,progressClass:"toast-progress",rtl:!1}}function f(e){C&&C(e)}function g(t){function o(e){return null==e&&(e=""),e.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function s(){c(),u(),d(),p(),g(),C(),l(),i()}function i(){var e="";switch(t.iconClass){case"toast-success":case"toast-info":e="polite";break;default:e="assertive"}I.attr("aria-live",e)}function a(){E.closeOnHover&&I.hover(H,D),!E.onclick&&E.tapToDismiss&&I.click(b),E.closeButton&&j&&j.click(function(e){e.stopPropagation?e.stopPropagation():void 0!==e.cancelBubble&&e.cancelBubble!==!0&&(e.cancelBubble=!0),E.onCloseClick&&E.onCloseClick(e),b(!0)}),E.onclick&&I.click(function(e){E.onclick(e),b()})}function r(){I.hide(),I[E.showMethod]({duration:E.showDuration,easing:E.showEasing,complete:E.onShown}),E.timeOut>0&&(k=setTimeout(b,E.timeOut),F.maxHideTime=parseFloat(E.timeOut),F.hideEta=(new Date).getTime()+F.maxHideTime,E.progressBar&&(F.intervalId=setInterval(x,10)))}function c(){t.iconClass&&I.addClass(E.toastClass).addClass(y)}function l(){E.newestOnTop?v.prepend(I):v.append(I)}function u(){if(t.title){var e=t.title;E.escapeHtml&&(e=o(t.title)),M.append(e).addClass(E.titleClass),I.append(M)}}function d(){if(t.message){var e=t.message;E.escapeHtml&&(e=o(t.message)),B.append(e).addClass(E.messageClass),I.append(B)}}function p(){E.closeButton&&(j.addClass(E.closeClass).attr("role","button"),I.prepend(j))}function g(){E.progressBar&&(q.addClass(E.progressClass),I.prepend(q))}function C(){E.rtl&&I.addClass("rtl")}function O(e,t){if(e.preventDuplicates){if(t.message===w)return!0;w=t.message}return!1}function b(t){var n=t&&E.closeMethod!==!1?E.closeMethod:E.hideMethod,o=t&&E.closeDuration!==!1?E.closeDuration:E.hideDuration,s=t&&E.closeEasing!==!1?E.closeEasing:E.hideEasing;if(!e(":focus",I).length||t)return clearTimeout(F.intervalId),I[n]({duration:o,easing:s,complete:function(){h(I),clearTimeout(k),E.onHidden&&"hidden"!==P.state&&E.onHidden(),P.state="hidden",P.endTime=new Date,f(P)}})}function D(){(E.timeOut>0||E.extendedTimeOut>0)&&(k=setTimeout(b,E.extendedTimeOut),F.maxHideTime=parseFloat(E.extendedTimeOut),F.hideEta=(new Date).getTime()+F.maxHideTime)}function H(){clearTimeout(k),F.hideEta=0,I.stop(!0,!0)[E.showMethod]({duration:E.showDuration,easing:E.showEasing})}function x(){var e=(F.hideEta-(new Date).getTime())/F.maxHideTime*100;q.width(e+"%")}var E=m(),y=t.iconClass||E.iconClass;if("undefined"!=typeof t.optionsOverride&&(E=e.extend(E,t.optionsOverride),y=t.optionsOverride.iconClass||y),!O(E,t)){T++,v=n(E,!0);var k=null,I=e("<div/>"),M=e("<div/>"),B=e("<div/>"),q=e("<div/>"),j=e(E.closeHtml),F={intervalId:null,hideEta:null,maxHideTime:null},P={toastId:T,state:"visible",startTime:new Date,options:E,map:t};return s(),r(),a(),f(P),E.debug&&console&&console.log(P),I}}function m(){return e.extend({},p(),b.options)}function h(e){v||(v=n()),e.is(":visible")||(e.remove(),e=null,0===v.children().length&&(v.remove(),w=void 0))}var v,C,w,T=0,O={error:"error",info:"info",success:"success",warning:"warning"},b={clear:r,remove:c,error:t,getContainer:n,info:o,options:{},subscribe:s,success:i,version:"2.1.4",warning:a};return b}()})}("function"==typeof define&&define.amd?define:function(e,t){"undefined"!=typeof module&&module.exports?module.exports=t(require("jquery")):window.toastr=t(window.jQuery)});
+//# sourceMappingURL=toastr.js.map
+toastr.options = {
+  "closeButton": true,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-bottom-center",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "1000",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "5000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "slideDown",
+  "hideMethod": "fadeOut"
+}

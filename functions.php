@@ -71,12 +71,6 @@ require_once('admin/settings-page.php');
 }
 
 /**
-* Print admin subpage
-*/
-function twp_broadcast_page_callback() {
-    require_once('broadcast.php');
-}
-/**
  * Enqueue styles in the WordPress admin.
  *
  * @param int $hook Hook suffix for the current admin page.
@@ -106,13 +100,18 @@ function twp_enqueue_script( $hook ) {
 	}
 	wp_enqueue_script( 'textrange', TWP_PLUGIN_URL. '/inc/js/textrange.js', array(), '', true );
 	wp_enqueue_script( 'emojione', TWP_PLUGIN_URL. '/inc/js/emojione.js', array(), '', true );
-	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array('jQuery'), '', true );
+	wp_enqueue_script( 'twp-functions', TWP_PLUGIN_URL. '/inc/js/fn.js', array(), '', true );
 	$translation_array = array(
 		'frame_title' => __("Select or Upload the custom photo", "twp-plugin"),
 		'button_text' => __("Use this image", "twp-plugin"),
 		'file_frame_title' => __("Select or Upload the files", "twp-plugin"),
 		'file_button_text' => __("Use this file(s)", "twp-plugin"),
-		'edit_file' => __("Edit file", "twp-plugin")
+		'edit_file' => __("Edit file", "twp-plugin"),
+		'bot_token_empty' => __("bot token field is empty", "twp-plugin"),
+		'test_message' => __("This is a test message", "twp-plugin"),
+		'token_chat_id_empty' => __("bot_token/chat_id field is empty", "twp-plugin"),
+		'channel_test' => __("This will send a test message to your channel. Do you want to continue?", "twp-plugin")
+
 		);
 	wp_localize_script( 'twp-functions', 'twp_js_obj', $translation_array );
 }
@@ -177,7 +176,7 @@ add_action( 'plugins_loaded', 'twp_load_textdomain' );
 * @return array
 */
 function twp_plugin_action_links($links) {
-	$links[] = '<a href="http://hamyarwp.com/telegram-for-wp/">' . __('Persian Tutorial in HamyarWP', 'twp-plugin') . '</a>';
+	$links[] = '<a href="https://ameer.ir/telegram-for-wp/">' . __('Persian Tutorial in My website', 'twp-plugin') . '</a>';
 	return $links;
 }
 add_action('plugin_action_links_' . plugin_basename(__FILE__), 'twp_plugin_action_links');
@@ -188,7 +187,7 @@ add_action('plugin_action_links_' . plugin_basename(__FILE__), 'twp_plugin_actio
 function twp_mail_action($result, $to, $cc, $bcc, $subject, $body){
 	global $tdata;
 	$nt = new Notifcaster_Class();
-	$_apitoken = $tdata['twp_api_token']->option_value;
+	$_apitoken = $tdata['twp_bot_token']->option_value;
 	$_msg = $body;
 	if($tdata['twp_hashtag']->option_value != '') {
 		$_msg = $tdata['twp_hashtag']->option_value."\n".$_msg;
