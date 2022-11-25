@@ -315,7 +315,7 @@ class Notifcaster_Class
                 case false === $v = realpath(filter_var($v)):
                 case !is_file($v):
                 case !is_readable($v):
-                continue; // or return false, throw new InvalidArgumentException
+                	break; // or return false, throw new InvalidArgumentException
             }
             $data = file_get_contents($v);
             $v = call_user_func("end", explode(DIRECTORY_SEPARATOR, $v));
