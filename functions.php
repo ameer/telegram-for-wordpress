@@ -481,13 +481,22 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		$parse_mode = null;
 			break;
 	}
+	$tags = "";
+	$categories = "";
+	$instant_view_url = "[rhash not set]";
 	$ch_name = $tdata['twp_channel_username']->option_value;
 	$token = $tdata['twp_bot_token']->option_value;
 	$web_preview = $tdata['twp_web_preview']->option_value;
 	$excerpt_length = intval($tdata['twp_excerpt_length']->option_value);
+	$instant_view_rhash = $tdata['twp_instant_view_rhash']->option_value;
 	if ($token == "" || $ch_name == ""){
 		update_post_meta( $ID, '_twp_meta_data', __('Bot token or Channel username aren\'t set!', 'twp-plugin') );
 		return;
+	}
+	if ($instant_view_rhash != ''){
+		$instant_view_url = "http://t.me/iv?url=".urlencode(get_permalink($ID))."&rhash=".$instant_view_rhash;
+		// temporarily replace percent sign to avoid unwanted replacements and broken links
+		$instant_view_url = str_replace("%", "@@@instantViewLinkPercentSign@@@", $instant_view_url);
 	}
 	if($post->post_type == 'product'){
 		$_pf = new WC_Product_Factory();
@@ -506,7 +515,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	}
 	// Preparing message for sending
 	// Wordpress default tags and substitutes array
-	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}");
+	$wp_tags = array("{ID}","{title}","{excerpt}","{content}","{author}","{short_url}","{full_url}","{tags}","{categories}", "{instant_view_url}");
 	$wp_subs = array(
 		$post->ID,
 		$post->post_title,
@@ -516,7 +525,8 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		wp_get_shortlink($ID),
 		get_permalink($ID),
 		$tags,
-		$categories
+		$categories,
+		$instant_view_url,
 		);
 	// WooCommerce tags and substitutes array
 	$wc_tags = array("{width}", "{length}", "{height}", "{weight}", "{price}", "{regular_price}", "{sale_price}", "{sku}", "{stock}", "{downloadable}", "{virtual}", "{sold_indiidually}", "{tax_status}", "{tax_class}", "{stock_status}", "{backorders}", "{featured}", "{visibility}");
@@ -545,7 +555,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 	if ($strip_wc == 1){
 		$msg = str_replace($wc_tags, '', $msg);
 	}
-	
+
 	// Search for custom field pattern
 	$re = "/%(#)?([\w\s]+)%/iu";
 	$number_of_cf = preg_match_all($re, $msg, $matches);
@@ -566,7 +576,10 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		}
 		$msg = str_replace($cf_tags_array, $cf_value_array, $msg);
 	}
-	
+
+	// get back percent inside instant view url
+	$msg = str_replace("@@@instantViewLinkPercentSign@@@", "%", $msg);
+
 	$msg = str_replace('&nbsp;','', $msg);
 
 	$nt = new Notifcaster_Class();
@@ -575,7 +588,7 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 		if($tdata['twp_img_position']->option_value == 1){
 			$msg = '<a href="'.wp_get_attachment_url($img_id).'">‌</a>'.$msg;
 			$nt->web_preview = 0;
-			$r = $nt->channel_text($ch_name, $msg);
+			$r = $nt->sendmessage($ch_name, $msg);
 		} else {
 			$attachment = wp_prepare_attachment_for_js($img_id);
 			if (mb_strlen($msg) < 200){
@@ -588,11 +601,11 @@ function twp_post_published ( $ID, $post, $pattern, $thumb_method, $twp_img_id, 
 				$file_format = 'image';
 				$file = $photo;
 				$r1 = $nt->channel_file($ch_name, $file_caption, $file, $file_format );
-				$r = $nt->channel_text($ch_name, $msg);
+				$r = $nt->sendmessage($ch_name, $msg);
 			}
 		}
 	} else {
-		$r = $nt->channel_text($ch_name, $msg);
+		$r = $nt->sendmessage($ch_name, $msg);
 	}
 	if($twp_file_id != 0){
 		$file = get_attached_file($twp_file_id);
@@ -672,7 +685,7 @@ function twp_ajax_test_callback() {
 		//Send a test message to channel
 			$nt->_telegram($_POST['bot_token'], $_POST['markdown'], $_POST['web_preview']);
 			$msg = str_replace("\\", "", $_POST['msg']);
-			$result = $nt->channel_text($_POST['channel_username'], $msg );
+			$result = $nt->sendmessage($_POST['channel_username'], $msg );
 			echo json_encode($result);
 			wp_die();
 			break;

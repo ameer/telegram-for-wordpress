@@ -56,6 +56,7 @@ function register_twp_settings() {
             register_setting( 'twp-settings-group', 'twp_web_preview', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_img_position', 'sanitize_text_field' );
             register_setting( 'twp-settings-group', 'twp_excerpt_length', 'sanitize_text_field' );
+            register_setting( 'twp-settings-group', 'twp_instant_view_rhash', 'sanitize_text_field');
 }
 // If api_token has been set, then add our hook to phpmailer.
 if ($tdata['twp_bot_token'] != null ) {

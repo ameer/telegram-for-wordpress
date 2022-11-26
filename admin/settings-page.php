@@ -172,6 +172,7 @@
 							<tr>
 								<?php
 								$preview = $tdata['twp_web_preview']->option_value;
+								$instant_view_rhash = $tdata['twp_instant_view_rhash']->option_value;
 								$excerpt_length = $tdata['twp_excerpt_length']->option_value;
 								$tstc = $tdata['twp_send_to_channel']->option_value;
 								$tstc = $tstc != "" ? $tstc : 0 ;
@@ -228,6 +229,14 @@
 									<input type="checkbox" id="twp_web_preview" name="twp_web_preview" value="1" <?php checked( '1', $preview ); ?>/>
 									<label for="twp_web_preview"><?php echo __('Disable Web page preview', 'twp-plugin' ) ?> </label>
 								</td>
+							</tr>
+							<tr>
+							   <th scope="row"><h3><?php echo __("Instant view Template", "twp-plugin") ?></h3></th>
+							   <td>
+								   <p class="howto"><?php echo __("Set instant view template rhash to see instant view button", "twp-plugin") ?></p><br>
+								   <input type="text" id="twp_instant_view_rhash" name="twp_instant_view_rhash" value="<?php echo $instant_view_rhash ?>" />
+								   <label for="twp_instant_view_rhash"><?php echo __('Instant View rhash', 'twp-plugin' ) ?> </label>
+							   </td>
 							</tr>
 							<tr>
 								<th scope="row"><h3><?php echo __("Photo position", "twp-plugin") ?></h3></th>
